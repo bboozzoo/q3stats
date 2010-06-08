@@ -66,7 +66,11 @@ class Q3FileImporter:
         '''start file import'''
         self.get_digest()
         self.document = xdm.parse(self.filename)
-        match_id = self.import_match_info()
+        try:
+            match_id = self.import_match_info()
+        except sqlite3.IntegrityError:
+            print 'file %s seems to have been already imported, skip' % (self.filename)
+            return
         self.import_players_info(match_id)
         print 'commit DB'
         self.db.commit()
@@ -87,8 +91,9 @@ class Q3FileImporter:
         print 'map: %s type %s date: %d file digest: %s' % (match_map, match_type, match_date, self.digest)
         # dump everything into DB
         c = self.db.execute('insert into matches(date, type, map, source_file_digest) values (?, ?, ?, ?)',
-                        (match_date, match_type, match_map, self.digest,))
+                            (match_date, match_type, match_map, self.digest,))
         return c.lastrowid
+
 
     
     def import_players_info(self, match_id):
