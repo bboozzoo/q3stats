@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml11">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>stats</title>
+    <link rel="stylesheet" type="text/css" href="skel.css" />
+  </head>
+
+  <body>
+    <div>
+      <form action="/cgi-bin/test" method="post">
+	<select name="player-name">
+	  ${players_list}
+	</select>
+	<input type="submit" value="See stats" />
+      </form>
+    </div>
+  </body>
+</html>
