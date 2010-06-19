@@ -26,6 +26,7 @@ class Stats:
     TEMPLATES = { 'main-page' : 'main-template.xhtml',
                   'player-stats' : 'player-stats-template.xhtml',
                   'player-stats-weapon-stats-table-entry' : 'player-stats-weapon-stats-table-entry-template.xhtml',
+                  'player-stats-item-stats-table-entry' : 'player-stats-item-stats-table-entry-template.xhtml',
                   'recent-match-list-table-entry': 'recent-match-list-table-entry-template.xhtml',
                   'player-list-table-entry': 'player-list-table-entry-template.xhtml'
                   }
@@ -40,7 +41,13 @@ class Stats:
                'MG' : 'iconw_machinegun.png',
                'MH' : 'iconh_mega.png',
                'RA' : 'iconr_red.png',
-               'YA' : 'iconr_yellow.png' 
+               'YA' : 'iconr_yellow.png',
+               'GA' : 'iconr_green.png',
+               'Quad' : 'quad.png',
+               'Invis' : 'invis.png',
+               'BattleSuit' : 'envirosuit.png',
+               'Regen' : 'regen.png',
+               'Flight' : 'flight.png'
                }
     
     def __init__(self):
@@ -180,7 +187,7 @@ def get_weapon_stats_table(stats, cgi_request):
         accuracy = 'N/A'
         efficiency = 'N/A'
         if shots > 0.0:
-            accuracy = '%d' % (100.0 * hits / shots)
+            accuracy = '%d%%' % (100.0 * hits / shots)
             efficiency = '%.02f' % ((float(kills) / shots))
         weapon_stats[weapon_type] = (accuracy, efficiency, kills)
     
@@ -193,7 +200,45 @@ def get_weapon_stats_table(stats, cgi_request):
     return html_weapon_stats_table
 
 def get_item_stats_table(stats, cgi_request):
-    return ''
+    '''return string with HTML formatted table with items statistics'''
+    html_items_stats_table = ''
+    # 'item type' => tuple(pickups, time) - all strings
+    zero_tuple = ('0', 'N/A')
+    items_order = ['RA', 'YA', 'GA', 'Quad', 'BattleSuit', 'Invis', 'Regen', 'Flight']
+    items_stats = {}
+    for i in items_order:
+        items_stats[i] = zero_tuple
+                     
+    conn = stats.db_get()
+    player_id = cgi_request.get('player_id', None)
+    if not player_id:
+        raise StatsError('player_id not set')
+    c = conn.execute('''select match_player_items_stats.type, 
+                        sum(match_player_items_stats.pickups), 
+                        sum(match_player_items_stats.time)
+                        from 
+                        match_player_items_stats 
+                        where  
+                        match_player_items_stats.match_player_stats_id 
+                        in  
+                        (select id from match_player_stats where alias_id = ?)
+                        group by 
+                        match_player_items_stats.type;''', (player_id[0], ))
+    for row in c:
+        item_type = row[0]
+        pickups = row[1]
+        hold_time = 'N/A'
+        if row[2] != 0:
+            hold_time = '%ds' % (int(row[2]))
+        items_stats[item_type] = (pickups, hold_time)
+    
+    tmpl = string.Template(stats.template_get('player-stats-item-stats-table-entry'))
+    for i_key in items_order:
+        html_items_stats_table += tmpl.substitute(item_img = stats.image_path_get(i_key),
+                                                   item_pickups = items_stats[i_key][0],
+                                                   item_time = items_stats[i_key][1])
+    return html_items_stats_table
+
                                     
 def output_main_page(stats):
     html_players_table = get_player_table(stats)
@@ -224,7 +269,7 @@ print 'Content-Type: text/html'
 print
 print 'query string: %s' % (os.environ['REQUEST_URI'])
 print '%s' % (repr(cgi_get_request))
-cgi.print_environ()
+#cgi.print_environ()
 #if len(request) == 0:
 req = cgi_get_request.get('req', ['none'])[0]
 print '<p>%s</p>' % (req)
