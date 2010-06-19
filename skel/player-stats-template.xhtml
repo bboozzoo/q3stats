@@ -6,41 +6,29 @@
 </head>
 
 <body>
+  <h3>${player_name}</h3>
   <div id="general-stats">
-    <h3>Overall stats</h3>
-    <p>player name: ${player_name}</p>
-    <p>match places
-      <li>1:</li>
-      <li>2:</li>
-      <li>3:</li>
-    </p>
-    
-    <h3>Weapon stats</h3>
+    Weapons
     <table>
       <tr>
-	<th>Weapon</th>
+	<th />
+	<th>Frags</th>
 	<th>Accuracy</th>
+	<th>Efficiency</th>
       </tr>
+      ${weapon_stats}
     </table>
-    
-  </div>
-  <div id="last-matches">
-    <div id="match-info">
-      <table style="width:100%;">
-	<tr>
-	  <th>place</th>
-	  <th>player</th>
-	  <th>kills</th>
-	  <th>deaths</th>
-	  <th>suicides</th>
-	  <th>damage give</th>
-	  <th>damage take</th>
-	  <th>total health</th>
-	  <th>total armor</th>
-	</tr>
-      </table>
-    </div>
-  </div>
+    Items
+    <table>
+      <tr>
+	<th />
+	<th>Pickups</th>
+	<th>Time</th>
+      </tr>
+      ${item_stats}
+    </table>
+  </div> 
+
 </body>
 </html>
 

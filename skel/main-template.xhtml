@@ -6,13 +6,23 @@
   </head>
 
   <body>
-    <div>
-      <form action="/cgi-bin/q3stat.py" method="post">
-	<select name="player-name">
-	  ${players_list}
-	</select>
-	<input type="submit" value="See stats" />
-      </form>
+    <div style="width:80%;border:1px solid red; float:left;padding:5px">
+      <h3>Recent matches</h3>
+      <table>
+	<tr>
+	  <th>Date</th>
+	  <th>Map</th>
+	  <th>Winner</th>
+	  <th>Players</th>
+	</tr>
+      ${matches_list}
+      </table>
+    </div>
+    <div style="width:10%;border:1px solid red; float:left;padding:5px;margin-left:10px;">
+      <h3>Players</h3>
+      <table>
+      ${players_list}
+      </table>
     </div>
   </body>
 </html>
