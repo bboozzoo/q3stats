@@ -7,6 +7,7 @@ import sqlite3
 import string
 import os
 import Cookie
+import datetime
 
 # to see backtraces
 cgitb.enable()
@@ -130,7 +131,9 @@ def get_recent_matches_table(stats):
                         order by matches.date desc''')
     tmpl = string.Template(stats.template_get('recent-match-list-table-entry'))
     for row in c:
-        when = row[1]
+        dt = datetime.datetime(1900,1,1)
+        dt = dt.fromtimestamp(row[1])
+        when = dt.strftime('%A, %d. %B %Y %I:%M%p')
         match_map = row[2]
         players_count = row[3]
         match_id = row[0]
