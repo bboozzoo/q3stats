@@ -71,7 +71,8 @@ class Q3FileImporter:
         except sqlite3.IntegrityError:
             print 'file %s seems to have been already imported, skip' % (self.filename)
             return
-        self.import_players_info(match_id)
+        winner_id = self.import_players_info(match_id)
+        self.update_match_winner(match_id, winner_id)
         print 'commit DB'
         self.db.commit()
 
@@ -94,14 +95,21 @@ class Q3FileImporter:
                             (match_date, match_type, match_map, self.digest,))
         return c.lastrowid
 
-
+    def update_match_winner(self, match_id, winner_id):
+        self.db.execute('update matches set winner_alias_id = ? where id = ?', (winner_id, match_id, ))
     
     def import_players_info(self, match_id):
+        winner_id = 0
+        player_score = 0
         players = self.document.getElementsByTagName('player')
         for p in players:
-           player_stats_id = self.import_player_stats_info(p, match_id)
+           player_stats_id, score, player_id = self.import_player_stats_info(p, match_id)
            self.import_player_weapons_info(p, player_stats_id)
            self.import_player_items_info(p, player_stats_id)
+           if score > player_score:
+               player_score = score
+               winner_id = player_id
+        return winner_id
 
     def get_player_and_alias_id(self, player_name):
         '''find player ID and alias ID for given player/nick name
@@ -138,7 +146,8 @@ class Q3FileImporter:
         
     def import_player_stats_info(self, player_element, match_id):
         '''import player statistics
-        return player_stats_id which is used as key in weapon and items statistics'''
+        return tuple(player_stats_id, score, alias_id)
+        player_stats_id is used as key in weapon and items statistics'''
         player_stats_id = 0
         # this will be filled in the for loop
         player_stats = {
@@ -195,7 +204,7 @@ class Q3FileImporter:
                              player_stats['damage_taken'], player_stats['health_total'],
                              player_stats['armor_total'],))
         # dump everything into DB
-        return c.lastrowid # stats entry ID
+        return c.lastrowid, player_stats['score'], alias_id # stats entry ID
 
     def import_player_weapons_info(self, player_element, player_stats_id):
         '''import list of weapon statistics'''

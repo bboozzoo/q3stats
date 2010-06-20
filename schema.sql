@@ -38,6 +38,7 @@ CREATE TABLE "matches" (
     "date" INTEGER NOT NULL,
     "type" TEXT NOT NULL,
     "map" TEXT NOT NULL,
+    "winner_alias_id" INTEGER,
     "source_file_digest" TEXT NOT NULL UNIQUE
 );
 CREATE TABLE "players" (

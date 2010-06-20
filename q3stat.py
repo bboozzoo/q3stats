@@ -89,6 +89,7 @@ class Stats:
                   
                              
 def get_player_table(stats):
+    '''return HTML formatted player aliases table'''
     conn = stats.db_get()
     html_players_table = ''
     c = conn.execute('select id, alias from player_aliases order by alias asc')
@@ -102,6 +103,7 @@ def get_player_table(stats):
     return html_players_table
 
 def get_players_list(stats, match_id):
+    '''return list of players ordered by score'''
     players_list = []
     conn = stats.db_get()
     c = conn.execute('''select alias_id, score, 
@@ -118,10 +120,12 @@ def get_players_list(stats, match_id):
     return players_list
 
 def get_recent_matches_table(stats):
+    '''return HTML formatted table of recent matches'''
     conn = stats.db_get()
     html_matches_table = ''
     c = conn.execute('''select matches.id, matches.date, 
-                        matches.map, count(match_player_stats.alias_id) 
+                        matches.map, count(match_player_stats.alias_id),
+                        matches.winner_alias_id
                         from 
                         match_player_stats 
                         inner join 
@@ -137,7 +141,7 @@ def get_recent_matches_table(stats):
         match_map = row[2]
         players_count = row[3]
         match_id = row[0]
-        who_won = get_players_list(stats, match_id)[0]
+        who_won = get_player_name(stats, row[4])
         html_matches_table += tmpl.substitute(script_name = SCRIPT_NAME,
                                               match_id = match_id,
                                               when = when,
@@ -146,17 +150,87 @@ def get_recent_matches_table(stats):
                                               how_many_players = players_count)
     return html_matches_table
 
-        
-def get_player_name(stats, cgi_request):
+def get_player_name(stats, player_id):
+    '''return string - player name given player alias id'''
     conn = stats.db_get()
-    player_id = cgi_request.get('player_id', None)
-    if not player_id:
-        raise StatsError('player_id not set')
-    c = conn.execute('select alias from player_aliases where id = ?', (player_id[0],))
+    c = conn.execute('select alias from player_aliases where id = ?', (player_id,))
     row = c.fetchone()
     return row[0]
 
-def get_weapon_stats_table(stats, cgi_request):
+def get_player_matches_count(stats, player_id):
+    '''return string - count of matches played by player of given id'''
+    conn = stats.db_get()
+    c = conn.execute('select count(*) from match_player_stats where alias_id = ?', (player_id, ))
+    row = c.fetchone()
+    return row[0]
+
+def get_player_wins_count(stats, player_id):
+    '''return string - count of player wins'''
+    conn = stats.db_get()
+    c = conn.execute('select count(*) from matches where winner_alias_id = ?', (player_id,))
+    row = c.fetchone()
+    return row[0]
+
+def get_player_frags_deaths_suicides_count(stats, player_id):
+    '''return tuple of strings (frags, deaths, suicides) for given player id'''
+    conn = stats.db_get()
+    c = conn.execute('''select 
+                      sum(kills), 
+                      sum(deaths), 
+                      sum(suicides) 
+                      from 
+                      match_player_stats 
+                      where alias_id = ?''', (player_id,))
+    row = c.fetchone()
+    return row[0], row[1], row[2]
+
+def get_player_hits_shots_accuracy(stats, player_id):
+    '''return tupe of strings(hits, shots, accuracy) for given player id'''
+    hits = 0
+    shots = 0
+    accuracy = 'N/A'
+    conn = stats.db_get()
+    c = conn.execute('''select 
+                        sum(hits), 
+                        sum(shots) 
+                        from 
+                        match_player_weapon_stats 
+                        where 
+                        match_player_stats_id 
+                        in 
+                        (select id from match_player_stats where alias_id = ?)''', (player_id,))
+    row = c.fetchone()
+    hits = row[0]
+    shots = row[1]
+    if int(shots) > 0:
+        accuracy = '%d%%' % (int(100.0 * float(hits) / float(shots)))
+    return hits, shots, accuracy
+
+def get_player_vital_stats(stats, player_id):
+    '''output dictionary containing string indexed player stats fields (also used as key names):
+    - matches
+    - wins
+    - losses === (matches - wins)
+    - kills
+    - deaths
+    - suicides
+    - hits
+    - shots
+    - accuracy
+    '''
+    vstats = {}
+    for s in ['matches', 'wins', 'losses', 'kills', 'deaths', 'suicides', 'hits', 'shots', 'accuracy']:
+        vstats[s] = '0'
+        
+    vstats['matches'] = get_player_matches_count(stats, player_id)
+    vstats['wins'] = get_player_wins_count(stats, player_id)
+    vstats['losses'] = '%d' % (int(vstats['matches']) - int(vstats['wins']))
+    vstats['kills'], vstats['deaths'], vstats['suicides'] = get_player_frags_deaths_suicides_count(stats, player_id)
+    vstats['hits'], vstats['shots'], vstats['accuracy'] = get_player_hits_shots_accuracy(stats, player_id)
+    return vstats
+    
+
+def get_player_weapon_stats_table(stats, player_id):
     '''return string with HTML formatted table with weapon statistics'''
     html_weapon_stats_table = ''
     # 'weapon type' => tuple(accuracy, efficiency, kills) - all strings
@@ -167,9 +241,6 @@ def get_weapon_stats_table(stats, cgi_request):
         weapon_stats[w] = zero_tuple
                      
     conn = stats.db_get()
-    player_id = cgi_request.get('player_id', None)
-    if not player_id:
-        raise StatsError('player_id not set')
     c = conn.execute('''select match_player_weapon_stats.type, 
                         sum(match_player_weapon_stats.hits), 
                         sum(match_player_weapon_stats.shots), 
@@ -181,7 +252,7 @@ def get_weapon_stats_table(stats, cgi_request):
                         in 
                         (select id from match_player_stats where alias_id = ?)
                         group by 
-                        match_player_weapon_stats.type''', (player_id[0], ))
+                        match_player_weapon_stats.type''', (player_id, ))
     for row in c:
         weapon_type = row[0]
         hits = float(row[1])
@@ -202,7 +273,7 @@ def get_weapon_stats_table(stats, cgi_request):
                                                    weapon_efficiency = weapon_stats[w_key][1])
     return html_weapon_stats_table
 
-def get_item_stats_table(stats, cgi_request):
+def get_player_item_stats_table(stats, player_id):
     '''return string with HTML formatted table with items statistics'''
     html_items_stats_table = ''
     # 'item type' => tuple(pickups, time) - all strings
@@ -213,9 +284,6 @@ def get_item_stats_table(stats, cgi_request):
         items_stats[i] = zero_tuple
                      
     conn = stats.db_get()
-    player_id = cgi_request.get('player_id', None)
-    if not player_id:
-        raise StatsError('player_id not set')
     c = conn.execute('''select match_player_items_stats.type, 
                         sum(match_player_items_stats.pickups), 
                         sum(match_player_items_stats.time)
@@ -226,7 +294,7 @@ def get_item_stats_table(stats, cgi_request):
                         in  
                         (select id from match_player_stats where alias_id = ?)
                         group by 
-                        match_player_items_stats.type;''', (player_id[0], ))
+                        match_player_items_stats.type;''', (player_id, ))
     for row in c:
         item_type = row[0]
         pickups = row[1]
@@ -254,13 +322,27 @@ def output_match_stats_page(stats, cgi_request):
     print '<h3>match stats</h3>'
 
 def output_player_stats_page(stats, cgi_request):
-    html_weapon_stats_table = get_weapon_stats_table(stats, cgi_request)
-    html_item_stats_table = get_item_stats_table(stats, cgi_request)
-    html_player_name = get_player_name(stats, cgi_request)
+    req_param_list_player_id = cgi_request.get('player_id', None)
+    if not req_param_list_player_id:
+        raise StatsError('player_id not set')
+    player_id = req_param_list_player_id[0]
+    html_weapon_stats_table = get_player_weapon_stats_table(stats, player_id)
+    html_item_stats_table = get_player_item_stats_table(stats, player_id)
+    html_player_name = get_player_name(stats, player_id)
+    player_vital_stats = get_player_vital_stats(stats, player_id)
     tmpl = string.Template(stats.template_get('player-stats'))
     print tmpl.substitute(player_name = html_player_name,
                           weapon_stats = html_weapon_stats_table,
-                          item_stats = html_item_stats_table)
+                          item_stats = html_item_stats_table,
+                          player_matches = player_vital_stats['matches'],
+                          player_wins = player_vital_stats['wins'],
+                          player_losses = player_vital_stats['losses'],
+                          player_kills = player_vital_stats['kills'],
+                          player_deaths = player_vital_stats['deaths'],
+                          player_suicides = player_vital_stats['suicides'],
+                          player_hits = player_vital_stats['hits'],
+                          player_shots = player_vital_stats['shots'],
+                          player_accuracy = player_vital_stats['accuracy'])
 
 
 # read configuration

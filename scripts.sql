@@ -22,3 +22,14 @@ from match_player_items_stats where match_player_items_stats.match_player_stats_
 group by match_player_items_stats.type;
 
 select id from match_player_stats where alias_id = 9;
+
+-- player matches
+select count(*) from match_player_stats where alias_id = 9;
+-- player frags, deaths, suicides
+select sum(kills), sum(deaths), sum(suicides) from match_player_stats where alias_id = 1;
+-- player hits shots
+select sum(hits), sum(shots) from match_player_weapon_stats where match_player_stats_id in (select id from match_player_stats where alias_id = 9);
+-- player wins
+select count(*) from matches where winner_alias_id = 1;
+select * from match_player_stats where match_id = 216;
+update 
