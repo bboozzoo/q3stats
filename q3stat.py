@@ -29,7 +29,10 @@ class Stats:
                   'player-stats-weapon-stats-table-entry' : 'player-stats-weapon-stats-table-entry-template.xhtml',
                   'player-stats-item-stats-table-entry' : 'player-stats-item-stats-table-entry-template.xhtml',
                   'recent-match-list-table-entry': 'recent-match-list-table-entry-template.xhtml',
-                  'player-list-table-entry': 'player-list-table-entry-template.xhtml'
+                  'player-list-table-entry': 'player-list-table-entry-template.xhtml',
+                  'alias-list-table-entry' : 'alias-list-table-entry-template.xhtml',
+                  'add-player' : 'add-player-template.xhtml',
+                  'modify-player-alias-checkbox' : 'modify-player-alias-checkbox-template.xhtml'
                   }
     IMAGES = { 'G' : 'iconw_gauntlet.png',
                'SG' : 'iconw_shotgun.png',
@@ -88,11 +91,26 @@ class Stats:
         return self.__document_root + self.IMAGES[name]
                   
                              
-def get_player_table(stats):
+def get_aliases_table(stats):
     '''return HTML formatted player aliases table'''
     conn = stats.db_get()
+    html_aliases_table = ''
+    c = conn.execute('select id, alias, player_id from player_aliases order by alias asc')
+    tmpl = string.Template(stats.template_get('alias-list-table-entry'))
+    for row in c:
+        alias_name = row[1]
+        alias_id = row[0]
+        player_id = row[2]
+        html_aliases_table += tmpl.substitute(script_name = SCRIPT_NAME,
+                                              player_id = player_id,
+                                              alias_name = alias_name)
+    return html_aliases_table
+
+def get_players_table(stats):
+    '''return HTML formatted players table'''
+    conn = stats.db_get()
     html_players_table = ''
-    c = conn.execute('select id, alias from player_aliases order by alias asc')
+    c = conn.execute('select id, name from players order by name asc')
     tmpl = string.Template(stats.template_get('player-list-table-entry'))
     for row in c:
         player_name = row[1]
@@ -100,6 +118,8 @@ def get_player_table(stats):
         html_players_table += tmpl.substitute(script_name = SCRIPT_NAME,
                                               player_id = player_id,
                                               player_name = player_name)
+    if len(html_players_table) == 0:
+        html_players_table = '<tr><td>None</td></tr>'
     return html_players_table
 
 def get_players_list(stats, match_id):
@@ -310,22 +330,51 @@ def get_player_item_stats_table(stats, player_id):
                                                    item_time = items_stats[i_key][1])
     return html_items_stats_table
 
-                                    
+def get_alias_checkbox_list(stats):
+    html_alias_checkbox_list = ''
+    tmpl = string.Template(stats.template_get('modify-player-alias-checkbox'))
+    conn = stats.db_get()
+    c = conn.execute('select id, alias from player_aliases')
+    for row in c:
+        alias_id = row[0]
+        alias_name = row[1]
+        html_alias_checkbox_list += tmpl.substitute(alias_id = alias_id,
+                                                     alias_name = alias_name)
+    return html_alias_checkbox_list
+        
 def output_main_page(stats):
-    html_players_table = get_player_table(stats)
+    html_aliases_table = get_aliases_table(stats)
+    html_players_table = get_players_table(stats)
     html_matches_table = get_recent_matches_table(stats)
     tmpl = string.Template(stats.template_get('main-page'))
-    print tmpl.substitute(players_list = html_players_table,
+    print tmpl.substitute(script_name = SCRIPT_NAME,
+                          aliases_list = html_aliases_table,
+                          players_list = html_players_table,
                           matches_list = html_matches_table)
 
-def output_match_stats_page(stats, cgi_request):
+def output_show_add_player_page(stats):
+    tmpl = string.Template(stats.template_get('add-player'))
+    print tmpl.substitute(script_name = SCRIPT_NAME)
+                          
+def output_show_modify_player_page(stats, cgi_fs):
+    player_id = cgi_fs.getvalue('player_id', None)
+    if not player_id:
+        raise StatsError('player_id not set')
+    html_alias_checkbox_list = get_alias_checkbox_list(stats)
+    tmpl = string.Template(stats.template_get('modify-player'))
+    print tmpl.substitute(script_name = SCRIPT_NAME,
+                          aliases_list = html_alias_checkbox_list,
+                          player_id = player_id)
+
+def output_match_stats_page(stats, cgi_fs):
     print '<h3>match stats</h3>'
 
-def output_player_stats_page(stats, cgi_request):
-    req_param_list_player_id = cgi_request.get('player_id', None)
-    if not req_param_list_player_id:
+def output_player_stats_page(stats, cgi_fs):
+    '''output player stats page
+    if player_id == 0 then there the player is not defined do not show anything'''
+    player_id = cgi_fs.getvalue('player_id', None)
+    if not player_id:
         raise StatsError('player_id not set')
-    player_id = req_param_list_player_id[0]
     html_weapon_stats_table = get_player_weapon_stats_table(stats, player_id)
     html_item_stats_table = get_player_item_stats_table(stats, player_id)
     html_player_name = get_player_name(stats, player_id)
@@ -347,21 +396,30 @@ def output_player_stats_page(stats, cgi_request):
 
 # read configuration
 SCRIPT_NAME = os.environ['SCRIPT_NAME']
-cgi_get_request = cgi.parse()
+#cgi_get_request = cgi.parse()
+cgi_fs = cgi.FieldStorage()
 stats_handler = Stats()
 
 print 'Content-Type: text/html'
 print
 print 'query string: %s' % (os.environ['REQUEST_URI'])
-print '%s' % (repr(cgi_get_request))
+#print '%s' % (repr(cgi_get_request))
+print '<p>fs: %s</p>' % (repr(cgi_fs))
 #cgi.print_environ()
-#if len(request) == 0:
-req = cgi_get_request.get('req', ['none'])[0]
+req = cgi_fs.getvalue('req', 'none')
 print '<p>%s</p>' % (req)
-if req == 'match-stats':
-    output_match_stats_page(stats_handler, cgi_get_request)
-elif req == 'player-stats':
-    output_player_stats_page(stats_handler, cgi_get_request)
+if req == 'show-match-stats':
+    output_match_stats_page(stats_handler, cgi_fs)
+elif req == 'show-player-stats':
+    output_player_stats_page(stats_handler, cgi_fs)
+elif req == 'show-add-player':
+    output_show_add_player_page(stats_handler)
+elif req == 'show-modify-player':
+    output_show_modify_player_page(stats_handler, cgi_fs)
+elif req == 'add-player':
+    pass
+elif req == 'modify-player':
+    pass
 else:
     output_main_page(stats_handler)
 

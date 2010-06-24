@@ -122,7 +122,7 @@ class Q3FileImporter:
         if not row:
             #entry does not exist
             print 'player %s does not exist yet, adding' % (player_name)
-            player_id = self.add_player_name(player_name)
+            player_id = 0 #self.add_player_name(player_name)
             alias_id = self.add_alias_for_player_id(player_name, player_id)
         else:
             player_id = row['player_id']

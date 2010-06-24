@@ -1,6 +1,6 @@
 CREATE TABLE "player_aliases" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "player_id" INTEGER NOT NULL,
+    "player_id" INTEGER,
     "alias" TEXT NOT NULL UNIQUE
 );
 CREATE TABLE "match_player_items_stats" (

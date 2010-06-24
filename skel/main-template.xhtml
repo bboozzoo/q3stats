@@ -18,11 +18,21 @@
       ${matches_list}
       </table>
     </div>
-    <div style="width:10%;border:1px solid red; float:left;padding:5px;margin-left:10px;">
-      <h3>Players</h3>
-      <table>
-      ${players_list}
-      </table>
+    <div style="width:10%;float:left;padding:5px;margin-left:10px;">
+      <div>
+	<h3>Players</h3>
+	<a href="${script_name}?req=show-add-player">add player</a>
+	<br/>
+	<table>
+	  ${players_list}
+	</table>
+      </div>
+      <div>
+	<h3>Aliases</h3>
+	<table>
+	  ${aliases_list}
+	</table>
+      </div>
     </div>
   </body>
 </html>
