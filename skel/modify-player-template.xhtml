@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml11">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>stats</title>
+    <link rel="stylesheet" type="text/css" href="skel.css" />
+  </head>
+  
+  <body>
+    <h3>Editing player ${player_name}</h3>	
+    <form action="${script_name}?req=modify-player&player_id=${player_id}" method="post">
+      <input type="submit" value="Confirm"/>
+      <br/>
+      Pick player aliases from list below:
+      <div>
+	${aliases_list}
+      </div>
+      
+    </form>
+  </body>
+</html>
