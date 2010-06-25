@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   <head>
     <title>stats</title>
-    <link rel="stylesheet" type="text/css" href="skel.css" />
+    <link rel="stylesheet" type="text/css" href="${style_name}" />
   </head>
 
   <body>
-    <div style="width:80%;border:1px solid red; float:left;padding:5px">
+    <div class="recent-matches">
       <h3>Recent matches</h3>
       <table>
 	<tr>
@@ -18,7 +18,7 @@
       ${matches_list}
       </table>
     </div>
-    <div style="width:10%;float:left;padding:5px;margin-left:10px;">
+    <div class="players-list">
       <div>
 	<h3>Players</h3>
 	<a href="${script_name}?req=show-add-player">add player</a>

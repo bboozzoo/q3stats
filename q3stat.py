@@ -24,6 +24,7 @@ class StatsError(Exception):
 class Stats:
     '''wrapper for all relevant config files/template access/db access'''
     CONFIG_FILE='/etc/q3stat.conf'
+    STYLE_NAME = 'q3stat.css'
     TEMPLATES = { 'main-page' : 'main-template.xhtml',
                   'player-stats' : 'player-stats-template.xhtml',
                   'player-stats-weapon-stats-table-entry' : 'player-stats-weapon-stats-table-entry-template.xhtml',
@@ -32,7 +33,10 @@ class Stats:
                   'player-list-table-entry': 'player-list-table-entry-template.xhtml',
                   'alias-list-table-entry' : 'alias-list-table-entry-template.xhtml',
                   'add-player' : 'add-player-template.xhtml',
-                  'modify-player-alias-checkbox' : 'modify-player-alias-checkbox-template.xhtml'
+                  'add-success' : 'add-player-success-template.xhtml',
+                  'add-failure' : 'add-player-failure-template.xhtml',
+                  'modify-player-alias-checkbox' : 'modify-player-alias-checkbox-template.xhtml',
+                  'modify-player' : 'modify-player-template.xhtml'
                   }
     IMAGES = { 'G' : 'iconw_gauntlet.png',
                'SG' : 'iconw_shotgun.png',
@@ -74,6 +78,7 @@ class Stats:
             
     def db_close(self):
         if self.__db_conn:
+            self.__db_conn.commit()
             self.__db_conn.close()
     
     def template_get(self, which):
@@ -89,6 +94,9 @@ class Stats:
         if not self.IMAGES.has_key(name):
             raise StatsError('image %s not found' % (name))
         return self.__document_root + self.IMAGES[name]
+
+    def style_name_get(self):
+        return self.__document_root + self.STYLE_NAME
                   
                              
 def get_aliases_table(stats):
@@ -161,7 +169,7 @@ def get_recent_matches_table(stats):
         match_map = row[2]
         players_count = row[3]
         match_id = row[0]
-        who_won = get_player_name(stats, row[4])
+        who_won = get_alias_name(stats, row[4])
         html_matches_table += tmpl.substitute(script_name = SCRIPT_NAME,
                                               match_id = match_id,
                                               when = when,
@@ -171,9 +179,16 @@ def get_recent_matches_table(stats):
     return html_matches_table
 
 def get_player_name(stats, player_id):
-    '''return string - player name given player alias id'''
+    '''return string - player name given player id'''
     conn = stats.db_get()
-    c = conn.execute('select alias from player_aliases where id = ?', (player_id,))
+    c = conn.execute('select name from players where id = ?', (player_id,))
+    row = c.fetchone()
+    return row[0]
+
+def get_alias_name(stats, alias_id):
+    '''return string - alias name given alias id'''
+    conn = stats.db_get()
+    c = conn.execute('select alias from player_aliases where id = ?', (alias_id,))
     row = c.fetchone()
     return row[0]
 
@@ -341,6 +356,20 @@ def get_alias_checkbox_list(stats):
         html_alias_checkbox_list += tmpl.substitute(alias_id = alias_id,
                                                      alias_name = alias_name)
     return html_alias_checkbox_list
+
+def add_player(stats, cgi_fs):
+    player_name = cgi_fs.getvalue('player_name', None)
+    if not player_name:
+        raise StatsError('player_name not set')
+    conn = stats.db_get()
+    player_id = 0
+    try:
+        c = conn.execute('insert into players(name) values(?)', (player_name,))
+        player_id = c.lastrowid
+    except sqlite3.IntegrityError:
+        raise StatsError('player %s already present' % (player_name))
+    return player_id
+
         
 def output_main_page(stats):
     html_aliases_table = get_aliases_table(stats)
@@ -348,23 +377,27 @@ def output_main_page(stats):
     html_matches_table = get_recent_matches_table(stats)
     tmpl = string.Template(stats.template_get('main-page'))
     print tmpl.substitute(script_name = SCRIPT_NAME,
+                          style_name = stats.style_name_get(),
                           aliases_list = html_aliases_table,
                           players_list = html_players_table,
                           matches_list = html_matches_table)
 
 def output_show_add_player_page(stats):
     tmpl = string.Template(stats.template_get('add-player'))
-    print tmpl.substitute(script_name = SCRIPT_NAME)
+    print tmpl.substitute(script_name = SCRIPT_NAME,
+                          style_name = stats.style_name_get())
                           
 def output_show_modify_player_page(stats, cgi_fs):
     player_id = cgi_fs.getvalue('player_id', None)
     if not player_id:
         raise StatsError('player_id not set')
     html_alias_checkbox_list = get_alias_checkbox_list(stats)
+    html_player_name = get_player_name(stats, player_id)
     tmpl = string.Template(stats.template_get('modify-player'))
     print tmpl.substitute(script_name = SCRIPT_NAME,
                           aliases_list = html_alias_checkbox_list,
-                          player_id = player_id)
+                          player_id = player_id,
+                          player_name = html_player_name)
 
 def output_match_stats_page(stats, cgi_fs):
     print '<h3>match stats</h3>'
@@ -373,11 +406,11 @@ def output_player_stats_page(stats, cgi_fs):
     '''output player stats page
     if player_id == 0 then there the player is not defined do not show anything'''
     player_id = cgi_fs.getvalue('player_id', None)
-    if not player_id:
+    if not player_id or player_id == '0':
         raise StatsError('player_id not set')
     html_weapon_stats_table = get_player_weapon_stats_table(stats, player_id)
     html_item_stats_table = get_player_item_stats_table(stats, player_id)
-    html_player_name = get_player_name(stats, player_id)
+    html_player_name = get_alias_name(stats, player_id)
     player_vital_stats = get_player_vital_stats(stats, player_id)
     tmpl = string.Template(stats.template_get('player-stats'))
     print tmpl.substitute(player_name = html_player_name,
@@ -393,6 +426,19 @@ def output_player_stats_page(stats, cgi_fs):
                           player_shots = player_vital_stats['shots'],
                           player_accuracy = player_vital_stats['accuracy'])
 
+def output_show_after_add_player_page(stats, cgi_fs, player_id):
+    player_name = cgi_fs.getvalue('player_name', '')
+    tmpl = string.Template(stats.template_get('add-success'))
+    print tmpl.substitute(player_name = player_name,
+                          style_name = stats.style_name_get(),
+                          script_name = SCRIPT_NAME,
+                          player_id = player_id)
+
+def output_show_after_add_player_error_page(stats, reason):
+    tmpl = string.Template(stats.template_get('add-failure'))
+    print tmpl.substitute(script_name = SCRIPT_NAME,
+                          style_name = stats.style_name_get(),
+                          reason = reason)
 
 # read configuration
 SCRIPT_NAME = os.environ['SCRIPT_NAME']
@@ -417,10 +463,17 @@ elif req == 'show-add-player':
 elif req == 'show-modify-player':
     output_show_modify_player_page(stats_handler, cgi_fs)
 elif req == 'add-player':
-    pass
+    add_success = True
+    try:
+        player_id = add_player(stats_handler, cgi_fs)
+        output_show_after_add_player_page(stats_handler, cgi_fs, player_id)
+    except StatsError, e:
+        output_show_after_add_player_error_page(stats_handler, e.what)
 elif req == 'modify-player':
     pass
 else:
     output_main_page(stats_handler)
+
+stats_handler.db_close()
 
 
