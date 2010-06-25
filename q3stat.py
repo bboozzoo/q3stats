@@ -36,7 +36,8 @@ class Stats:
                   'add-success' : 'add-player-success-template.xhtml',
                   'add-failure' : 'add-player-failure-template.xhtml',
                   'modify-player-alias-checkbox' : 'modify-player-alias-checkbox-template.xhtml',
-                  'modify-player' : 'modify-player-template.xhtml'
+                  'modify-player' : 'modify-player-template.xhtml',
+                  'delete-after' : 'delete-player-template.xhtml'
                   }
     IMAGES = { 'G' : 'iconw_gauntlet.png',
                'SG' : 'iconw_shotgun.png',
@@ -335,7 +336,7 @@ def get_player_item_stats_table(stats, player_id):
         pickups = row[1]
         hold_time = 'N/A'
         if row[2] != 0:
-            hold_time = '%ds' % (int(row[2]))
+            hold_time = '%ds' % (int(row[2]) / 1000)
         items_stats[item_type] = (pickups, hold_time)
     
     tmpl = string.Template(stats.template_get('player-stats-item-stats-table-entry'))
@@ -370,6 +371,14 @@ def add_player(stats, cgi_fs):
         raise StatsError('player %s already present' % (player_name))
     return player_id
 
+def delete_player(stats, cgi_fs):
+    player_id = cgi_fs.getvalue('player_id', None)
+    if not player_id:
+        raise StatsError('player_id not set')
+    conn = stats.db_get()
+    c = conn.execute('update player_aliases set player_id = 0 where player_id = ?',
+                     (player_id,))
+    c = conn.execute('delete from players where id = ?', (player_id,))
         
 def output_main_page(stats):
     html_aliases_table = get_aliases_table(stats)
@@ -397,7 +406,8 @@ def output_show_modify_player_page(stats, cgi_fs):
     print tmpl.substitute(script_name = SCRIPT_NAME,
                           aliases_list = html_alias_checkbox_list,
                           player_id = player_id,
-                          player_name = html_player_name)
+                          player_name = html_player_name,
+                          style_name = stats.style_name_get())
 
 def output_match_stats_page(stats, cgi_fs):
     print '<h3>match stats</h3>'
@@ -440,6 +450,11 @@ def output_show_after_add_player_error_page(stats, reason):
                           style_name = stats.style_name_get(),
                           reason = reason)
 
+def output_show_after_delete_player_page(stats):
+    tmpl = string.Template(stats.template_get('delete-after'))
+    print tmpl.substitute(script_name = SCRIPT_NAME,
+                          style_name = stats.style_name_get())
+
 # read configuration
 SCRIPT_NAME = os.environ['SCRIPT_NAME']
 #cgi_get_request = cgi.parse()
@@ -463,14 +478,18 @@ elif req == 'show-add-player':
 elif req == 'show-modify-player':
     output_show_modify_player_page(stats_handler, cgi_fs)
 elif req == 'add-player':
-    add_success = True
     try:
         player_id = add_player(stats_handler, cgi_fs)
         output_show_after_add_player_page(stats_handler, cgi_fs, player_id)
     except StatsError, e:
         output_show_after_add_player_error_page(stats_handler, e.what)
 elif req == 'modify-player':
-    pass
+    vals = cgi_fs.getvalue('alias_id')
+    print repr(vals)
+
+elif req == 'delete-player':
+    delete_player(stats_handler, cgi_fs)
+    output_show_after_delete_player_page(stats_handler)
 else:
     output_main_page(stats_handler)
 
