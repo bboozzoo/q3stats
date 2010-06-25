@@ -1,0 +1,26 @@
+a, a:active {
+    text-decoration: none;
+}
+
+a:hover, a:focus {
+    text-decoration: underline;
+}
+
+body,div,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {
+    font-family: verdana, helvetica, arial, sans;
+    font-size: 95%;
+}
+
+div.recent-matches {
+    width: 80%;
+    border: 1px solid red;
+    float: left;
+    padding: 5px;
+}
+
+div.players-list {
+    width: 10%;
+    float: left;
+    padding: 5px;
+    margin-left: 10px;
+}
