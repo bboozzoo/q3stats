@@ -7,8 +7,10 @@
   
   <body>
     <h3>Editing player ${player_name}</h3>	
-    <form action="${script_name}?req=modify-player&player_id=${player_id}" method="post">
+    <form action="${script_name}" method="post">
       <input type="submit" value="Confirm"/>
+      <input type="hidden" name="req" value="modify-player" />
+      <input type="hidden" name="player_id" value="${player_id}" />
       <br/>
       Pick player aliases from list below:
       <div>

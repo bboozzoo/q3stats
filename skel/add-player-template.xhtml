@@ -6,9 +6,10 @@
   </head>
   
   <body>
-    <form action="${script_name}?req=add-player" method="post">
+    <form action="${script_name}" method="post">
       Add player <input type="text" name="player_name"/>
       <input type="submit" value="add player"/>
+      <input type="hidden" name="req" value="add-player" />
     </form>
     <a href="${script_name}">go to main</a>
   </body>

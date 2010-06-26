@@ -525,7 +525,6 @@ stats_handler = Stats()
 print 'Content-Type: text/html'
 print
 #print 'query string: %s' % (os.environ['REQUEST_URI'])
-#print '%s' % (repr(cgi_get_request))
 #print '<p>fs: %s</p>' % (repr(cgi_fs))
 #cgi.print_environ()
 req = cgi_fs.getvalue('req', 'none')
