@@ -33,3 +33,10 @@ select sum(hits), sum(shots) from match_player_weapon_stats where match_player_s
 select count(*) from matches where winner_alias_id = 1;
 select * from match_player_stats where match_id = 216;
 update 
+
+select * from player_aliases;
+select * from players;
+select * from player_aliases where player_id = 6;
+update player_aliases set player_id = 6 where id in (1);
+update player_aliases set player_id = 0 where player_id = 6;
+select name from players where id in (select player_id from player_aliases where id = 10);
