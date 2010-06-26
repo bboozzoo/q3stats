@@ -39,7 +39,8 @@ class Stats:
                   'modify-player-alias-checkbox' : 'modify-player-alias-checkbox-template.xhtml',
                   'modify-player' : 'modify-player-template.xhtml',
                   'modify-success' : 'modify-player-success-template.xhtml',
-                  'delete-after' : 'delete-player-template.xhtml'
+                  'delete-after' : 'delete-player-template.xhtml',
+                  'error' : 'error-template.xhtml'
                   }
     IMAGES = { 'G' : 'iconw_gauntlet.png',
                'SG' : 'iconw_shotgun.png',
@@ -273,6 +274,18 @@ def get_player_hits_shots_accuracy(stats, player_id):
         accuracy = '%d%%' % (int(100.0 * float(hits) / float(shots)))
     return hits, shots, accuracy
 
+def check_player_played_any_games(stats, player_id):
+    '''return True if player has played any matches, False otherwise'''
+    conn = stats.db_get()
+    c = conn.execute('''select count(*) from match_player_stats
+                        where alias_id in
+                        (select id from player_aliases where
+                         player_id = ?)''', (player_id, ))
+    row = c.fetchone()
+    if not row or int(row[0]) == 0:
+        return False
+    return True
+
 def get_player_vital_stats(stats, player_id):
     '''output dictionary containing string indexed player stats fields (also used as key names):
     - matches
@@ -471,6 +484,8 @@ def output_player_stats_page(stats, cgi_fs):
     player_id = cgi_fs.getvalue('player_id', None)
     if not player_id or player_id == '0':
         raise StatsError('player_id not set')
+    if not check_player_played_any_games(stats, player_id):
+        raise StatsError('player has not played any games, maybe you forgot to assign aliases?')
     html_weapon_stats_table = get_player_weapon_stats_table(stats, player_id)
     html_item_stats_table = get_player_item_stats_table(stats, player_id)
     html_player_name = get_alias_name(stats, player_id)
@@ -516,6 +531,15 @@ def output_show_after_modify_player_page(stats, cgi_fs):
                           style_name = stats.style_name_get(),
                           player_name = player_name)
 
+def output_error_page(stats, possible_reason):
+    reason = 'Unknown'
+    if possible_reason and len(possible_reason) > 0:
+        reason = possible_reason
+    tmpl = string.Template(stats.template_get('error'))
+    print tmpl.substitute(script_name = SCRIPT_NAME,
+                          style_name = stats.style_name_get(),
+                          reason = reason)
+
 # read configuration
 SCRIPT_NAME = os.environ['SCRIPT_NAME']
 #cgi_get_request = cgi.parse()
@@ -532,7 +556,10 @@ req = cgi_fs.getvalue('req', 'none')
 if req == 'show-match-stats':
     output_match_stats_page(stats_handler, cgi_fs)
 elif req == 'show-player-stats':
-    output_player_stats_page(stats_handler, cgi_fs)
+    try:
+        output_player_stats_page(stats_handler, cgi_fs)
+    except StatsError, e:
+        output_error_page(stats_handler, e.what)
 elif req == 'show-add-player':
     output_show_add_player_page(stats_handler)
 elif req == 'show-modify-player':
@@ -542,7 +569,8 @@ elif req == 'add-player':
         player_id = add_player(stats_handler, cgi_fs)
         output_show_after_add_player_page(stats_handler, cgi_fs, player_id)
     except StatsError, e:
-        output_show_after_add_player_error_page(stats_handler, e.what)
+        output_error_page(stats_handler, e.what)
+#        output_show_after_add_player_error_page(stats_handler, e.what)
 elif req == 'modify-player':
 #   vals = cgi_fs.getvalue('alias_id')
 #   print repr(vals)
@@ -550,7 +578,8 @@ elif req == 'modify-player':
         modify_player(stats_handler, cgi_fs)
         output_show_after_modify_player_page(stats_handler, cgi_fs)
     except StatsError, e:
-        print 'oops', e.what
+        output_error_page(stats_handler, e.what)
+
 elif req == 'delete-player':
     delete_player(stats_handler, cgi_fs)
     output_show_after_delete_player_page(stats_handler)
