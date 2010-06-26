@@ -32,11 +32,13 @@ class Stats:
                   'recent-match-list-table-entry': 'recent-match-list-table-entry-template.xhtml',
                   'player-list-table-entry': 'player-list-table-entry-template.xhtml',
                   'alias-list-table-entry' : 'alias-list-table-entry-template.xhtml',
+                  'alias-list-table-entry-no-link' : 'alias-list-table-entry-no-link-template.xhtml',
                   'add-player' : 'add-player-template.xhtml',
                   'add-success' : 'add-player-success-template.xhtml',
                   'add-failure' : 'add-player-failure-template.xhtml',
                   'modify-player-alias-checkbox' : 'modify-player-alias-checkbox-template.xhtml',
                   'modify-player' : 'modify-player-template.xhtml',
+                  'modify-success' : 'modify-player-success-template.xhtml',
                   'delete-after' : 'delete-player-template.xhtml'
                   }
     IMAGES = { 'G' : 'iconw_gauntlet.png',
@@ -106,13 +108,17 @@ def get_aliases_table(stats):
     html_aliases_table = ''
     c = conn.execute('select id, alias, player_id from player_aliases order by alias asc')
     tmpl = string.Template(stats.template_get('alias-list-table-entry'))
+    tmpl_no_link = string.Template(stats.template_get('alias-list-table-entry-no-link'))
     for row in c:
         alias_name = row[1]
         alias_id = row[0]
         player_id = row[2]
-        html_aliases_table += tmpl.substitute(script_name = SCRIPT_NAME,
-                                              player_id = player_id,
-                                              alias_name = alias_name)
+        if int(player_id) != 0:
+            html_aliases_table += tmpl.substitute(script_name = SCRIPT_NAME,
+                                                  player_id = player_id,
+                                                  alias_name = alias_name)
+        else:
+            html_aliases_table += tmpl_no_link.substitute(alias_name = alias_name)
     return html_aliases_table
 
 def get_players_table(stats):
@@ -171,12 +177,18 @@ def get_recent_matches_table(stats):
         players_count = row[3]
         match_id = row[0]
         who_won = get_alias_name(stats, row[4])
+        player_name = get_player_name_from_alias_id(stats, row[4])
+        who_won_player = ''
+        if player_name:
+            who_won_player = '(%s)' % (player_name)
+        
         html_matches_table += tmpl.substitute(script_name = SCRIPT_NAME,
                                               match_id = match_id,
                                               when = when,
                                               map = match_map,
                                               who_won = who_won,
-                                              how_many_players = players_count)
+                                              how_many_players = players_count,
+                                              real_player_name = who_won_player)
     return html_matches_table
 
 def get_player_name(stats, player_id):
@@ -185,6 +197,19 @@ def get_player_name(stats, player_id):
     c = conn.execute('select name from players where id = ?', (player_id,))
     row = c.fetchone()
     return row[0]
+
+def get_player_name_from_alias_id(stats, alias_id):
+    '''return player name string associated with alias_id
+    if no player is assigned return None'''
+    player_name = None
+    conn = stats.db_get()
+    c = conn.execute('''select name from players where id in 
+                        (select player_id from player_aliases where id = ?)''',
+                     (alias_id,))
+    row = c.fetchone()
+    if row:
+        player_name = row[0]
+    return player_name
 
 def get_alias_name(stats, alias_id):
     '''return string - alias name given alias id'''
@@ -196,14 +221,16 @@ def get_alias_name(stats, alias_id):
 def get_player_matches_count(stats, player_id):
     '''return string - count of matches played by player of given id'''
     conn = stats.db_get()
-    c = conn.execute('select count(*) from match_player_stats where alias_id = ?', (player_id, ))
+    c = conn.execute('''select count(*) from match_player_stats where alias_id in 
+                      (select id from player_aliases where player_id = ?)''', (player_id, ))
     row = c.fetchone()
     return row[0]
 
 def get_player_wins_count(stats, player_id):
     '''return string - count of player wins'''
     conn = stats.db_get()
-    c = conn.execute('select count(*) from matches where winner_alias_id = ?', (player_id,))
+    c = conn.execute('''select count(*) from matches where winner_alias_id in 
+                      (select id from player_aliases where player_id = ?)''', (player_id,))
     row = c.fetchone()
     return row[0]
 
@@ -216,7 +243,8 @@ def get_player_frags_deaths_suicides_count(stats, player_id):
                       sum(suicides) 
                       from 
                       match_player_stats 
-                      where alias_id = ?''', (player_id,))
+                      where alias_id in
+                      (select id from player_aliases where player_id = ?)''', (player_id,))
     row = c.fetchone()
     return row[0], row[1], row[2]
 
@@ -234,7 +262,10 @@ def get_player_hits_shots_accuracy(stats, player_id):
                         where 
                         match_player_stats_id 
                         in 
-                        (select id from match_player_stats where alias_id = ?)''', (player_id,))
+                        (select id from match_player_stats 
+                         where alias_id in
+                         (select id from player_aliases where player_id = ?)
+                        )''', (player_id,))
     row = c.fetchone()
     hits = row[0]
     shots = row[1]
@@ -286,7 +317,9 @@ def get_player_weapon_stats_table(stats, player_id):
                         where 
                         match_player_weapon_stats.match_player_stats_id 
                         in 
-                        (select id from match_player_stats where alias_id = ?)
+                        (select id from match_player_stats where alias_id in
+                         (select id from player_aliases where player_id = ?)
+                        )
                         group by 
                         match_player_weapon_stats.type''', (player_id, ))
     for row in c:
@@ -328,7 +361,9 @@ def get_player_item_stats_table(stats, player_id):
                         where  
                         match_player_items_stats.match_player_stats_id 
                         in  
-                        (select id from match_player_stats where alias_id = ?)
+                        (select id from match_player_stats where alias_id in
+                         (select id from player_aliases where player_id = ?)
+                        )
                         group by 
                         match_player_items_stats.type;''', (player_id, ))
     for row in c:
@@ -346,16 +381,21 @@ def get_player_item_stats_table(stats, player_id):
                                                    item_time = items_stats[i_key][1])
     return html_items_stats_table
 
-def get_alias_checkbox_list(stats):
+def get_alias_checkbox_list(stats, player_id):
     html_alias_checkbox_list = ''
     tmpl = string.Template(stats.template_get('modify-player-alias-checkbox'))
     conn = stats.db_get()
-    c = conn.execute('select id, alias from player_aliases')
+    c = conn.execute('select id, alias, player_id from player_aliases')
     for row in c:
         alias_id = row[0]
         alias_name = row[1]
+        alias_player_id = row[2]
+        checked = ''
+        if int(alias_player_id) == int(player_id):
+            checked = 'checked=\"checked\"'
         html_alias_checkbox_list += tmpl.substitute(alias_id = alias_id,
-                                                     alias_name = alias_name)
+                                                    alias_name = alias_name,
+                                                    checked = checked)
     return html_alias_checkbox_list
 
 def add_player(stats, cgi_fs):
@@ -379,6 +419,19 @@ def delete_player(stats, cgi_fs):
     c = conn.execute('update player_aliases set player_id = 0 where player_id = ?',
                      (player_id,))
     c = conn.execute('delete from players where id = ?', (player_id,))
+
+def modify_player(stats, cgi_fs):
+    player_id = cgi_fs.getvalue('player_id', None)
+    aliases_id_list = cgi_fs.getvalue('alias_id', None)
+    if not player_id or not aliases_id_list:
+        raise StatsError('player_id or aliases_id not set')
+    if not isinstance(aliases_id_list, list):
+        aliases_id_list = [aliases_id_list]
+    conn = stats.db_get()
+    c = conn.execute('update player_aliases set player_id = 0 where player_id = ?', 
+                         (player_id, ))
+    c = conn.execute('update player_aliases set player_id = ? where id in %s' % str(tuple(aliases_id_list)), (player_id,))
+   
         
 def output_main_page(stats):
     html_aliases_table = get_aliases_table(stats)
@@ -400,7 +453,7 @@ def output_show_modify_player_page(stats, cgi_fs):
     player_id = cgi_fs.getvalue('player_id', None)
     if not player_id:
         raise StatsError('player_id not set')
-    html_alias_checkbox_list = get_alias_checkbox_list(stats)
+    html_alias_checkbox_list = get_alias_checkbox_list(stats, player_id)
     html_player_name = get_player_name(stats, player_id)
     tmpl = string.Template(stats.template_get('modify-player'))
     print tmpl.substitute(script_name = SCRIPT_NAME,
@@ -455,6 +508,14 @@ def output_show_after_delete_player_page(stats):
     print tmpl.substitute(script_name = SCRIPT_NAME,
                           style_name = stats.style_name_get())
 
+def output_show_after_modify_player_page(stats, cgi_fs):
+    player_id = cgi_fs.getvalue('player_id')
+    player_name = get_player_name(stats, player_id)
+    tmpl = string.Template(stats.template_get('modify-success'))
+    print tmpl.substitute(script_name = SCRIPT_NAME,
+                          style_name = stats.style_name_get(),
+                          player_name = player_name)
+
 # read configuration
 SCRIPT_NAME = os.environ['SCRIPT_NAME']
 #cgi_get_request = cgi.parse()
@@ -463,12 +524,12 @@ stats_handler = Stats()
 
 print 'Content-Type: text/html'
 print
-print 'query string: %s' % (os.environ['REQUEST_URI'])
+#print 'query string: %s' % (os.environ['REQUEST_URI'])
 #print '%s' % (repr(cgi_get_request))
-print '<p>fs: %s</p>' % (repr(cgi_fs))
+#print '<p>fs: %s</p>' % (repr(cgi_fs))
 #cgi.print_environ()
 req = cgi_fs.getvalue('req', 'none')
-print '<p>%s</p>' % (req)
+#print '<p>%s</p>' % (req)
 if req == 'show-match-stats':
     output_match_stats_page(stats_handler, cgi_fs)
 elif req == 'show-player-stats':
@@ -484,9 +545,13 @@ elif req == 'add-player':
     except StatsError, e:
         output_show_after_add_player_error_page(stats_handler, e.what)
 elif req == 'modify-player':
-    vals = cgi_fs.getvalue('alias_id')
-    print repr(vals)
-
+#   vals = cgi_fs.getvalue('alias_id')
+#   print repr(vals)
+    try:
+        modify_player(stats_handler, cgi_fs)
+        output_show_after_modify_player_page(stats_handler, cgi_fs)
+    except StatsError, e:
+        print 'oops', e.what
 elif req == 'delete-player':
     delete_player(stats_handler, cgi_fs)
     output_show_after_delete_player_page(stats_handler)
