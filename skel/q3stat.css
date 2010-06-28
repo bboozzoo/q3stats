@@ -67,3 +67,11 @@ img.dark-background {
     background-color: #333;
     padding: 1px;
 }
+
+.tooltip {
+    background: black;
+    color: #fff;
+    display: none;
+    font-size: 12px;
+    padding: 10px;
+}
