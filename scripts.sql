@@ -40,3 +40,25 @@ select * from player_aliases where player_id = 6;
 update player_aliases set player_id = 6 where id in (1);
 update player_aliases set player_id = 0 where player_id = 6;
 select name from players where id in (select player_id from player_aliases where id = 10);
+
+-- match statistics
+select 
+id, alias, players.id, 
+score, kills,  deaths, 
+suicides, damage_given, 
+damage_taken, health_total, armor_total 
+from match_player_stats  
+inner join player_aliases 
+on match_player_stats.alias_id = player_aliases.id 
+inner join players
+on player_aliases.player_id = players.id
+where match_id = 1 
+order by 
+score 
+desc;
+
+select * from match_player_weapon_stats where match_player_stats_id in (select id from match_player_stats where match_id = 1) order by match_player_stats_id;
+
+select * from match_player_weapon_stats inner join match_player_stats 
+on match_player_weapon_stats.match_player_stats_id = match_player_stats.id 
+where match_player_stats.match_id = 1 order by score desc;
