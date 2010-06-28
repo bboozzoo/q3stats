@@ -488,7 +488,7 @@ def output_player_stats_page(stats, cgi_fs):
         raise StatsError('player has not played any games, maybe you forgot to assign aliases?')
     html_weapon_stats_table = get_player_weapon_stats_table(stats, player_id)
     html_item_stats_table = get_player_item_stats_table(stats, player_id)
-    html_player_name = get_alias_name(stats, player_id)
+    html_player_name = get_player_name(stats, player_id)
     player_vital_stats = get_player_vital_stats(stats, player_id)
     tmpl = string.Template(stats.template_get('player-stats'))
     print tmpl.substitute(player_name = html_player_name,
