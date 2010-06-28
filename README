@@ -1,0 +1,45 @@
+
+
+* Installation
+
+** Requirements
+
+   - Python >=.2.5
+   - python-sqlite3
+   - webserver w/ CGI support (lighttpd, apache)
+
+** Deployment
+   Copy q3stat directory (the one with images/ scripts/ inside) to
+   your WWW document root you wish to use.
+   Copy q3stat.conf to /etc, so that it's available under
+   /etc/q3stat.conf and edit the contents appropriately:
+
+   Example configuration file:
+   --- starts here ---
+   [general]
+   templates-path=<path to skel directory in q3stats>/
+   # format /<path>/
+
+   document-root=/q3stat/
+   [database]
+   path=/<path to your database location>/stat.db
+   --- ends here ---
+
+   IMPORTANT: make sure that the database and directory in which it is
+   stored are writable for the WWW user.
+
+   Copy the q3stat.py script to your cgi-bin location. Make sure that
+   the HTTP server can execute the file (typical stuff to check:
+   handlers, file permissions etc.)
+
+* Internals
+  <write about internals>
+  
+* Code organization
+  There are 2 main scripts:
+  - q3import.py
+  - q3stat.py
+   
+
+* Author
+  Maciek Borzecki - maciek.borzecki@gmail.com
