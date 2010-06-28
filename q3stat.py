@@ -67,27 +67,27 @@ class Stats:
                'action-delete' : 'images/action_delete.png',
                'action-add' : 'images/action_add.png'
                }
-    DESCS = { 'G' : 'Gauntlet',
-               'SG' : 'Shotgun',
-               'RL' : 'Rocket launcher',
-               'RG' : 'Railgun',
-               'LG' : 'Lightning gun',
-               'PG' : 'Plasma gun',
-               'BFG' : 'Big f-cking gun',
-               'GL' : 'Grenade launcher',
-               'MG' : 'Machinegun',
-               'MH' : 'Mega health',
-               'RA' : 'Red armor',
-               'YA' : 'Yellow armor',
-               'GA' : 'Green armor',
-               'Quad' : 'Quad damage',
-               'Invis' : 'Invisibility',
-               'BattleSuit' : 'Environment suit',
-               'Regen' : 'Regeneraion',
-               'Flight' : 'Flight',
-               'action-edit' : 'Edit',
-               'action-delete' : 'Delete',
-               'action-add' : 'Add new player'
+    DESCS = { 'G_desc' : 'Gauntlet',
+               'SG_desc' : 'Shotgun',
+               'RL_desc' : 'Rocket launcher',
+               'RG_desc' : 'Railgun',
+               'LG_desc' : 'Lightning gun',
+               'PG_desc' : 'Plasma gun',
+               'BFG_desc' : 'Big f_cking gun',
+               'GL_desc' : 'Grenade launcher',
+               'MG_desc' : 'Machinegun',
+               'MH_desc' : 'Mega health',
+               'RA_desc' : 'Red armor',
+               'YA_desc' : 'Yellow armor',
+               'GA_desc' : 'Green armor',
+               'Quad_desc' : 'Quad damage',
+               'Invis_desc' : 'Invisibility',
+               'BattleSuit_desc' : 'Environment suit',
+               'Regen_desc' : 'Regeneraion',
+               'Flight_desc' : 'Flight',
+               'action-edit_desc' : 'Edit',
+               'action-delete_desc' : 'Delete',
+               'action-add_desc' : 'Add new player'
                }
     SCRIPTS = { 'jquery' : 'scripts/q3stat-base.js',
                 'q3stat' : 'scripts/q3stat.js'
@@ -393,7 +393,7 @@ def get_player_weapon_stats_table(stats, player_id):
     tmpl = string.Template(stats.template_get('player-stats-weapon-stats-table-entry'))
     for w_key in weapons_order:
         html_weapon_stats_table += tmpl.substitute(weapon_img = stats.image_path_get(w_key),
-                                                   weapon_desc = stats.desc_get(w_key),
+                                                   weapon_desc = stats.desc_get(w_key + '_desc'),
                                                    weapon_kills = weapon_stats[w_key][2],
                                                    weapon_accuracy = weapon_stats[w_key][0],
                                                    weapon_efficiency = weapon_stats[w_key][1])
@@ -434,7 +434,7 @@ def get_player_item_stats_table(stats, player_id):
     tmpl = string.Template(stats.template_get('player-stats-item-stats-table-entry'))
     for i_key in items_order:
         html_items_stats_table += tmpl.substitute(item_img = stats.image_path_get(i_key),
-                                                  item_desc = stats.desc_get(i_key),
+                                                  item_desc = stats.desc_get(i_key + '_desc'),
                                                    item_pickups = items_stats[i_key][0],
                                                    item_time = items_stats[i_key][1])
     return html_items_stats_table
@@ -629,7 +629,8 @@ def output_match_stats_page(stats, cgi_fs):
         = get_players_stats_for_match(stats, match_id, player_weapon_stats)
 
     tmpl = string.Template(stats.template_get('match-stats'))
-    print tmpl.substitute(script_name = SCRIPT_NAME,
+    print tmpl.substitute(stats.DESCS,
+                          script_name = SCRIPT_NAME,
                           style_name = stats.style_name_get(),
                           player_general_stats = html_player_general_stats,
                           player_accuracy_stats = html_player_accuracy_stats,
