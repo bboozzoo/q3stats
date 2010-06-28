@@ -63,6 +63,18 @@ td {
 //    border: solid 1px black;
 }
 
+th.rank {
+    width: 5%;
+}
+
+th.player-name {
+    width: 10%;
+}
+
+table.wide {
+    width: 100%;
+}
+
 img.dark-background {
     background-color: #333333;
     padding: 1px;

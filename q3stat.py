@@ -42,7 +42,8 @@ class Stats:
                   'delete-after' : 'delete-player-template.xhtml',
                   'error' : 'error-template.xhtml',
                   'match-stats' : 'match-stats-template.xhtml',
-                  'match-stats-player-general-stats' : 'match-stats-player-general-stats.xhtml'
+                  'match-stats-player-general-stats' : 'match-stats-player-general-stats.xhtml',
+                  'match-stats-player-weapon-stats' : 'match-stats-player-weapon-stats.xhtml'
                   }
     IMAGES = { 'G' : 'images/iconw_gauntlet.png',
                'SG' : 'images/iconw_shotgun.png',
@@ -438,11 +439,16 @@ def get_player_item_stats_table(stats, player_id):
                                                    item_time = items_stats[i_key][1])
     return html_items_stats_table
 
-def get_players_stats_for_match(stats, match_id):
+def get_players_stats_for_match(stats, match_id, player_weapon_stats):
+    '''return tables of weapon statistics, accuracy statistics and frags statistics
+    '''
     conn = stats.db_get()
-    html_player_stats_for_match = ''
+    html_player_stats = ''
+    html_player_accuracy_stats = ''
+    html_player_frags_stats = ''
+
     c = conn.execute('''select 
-                        match_player_stats.id, alias, players.id, 
+                        alias_id, alias, players.id, 
                         score, kills,  deaths, 
                         suicides, damage_given, 
                         damage_taken, health_total, armor_total 
@@ -455,12 +461,16 @@ def get_players_stats_for_match(stats, match_id):
                         order by 
                         score 
                         desc;''', (match_id, ))
-    tmpl = string.Template(stats.template_get('match-stats-player-general-stats'))
+    tmpl_general = string.Template(stats.template_get('match-stats-player-general-stats'))
+    tmpl_acc = string.Template(stats.template_get('match-stats-player-weapon-stats'))
+    tmpl_frags = string.Template(stats.template_get('match-stats-player-weapon-stats'))
     d = {}
     d['rank'] = 0
     for row in c:
+        alias_id = row[0]
         d['rank'] = d['rank'] + 1
         d['player'] = row[1]
+        d['player_id'] = row[2]
         d['score'] = row[3]
         d['frags'] = row[4]
         d['deaths'] = row[5]
@@ -469,12 +479,61 @@ def get_players_stats_for_match(stats, match_id):
         d['damage_given'] = row[7]
         d['damage_taken'] = row[8]
         d['armor'] = row[10]
-        html_player_stats_for_match += tmpl.substitute(d)
-    return html_player_stats_for_match
+        acc = {}
+        frags = {}
+        frags['player'] = acc['player'] = d['player']
+        frags['rank'] = acc['rank'] = d['rank']
+        frags['player_id'] = acc['player_id'] = d['player_id']
+        frags['script_name'] = acc['script_name'] = d['script_name'] = SCRIPT_NAME
+        player_stats = player_weapon_stats[alias_id]
+        for k in player_stats.keys():
+            t = player_stats[k]
+            acc[k] = t[0]
+            frags[k] = t[1]
+        html_player_accuracy_stats += tmpl_acc.substitute(acc)
+        html_player_frags_stats += tmpl_frags.substitute(frags)
+        html_player_stats += tmpl_general.substitute(d)
+    return html_player_stats, html_player_accuracy_stats, html_player_frags_stats
         
 
 def get_players_weapon_stats_for_match(stats, match_id):
-    return '', ''
+    '''fetch weapon statistics for all players in given match
+    return map keyed by alias_id of maps keyed by weaon type containing tuples
+    (accuracy, frags)'''
+    conn = stats.db_get()
+    # accuracy, frags
+    zero_tuple = ('-', '-')
+    weapons_order = ['G', 'MG', 'SG', 'GL', 'RL', 'LG', 'RG', 'PG', 'BFG']
+    weapon_player_stats = {}
+    # return this dictionary, alias_id is a key
+    all_players_stats = {}
+    for w in weapons_order:
+        weapon_player_stats[w] = zero_tuple
+                     
+    c = conn.execute('''select alias_id, type, hits, shots, 
+                        match_player_weapon_stats.kills 
+                        from match_player_weapon_stats 
+                        inner join 
+                        match_player_stats 
+                        on 
+                        match_player_weapon_stats.match_player_stats_id = match_player_stats.id 
+                        where 
+                        match_player_stats.match_id = ?''', 
+                     (match_id, ))
+    for row in c:
+        alias_id = row[0]
+        weapon_type = row[1]
+        hits = row[2]
+        shots = row[3]
+        kills = row[4]
+        accuracy = '-'
+        if int(shots) != 0:
+            accuracy = '%d%%' % (int(float(hits) * 100.0 / float(shots)))
+        if not all_players_stats.has_key(alias_id):
+            all_players_stats[alias_id] = dict(weapon_player_stats)
+        all_players_stats[alias_id][weapon_type] = (accuracy, kills)
+    return all_players_stats
+        
 
 def get_alias_checkbox_list(stats, player_id):
     html_alias_checkbox_list = ''
@@ -565,8 +624,10 @@ def output_match_stats_page(stats, cgi_fs):
     match_id = cgi_fs.getvalue('match_id', None)
     if not match_id:
         raise StatsError('match_id not set')
-    html_player_general_stats = get_players_stats_for_match(stats, match_id)
-    html_player_accuracy_stats, html_player_frags_stats = get_players_weapon_stats_for_match(stats, match_id)
+    player_weapon_stats = get_players_weapon_stats_for_match(stats, match_id)
+    html_player_general_stats, html_player_accuracy_stats, html_player_frags_stats \
+        = get_players_stats_for_match(stats, match_id, player_weapon_stats)
+
     tmpl = string.Template(stats.template_get('match-stats'))
     print tmpl.substitute(script_name = SCRIPT_NAME,
                           style_name = stats.style_name_get(),
