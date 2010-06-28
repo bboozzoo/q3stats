@@ -509,7 +509,8 @@ def output_player_stats_page(stats, cgi_fs):
                           player_hits = player_vital_stats['hits'],
                           player_shots = player_vital_stats['shots'],
                           player_accuracy = player_vital_stats['accuracy'],
-                          style_name = stats.style_name_get())
+                          style_name = stats.style_name_get(),
+                          script_name = SCRIPT_NAME)
 
 def output_show_after_add_player_page(stats, cgi_fs, player_id):
     player_name = cgi_fs.getvalue('player_name', '')
