@@ -526,7 +526,8 @@ def output_match_stats_page(stats, cgi_fs):
     tmpl = string.Template(stats.template_get('match-stats'))
     print tmpl.substitute(script_name = SCRIPT_NAME,
                           style_name = stats.style_name_get(),
-                          jquery_script = stats.script_name_get())
+                          jquery_script = stats.script_name_get('jquery'),
+                          q3stat_script = stats.script_name_get('q3stat'))
 
 def output_player_stats_page(stats, cgi_fs):
     '''output player stats page

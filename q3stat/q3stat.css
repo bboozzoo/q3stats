@@ -68,6 +68,7 @@ img.dark-background {
     padding: 1px;
 }
 
+/* for tooltips */
 .tooltip {
     background: black;
     color: #fff;
@@ -75,3 +76,37 @@ img.dark-background {
     font-size: 12px;
     padding: 10px;
 }
+
+/* for tabs */
+.panes .pane {
+    display: none;
+}
+
+.tabs {
+    list-style: none;
+    margin: 0 !important;
+    padding: 0;
+    height: 30px;
+    border-bottom: 1px solid black;
+}
+.tabs a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.tabs li {
+    float: left;
+    text-indent: 0;
+    padding: 2px;
+    margin: 2px; !important;
+    list-style-image: none !important;
+    background-color: #333;
+}
+
+.tabs .current {
+    background-color: #666;
+}
+
+/*.tabs .current:hover {
+    background-color: #;
+}*/

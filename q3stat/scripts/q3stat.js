@@ -6,5 +6,6 @@ $(document).ready(
 		offset: [-2, 0]
 	    }
 	);
+	$("ul.tabs").tabs("div.panes > div");
     }
 );

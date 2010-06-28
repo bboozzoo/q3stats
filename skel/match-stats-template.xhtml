@@ -3,23 +3,49 @@
   <head>
     <title>stats</title>
     <link rel="stylesheet" type="text/css" href="${style_name}" />
-    <script src="${jquery_script}" type="text/javascript" />
+    <script src="${jquery_script}" type="text/javascript"></script>
+    <script src="${q3stat_script}" type="text/javascript"></script>  
   </head>
 
   <body>
     <div class="one-large">
       <h1>Match statistics</h1>
-      <div class="match-players-list">
-	<table>
-	  <th>
-	    <td>Player</td>
-	    <td>Score</td>
-	    <td>Frags</td>
-	    <td>Deaths</td>
-	    <td>Suicides</td>
-	    <td>Accuracy</td>
-	  </th>
-	</table>
+      <ul class="tabs">
+	<li><a href="#">General</a></li>
+	<li><a href="#">Accuracy</a></li>
+	<li><a href="#">Weapon frags</a></li>
+      </ul>
+
+      <div class="panes">
+	<div class="match-players-list">
+	  test1
+	  <table>
+	    <tr>
+	      <th>Player</th>
+	      <th>Score</th>
+	      <th>Frags</th>
+	      <th>Deaths</th>
+	      <th>Suicides</th>
+	      <th>Accuracy</th>
+	    </tr>
+	  </table>
+	</div>
+	<div class="match-player-list">
+	  test2
+	  <table>
+	    <tr>
+	      <th>Player</th>
+	    </tr>
+	  </table>
+	</div>
+	<div class="match-player-list">
+	  test3
+	  <table>
+	    <tr>
+	      <th>Player</th>
+	    </tr>
+	  </table>
+	</div>
       </div>
     </div>
   </body>
