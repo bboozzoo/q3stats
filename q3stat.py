@@ -40,30 +40,56 @@ class Stats:
                   'modify-player' : 'modify-player-template.xhtml',
                   'modify-success' : 'modify-player-success-template.xhtml',
                   'delete-after' : 'delete-player-template.xhtml',
-                  'error' : 'error-template.xhtml'
+                  'error' : 'error-template.xhtml',
+                  'match-stats' : 'match-stats-template.xhtml'
                   }
-    IMAGES = { 'G' : 'iconw_gauntlet.png',
-               'SG' : 'iconw_shotgun.png',
-               'RL' : 'iconw_rocket.png',
-               'RG' : 'iconw_railgun.png',
-               'LG' : 'iconw_lightning.png',
-               'PG' : 'iconw_plasma.png',
-               'BFG' : 'iconw_bfg.png',
-               'GL' : 'iconw_grenade.png',
-               'MG' : 'iconw_machinegun.png',
-               'MH' : 'iconh_mega.png',
-               'RA' : 'iconr_red.png',
-               'YA' : 'iconr_yellow.png',
-               'GA' : 'iconr_green.png',
-               'Quad' : 'quad.png',
-               'Invis' : 'invis.png',
-               'BattleSuit' : 'envirosuit.png',
-               'Regen' : 'regen.png',
-               'Flight' : 'flight.png',
-               'action-edit' : 'action_edit.png',
-               'action-delete' : 'action_delete.png',
-               'action-add' : 'action_add.png'
+    IMAGES = { 'G' : 'images/iconw_gauntlet.png',
+               'SG' : 'images/iconw_shotgun.png',
+               'RL' : 'images/iconw_rocket.png',
+               'RG' : 'images/iconw_railgun.png',
+               'LG' : 'images/iconw_lightning.png',
+               'PG' : 'images/iconw_plasma.png',
+               'BFG' : 'images/iconw_bfg.png',
+               'GL' : 'images/iconw_grenade.png',
+               'MG' : 'images/iconw_machinegun.png',
+               'MH' : 'images/iconh_mega.png',
+               'RA' : 'images/iconr_red.png',
+               'YA' : 'images/iconr_yellow.png',
+               'GA' : 'images/iconr_green.png',
+               'Quad' : 'images/quad.png',
+               'Invis' : 'images/invis.png',
+               'BattleSuit' : 'images/envirosuit.png',
+               'Regen' : 'images/regen.png',
+               'Flight' : 'images/flight.png',
+               'action-edit' : 'images/action_edit.png',
+               'action-delete' : 'images/action_delete.png',
+               'action-add' : 'images/action_add.png'
                }
+    DESCS = { 'G' : 'Gauntlet',
+               'SG' : 'Shotgun',
+               'RL' : 'Rocket launcher',
+               'RG' : 'Railgun',
+               'LG' : 'Lightning gun',
+               'PG' : 'Plasma gun',
+               'BFG' : 'Big f-cking gun',
+               'GL' : 'Grenade launcher',
+               'MG' : 'Machinegun',
+               'MH' : 'Mega health',
+               'RA' : 'Red armor',
+               'YA' : 'Yellow armor',
+               'GA' : 'Green armor',
+               'Quad' : 'Quad damage',
+               'Invis' : 'Invisibility',
+               'BattleSuit' : 'Environment suit',
+               'Regen' : 'Regeneraion',
+               'Flight' : 'Flight',
+               'action-edit' : 'Edit',
+               'action-delete' : 'Delete',
+               'action-add' : 'Add new player'
+               }
+    SCRIPTS = { 'jquery' : 'scripts/q3stat-base.js',
+                'q3stat' : 'scripts/q3stat.js'
+                }
     
     def __init__(self):
         self.load_config()
@@ -104,6 +130,16 @@ class Stats:
 
     def style_name_get(self):
         return self.__document_root + self.STYLE_NAME
+
+    def script_name_get(self, name):
+        if not self.SCRIPTS.has_key(name):
+            raise StatsError('script %s not found' % (name))
+        return self.__document_root + self.SCRIPTS[name]
+
+    def desc_get(self, name):
+        if not self.DESCS.has_key(name):
+            raise StatsError('description for item %s not found' % (name))
+        return self.DESCS[name]
                   
                              
 def get_aliases_table(stats):
@@ -355,6 +391,7 @@ def get_player_weapon_stats_table(stats, player_id):
     tmpl = string.Template(stats.template_get('player-stats-weapon-stats-table-entry'))
     for w_key in weapons_order:
         html_weapon_stats_table += tmpl.substitute(weapon_img = stats.image_path_get(w_key),
+                                                   weapon_desc = stats.desc_get(w_key),
                                                    weapon_kills = weapon_stats[w_key][2],
                                                    weapon_accuracy = weapon_stats[w_key][0],
                                                    weapon_efficiency = weapon_stats[w_key][1])
@@ -395,6 +432,7 @@ def get_player_item_stats_table(stats, player_id):
     tmpl = string.Template(stats.template_get('player-stats-item-stats-table-entry'))
     for i_key in items_order:
         html_items_stats_table += tmpl.substitute(item_img = stats.image_path_get(i_key),
+                                                  item_desc = stats.desc_get(i_key),
                                                    item_pickups = items_stats[i_key][0],
                                                    item_time = items_stats[i_key][1])
     return html_items_stats_table
@@ -461,7 +499,10 @@ def output_main_page(stats):
                           aliases_list = html_aliases_table,
                           players_list = html_players_table,
                           matches_list = html_matches_table,
-                          action_add_img = stats.image_path_get('action-add'))
+                          action_add_img = stats.image_path_get('action-add'),
+                          jquery_script = stats.script_name_get('jquery'),
+                          q3stat_script = stats.script_name_get('q3stat'))
+    
 
 def output_show_add_player_page(stats):
     tmpl = string.Template(stats.template_get('add-player'))
@@ -482,7 +523,10 @@ def output_show_modify_player_page(stats, cgi_fs):
                           style_name = stats.style_name_get())
 
 def output_match_stats_page(stats, cgi_fs):
-    print '<h3>match stats</h3>'
+    tmpl = string.Template(stats.template_get('match-stats'))
+    print tmpl.substitute(script_name = SCRIPT_NAME,
+                          style_name = stats.style_name_get(),
+                          jquery_script = stats.script_name_get())
 
 def output_player_stats_page(stats, cgi_fs):
     '''output player stats page
@@ -510,7 +554,9 @@ def output_player_stats_page(stats, cgi_fs):
                           player_shots = player_vital_stats['shots'],
                           player_accuracy = player_vital_stats['accuracy'],
                           style_name = stats.style_name_get(),
-                          script_name = SCRIPT_NAME)
+                          script_name = SCRIPT_NAME,
+                          jquery_script = stats.script_name_get('jquery'),
+                          q3stat_script = stats.script_name_get('q3stat'))
 
 def output_show_after_add_player_page(stats, cgi_fs, player_id):
     player_name = cgi_fs.getvalue('player_name', '')

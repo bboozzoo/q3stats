@@ -1,5 +1,5 @@
 $(document).ready(
 		  function() {
-		      $("[title]").tooltip();
+		      $("[title]").tooltip({effect: "fade"});
 		  }
 );
