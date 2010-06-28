@@ -3,6 +3,11 @@
   <head>
     <title>stats</title>
     <link rel="stylesheet" type="text/css" href="${style_name}" />
+    <script src="${jquery_script}" type="text/javascript"></script>
+    <script src="${q3stat_script}" type="text/javascript"></script>
+<!--    <script type="text/javascript">
+
+    </script> -->
   </head>
 
   <body>
@@ -23,7 +28,7 @@
       <div>
 	<h3>
 	  Players 
-	  <a href="${script_name}?req=show-add-player">  <img src="${action_add_img}" alt="add" title="Add new player" />
+	  <a href="${script_name}?req=show-add-player">  <img id="tooltip" src="${action_add_img}" alt="add" title="Add new player" />
 	  </a>
 	</h3>
 	<table>
