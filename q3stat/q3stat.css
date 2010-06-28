@@ -1,6 +1,6 @@
 a, a:active, a:visited {
     text-decoration: none;
-    color: #00f;
+    color: #0000ff;
 }
 
 a:hover, a:focus {
@@ -45,7 +45,7 @@ div.player-items-list {
 }
 
 table {
-    background-color: #eee;
+    background-color: #eeeeee;
     padding: 5px;
 }
 
@@ -64,14 +64,18 @@ td {
 }
 
 img.dark-background {
-    background-color: #333;
+    background-color: #333333;
     padding: 1px;
+}
+
+img {
+    border: 0px;
 }
 
 /* for tooltips */
 .tooltip {
     background: black;
-    color: #fff;
+    color: #ffffff;
     display: none;
     font-size: 12px;
     padding: 10px;
@@ -91,7 +95,7 @@ img.dark-background {
 }
 .tabs a {
     text-decoration: none;
-    color: #fff;
+    color: #ffffff;
 }
 
 .tabs li {
@@ -100,13 +104,16 @@ img.dark-background {
     padding: 2px;
     margin: 2px; !important;
     list-style-image: none !important;
-    background-color: #333;
+    background-color: #333333;
 }
 
 .tabs .current {
-    background-color: #666;
+    background-color: #ffffff;
+    color: #000000;
 }
 
-/*.tabs .current:hover {
+/*
+.tabs .current:hover {
     background-color: #;
-}*/
+}
+*/
