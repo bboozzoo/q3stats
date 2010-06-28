@@ -3,9 +3,15 @@
     <a href="${script_name}?req=show-player-stats&player_id=${player_id}">
       ${player_name}
     </a>
+  </td>
+  <td>
     <a href="${script_name}?req=show-modify-player&player_id=${player_id}">
-      edit
+      <img src="${action_edit_img}" alt="edit" title="Edit"/>
     </a>
-    <a href="${script_name}?req=delete-player&player_id=${player_id}">delete</a>
+  </td>
+  <td>
+    <a href="${script_name}?req=delete-player&player_id=${player_id}">
+      <img src="${action_delete_img}" alt="delete" title="Delete"/>
+    </a>
   </td>
 </tr>

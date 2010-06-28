@@ -8,19 +8,56 @@ a:hover, a:focus {
 
 body,div,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {
     font-family: verdana, helvetica, arial, sans;
-    font-size: 95%;
+//    font-size: 95%;
+}
+
+div.one-large {
+    margin: 0px auto;
+    padding: 0px;
+    width: 80%;
 }
 
 div.recent-matches {
     width: 80%;
-    border: 1px solid red;
+    border: 1px solid black;
     float: left;
     padding: 5px;
 }
 
 div.players-list {
-    width: 10%;
+    width: 15%;
     float: left;
     padding: 5px;
     margin-left: 10px;
+}
+
+div.player-weapons-list {
+    width: 40%;
+    float: left;
+    padding: 0px;
+}
+
+div.player-items-list {
+    width: 40%;
+    float: left;
+    padding: 0px;
+}
+
+table {
+    background-color: #eee;
+    padding: 5px;
+}
+
+th,td {
+    text-align: center;
+}
+
+td.left-aligned {
+    text-align: left;
+}
+
+td {
+//    border-top: solid 1px black;
+    border-bottom: solid 1px black;
+//    border: solid 1px black;
 }

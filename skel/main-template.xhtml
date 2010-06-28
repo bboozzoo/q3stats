@@ -6,6 +6,7 @@
   </head>
 
   <body>
+    <div class="one-large">
     <div class="recent-matches">
       <h3>Recent matches</h3>
       <table>
@@ -20,9 +21,11 @@
     </div>
     <div class="players-list">
       <div>
-	<h3>Players</h3>
-	<a href="${script_name}?req=show-add-player">add player</a>
-	<br/>
+	<h3>
+	  Players 
+	  <a href="${script_name}?req=show-add-player">  <img src="${action_add_img}" alt="add" title="Add new player" />
+	  </a>
+	</h3>
 	<table>
 	  ${players_list}
 	</table>
@@ -33,6 +36,7 @@
 	  ${aliases_list}
 	</table>
       </div>
+    </div>
     </div>
   </body>
 </html>

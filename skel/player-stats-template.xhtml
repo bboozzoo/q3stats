@@ -2,40 +2,46 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <title>stats</title>
-<link rel="stylesheet" type="text/css" href="skel.css" />
+<link rel="stylesheet" type="text/css" href="${style_name}" />
 </head>
 
 <body>
-  <h3>${player_name}</h3>
-  <div id="general-stats">
-    Vital stats<br/>
-    Matches played: ${player_matches}<br/>
-    Wins: ${player_wins}<br/>
-    Losses: ${player_losses}<br/>
-    Frags/Deaths: ${player_kills}/${player_deaths}<br/>
-    Suicides: ${player_suicides}<br/>
-    Hits/Shots: ${player_hits}/${player_shots}<br/>
-    Accuracy: ${player_accuracy}<br/>
-    Weapons
-    <table>
-      <tr>
-	<th />
-	<th>Frags</th>
-	<th>Accuracy</th>
-	<th>Efficiency</th>
-      </tr>
-      ${weapon_stats}
-    </table>
-    Items
-    <table>
-      <tr>
-	<th />
-	<th>Pickups</th>
-	<th>Time</th>
-      </tr>
-      ${item_stats}
-    </table>
-  </div> 
+  <div class="one-large">
+    <h1>${player_name}</h1>
+    <div id="general-stats">
+      <h3>Vital stats</h3>
+      <b>Matches played:</b> ${player_matches}<br/>
+      <b>Wins:</b> ${player_wins}<br/>
+      <b>Losses:</b> ${player_losses}<br/>
+      <b>Frags/Deaths:</b> ${player_kills}/${player_deaths}<br/>
+      <b>Suicides:</b> ${player_suicides}<br/>
+      <b>Hits/Shots:</b> ${player_hits}/${player_shots}<br/>
+      <b>Accuracy:</b> ${player_accuracy}<br/>
+      <div class="player-weapons-list">
+      <h3>Weapons</h3>
+      <table>
+	<tr>
+	  <th />
+	  <th>Frags</th>
+	  <th>Accuracy</th>
+	  <th>Efficiency</th>
+	</tr>
+	${weapon_stats}
+      </table>
+      </div>
+      <div class="player-items-list">
+      <h3>Items</h3>
+      <table>
+	<tr>
+	  <th />
+	  <th>Pickups</th>
+	  <th>Time</th>
+	</tr>
+	${item_stats}
+      </table>
+      </div>
+    </div> 
+  </div>
 
 </body>
 </html>

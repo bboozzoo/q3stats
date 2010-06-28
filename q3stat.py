@@ -59,7 +59,10 @@ class Stats:
                'Invis' : 'invis.png',
                'BattleSuit' : 'envirosuit.png',
                'Regen' : 'regen.png',
-               'Flight' : 'flight.png'
+               'Flight' : 'flight.png',
+               'action-edit' : 'action_edit.png',
+               'action-delete' : 'action_delete.png',
+               'action-add' : 'action_add.png'
                }
     
     def __init__(self):
@@ -133,7 +136,9 @@ def get_players_table(stats):
         player_id = row[0]
         html_players_table += tmpl.substitute(script_name = SCRIPT_NAME,
                                               player_id = player_id,
-                                              player_name = player_name)
+                                              player_name = player_name,
+                                              action_edit_img = stats.image_path_get('action-edit'),
+                                              action_delete_img = stats.image_path_get('action-delete'))
     if len(html_players_table) == 0:
         html_players_table = '<tr><td>None</td></tr>'
     return html_players_table
@@ -455,7 +460,8 @@ def output_main_page(stats):
                           style_name = stats.style_name_get(),
                           aliases_list = html_aliases_table,
                           players_list = html_players_table,
-                          matches_list = html_matches_table)
+                          matches_list = html_matches_table,
+                          action_add_img = stats.image_path_get('action-add'))
 
 def output_show_add_player_page(stats):
     tmpl = string.Template(stats.template_get('add-player'))
@@ -502,7 +508,8 @@ def output_player_stats_page(stats, cgi_fs):
                           player_suicides = player_vital_stats['suicides'],
                           player_hits = player_vital_stats['hits'],
                           player_shots = player_vital_stats['shots'],
-                          player_accuracy = player_vital_stats['accuracy'])
+                          player_accuracy = player_vital_stats['accuracy'],
+                          style_name = stats.style_name_get())
 
 def output_show_after_add_player_page(stats, cgi_fs, player_id):
     player_name = cgi_fs.getvalue('player_name', '')
