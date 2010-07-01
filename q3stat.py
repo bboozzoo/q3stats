@@ -65,7 +65,8 @@ class Stats:
                'Flight' : 'images/flight.png',
                'action-edit' : 'images/action_edit.png',
                'action-delete' : 'images/action_delete.png',
-               'action-add' : 'images/action_add.png'
+               'action-add' : 'images/action_add.png',
+               'action-go-to-main' : 'images/action_go_to_main.png'
                }
     DESCS = { 'G_desc' : 'Gauntlet',
                'SG_desc' : 'Shotgun',
@@ -640,7 +641,8 @@ def output_match_stats_page(stats, cgi_fs):
                           player_accuracy_stats = html_player_accuracy_stats,
                           player_frags_stats = html_player_frags_stats,
                           jquery_script = stats.script_name_get('jquery'),
-                          q3stat_script = stats.script_name_get('q3stat'))
+                          q3stat_script = stats.script_name_get('q3stat'),
+                          action_go_to_main_img = stats.image_path_get('action-go-to-main'))
 
 def output_player_stats_page(stats, cgi_fs):
     '''output player stats page
@@ -670,7 +672,8 @@ def output_player_stats_page(stats, cgi_fs):
                           style_name = stats.style_name_get(),
                           script_name = SCRIPT_NAME,
                           jquery_script = stats.script_name_get('jquery'),
-                          q3stat_script = stats.script_name_get('q3stat'))
+                          q3stat_script = stats.script_name_get('q3stat'),
+                          action_go_to_main_img = stats.image_path_get('action-go-to-main'))
 
 def output_show_after_add_player_page(stats, cgi_fs, player_id):
     player_name = cgi_fs.getvalue('player_name', '')
