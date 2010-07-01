@@ -43,19 +43,21 @@ select name from players where id in (select player_id from player_aliases where
 
 -- match statistics
 select 
-id, alias, players.id, 
+alias_id, alias, players.id, 
 score, kills,  deaths, 
 suicides, damage_given, 
 damage_taken, health_total, armor_total 
 from match_player_stats  
-inner join player_aliases 
+left join player_aliases 
 on match_player_stats.alias_id = player_aliases.id 
-inner join players
+left join players
 on player_aliases.player_id = players.id
-where match_id = 1 
+where match_id = 38 
 order by 
 score 
 desc;
+
+select * from match_player_stats where match_id = 38;
 
 select * from match_player_weapon_stats where match_player_stats_id in (select id from match_player_stats where match_id = 1) order by match_player_stats_id;
 

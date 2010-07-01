@@ -124,8 +124,33 @@ img {
     color: #000000;
 }
 
-/*
-.tabs .current:hover {
-    background-color: #;
+td .score {
+    font-weight: bold;
+    color: #ff0000;
+}
+
+/* tables */
+/*table.sortable thead tr {
+    cursor: pointer;
+}
+*/
+table.sortable thead tr .header {
+/*    text-align: ;*/
+    background-image: url(images/sort-both.gif);
+    background-repeat: no-repeat;
+    background-position: right;
+    cursor: pointer;
+}
+
+table.sortable thead tr .headerSortUp {
+    background-image: url(images/sort-desc.gif);
+}
+
+table.sortable thead tr .headerSortDown {
+    background-image: url(images/sort-asc.gif);
+}
+
+/*table.sortable thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+    background-color: #8dbdd8;
 }
 */

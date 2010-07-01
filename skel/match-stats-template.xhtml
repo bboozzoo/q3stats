@@ -18,56 +18,68 @@
 
       <div class="panes">
 	<div class="match-players-list">
-	  <table class="wide">
-	    <tr>
-	      <th class="rank">Rank</th>
-	      <th class="player-name">Player</th>
-	      <th>Score</th>
-	      <th>Frags</th>
-	      <th>Deaths</th>
-	      <th>Suicides</th>
-	      <th>Accuracy</th>
-	      <th>Dmg. given</th>
-	      <th>Dmg. taken</th>
-	      <th>Armor</th>
-	    </tr>
-	    ${player_general_stats}
+	  <table class="wide sortable">
+            <thead>
+	      <tr>
+	        <th class="rank">Rank</th>
+	        <th class="player-name">Player</th>
+	        <th>Score</th>
+	        <th>Frags</th>
+	        <th>Deaths</th>
+	        <th>Suicides</th>
+	        <th>Accuracy</th>
+	        <th>Dmg. given</th>
+	        <th>Dmg. taken</th>
+	        <th>Armor</th>
+	      </tr>
+            </thead>
+            <tbody>
+	      ${player_general_stats}
+            </tbody>
 	  </table>
 	</div>
 	<div class="match-player-list">
-	  <table class="wide">
-	    <tr>
-	      <th class="rank">Rank</th>
-	      <th class="player-name">Player</th>
-	      <th title="${G_desc}">G</th>
-	      <th title="${MG_desc}">MG</th>
-	      <th title="${SG_desc}">SG</th>
-	      <th title="${GL_desc}">GL</th>
-	      <th title="${RL_desc}">RL</th>
-	      <th title="${LG_desc}">LG</th>
-	      <th title="${RG_desc}">RG</th>
-	      <th title="${PG_desc}">PG</th>
-	      <th title="${BFG_desc}">BFG</th>
-	    </tr>
-	    ${player_accuracy_stats}
+	  <table class="wide sortable">
+            <thead>
+	      <tr>
+	        <th class="rank">Rank</th>
+	        <th class="player-name">Player</th>
+	        <th title="${G_desc}">G</th>
+	        <th title="${MG_desc}">MG</th>
+	        <th title="${SG_desc}">SG</th>
+	        <th title="${GL_desc}">GL</th>
+	        <th title="${RL_desc}">RL</th>
+	        <th title="${LG_desc}">LG</th>
+	        <th title="${RG_desc}">RG</th>
+	        <th title="${PG_desc}">PG</th>
+	        <th title="${BFG_desc}">BFG</th>
+	      </tr>
+            </thead>
+            <tbody>
+	      ${player_accuracy_stats}
+            </tbody>
 	  </table>
 	</div>
 	<div class="match-player-list">
-	  <table class="wide">
-	    <tr>
-	      <th class="rank">Rank</th>
-	      <th class="player-name">Player</th>
-	      <th title="${G_desc}">G</th>
-	      <th title="${MG_desc}">MG</th>
-	      <th title="${SG_desc}">SG</th>
-	      <th title="${GL_desc}">GL</th>
-	      <th title="${RL_desc}">RL</th>
-	      <th title="${LG_desc}">LG</th>
-	      <th title="${RG_desc}">RG</th>
-	      <th title="${PG_desc}">PG</th>
-	      <th title="${BFG_desc}">BFG</th>
-	    </tr>
-	    ${player_frags_stats}
+	  <table class="wide sortable">
+            <thead>
+	      <tr>
+	        <th class="rank">Rank</th>
+	        <th class="player-name">Player</th>
+	        <th title="${G_desc}">G</th>
+	        <th title="${MG_desc}">MG</th>
+	        <th title="${SG_desc}">SG</th>
+	        <th title="${GL_desc}">GL</th>
+	        <th title="${RL_desc}">RL</th>
+	        <th title="${LG_desc}">LG</th>
+	        <th title="${RG_desc}">RG</th>
+	        <th title="${PG_desc}">PG</th>
+	        <th title="${BFG_desc}">BFG</th>
+	      </tr>
+            </thead>
+            <tbody>
+	      ${player_frags_stats}
+            </tbody>
 	  </table>
 	</div>
       </div>

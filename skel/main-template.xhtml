@@ -12,13 +12,17 @@
     <div class="recent-matches">
       <h3>Recent matches</h3>
       <table>
+        <thead>
 	<tr>
 	  <th>Date</th>
 	  <th>Map</th>
 	  <th>Winner</th>
 	  <th>Players</th>
 	</tr>
-      ${matches_list}
+        </thead>
+        <tbody>
+          ${matches_list}
+        </tbody>
       </table>
     </div>
     <div class="players-list">
@@ -29,13 +33,17 @@
 	  </a>
 	</h3>
 	<table>
-	  ${players_list}
+          <tbody>
+	    ${players_list}
+          </tbody>
 	</table>
       </div>
       <div>
 	<h3>Aliases</h3>
 	<table>
-	  ${aliases_list}
+          <tbody>
+	    ${aliases_list}
+          </tbody>
 	</table>
       </div>
     </div>

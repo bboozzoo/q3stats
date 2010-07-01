@@ -7,5 +7,8 @@ $(document).ready(
 	    }
 	);
 	$("ul.tabs").tabs("div.panes > div");
+        console.log("calling tablesorter\n");
+        $("table.sortable").tablesorter();
+
     }
 );
