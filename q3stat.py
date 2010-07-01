@@ -43,7 +43,9 @@ class Stats:
                   'error' : 'error-template.xhtml',
                   'match-stats' : 'match-stats-template.xhtml',
                   'match-stats-player-general-stats' : 'match-stats-player-general-stats.xhtml',
-                  'match-stats-player-weapon-stats' : 'match-stats-player-weapon-stats.xhtml'
+                  'match-stats-player-weapon-stats' : 'match-stats-player-weapon-stats.xhtml',
+                  'match-stats-player-general-stats-no-link' : 'match-stats-player-general-stats-no-link.xhtml',
+                  'match-stats-player-weapon-stats-no-link' : 'match-stats-player-weapon-stats-no-link.xhtml'
                   }
     IMAGES = { 'G' : 'images/iconw_gauntlet.png',
                'SG' : 'images/iconw_shotgun.png',
@@ -454,24 +456,32 @@ def get_players_stats_for_match(stats, match_id, player_weapon_stats):
                         suicides, damage_given, 
                         damage_taken, health_total, armor_total 
                         from match_player_stats  
-                        inner join player_aliases 
+                        left join player_aliases 
                         on match_player_stats.alias_id = player_aliases.id 
-                        inner join players
+                        left join players
                         on player_aliases.player_id = players.id
                         where match_id = ?
                         order by 
                         score 
                         desc;''', (match_id, ))
-    tmpl_general = string.Template(stats.template_get('match-stats-player-general-stats'))
-    tmpl_acc = string.Template(stats.template_get('match-stats-player-weapon-stats'))
-    tmpl_frags = string.Template(stats.template_get('match-stats-player-weapon-stats'))
+    tmpl_general_link = string.Template(stats.template_get('match-stats-player-general-stats'))
+    tmpl_weapons_link = string.Template(stats.template_get('match-stats-player-weapon-stats'))
+    tmpl_general_no_link = string.Template(stats.template_get('match-stats-player-general-stats-no-link'))
+    tmpl_weapons_no_link = string.Template(stats.template_get('match-stats-player-weapon-stats-no-link'))   
     d = {}
     d['rank'] = 0
     for row in c:
+        tmpl_general = tmpl_general_link
+        tmpl_weapons = tmpl_weapons_link
         alias_id = row[0]
         d['rank'] = d['rank'] + 1
         d['player'] = row[1]
         d['player_id'] = row[2]
+        if not row[2]: 
+            # player_id is null, meaning alias is not assigned to any player
+            # see SQL select above
+            tmpl_general = tmpl_general_no_link
+            tmpl_weapons = tmpl_weapons_no_link
         d['score'] = row[3]
         d['frags'] = row[4]
         d['deaths'] = row[5]
@@ -491,8 +501,8 @@ def get_players_stats_for_match(stats, match_id, player_weapon_stats):
             t = player_stats[k]
             acc[k] = t[0]
             frags[k] = t[1]
-        html_player_accuracy_stats += tmpl_acc.substitute(acc)
-        html_player_frags_stats += tmpl_frags.substitute(frags)
+        html_player_accuracy_stats += tmpl_weapons.substitute(acc)
+        html_player_frags_stats += tmpl_weapons.substitute(frags)
         html_player_stats += tmpl_general.substitute(d)
     return html_player_stats, html_player_accuracy_stats, html_player_frags_stats
         
