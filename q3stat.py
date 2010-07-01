@@ -574,17 +574,21 @@ def delete_player(stats, cgi_fs):
                      (player_id,))
     c = conn.execute('delete from players where id = ?', (player_id,))
 
+def stringify_list_for_sql(list_of_ids):
+    '''return a comman separated list of ids
+    for use within SQL update'''
+    ids = map(lambda x: str(x), list_of_ids)
+    return string.join(ids, ',')
+
 def modify_player(stats, cgi_fs):
     player_id = cgi_fs.getvalue('player_id', None)
-    aliases_id_list = cgi_fs.getvalue('alias_id', None)
-    if not player_id or not aliases_id_list:
+    aliases_id_list = cgi_fs.getlist('alias_id')
+    if not player_id or len(aliases_id_list) == 0:
         raise StatsError('player_id or aliases_id not set')
-    if not isinstance(aliases_id_list, list):
-        aliases_id_list = [aliases_id_list]
     conn = stats.db_get()
     c = conn.execute('update player_aliases set player_id = 0 where player_id = ?', 
                          (player_id, ))
-    c = conn.execute('update player_aliases set player_id = ? where id in %s' % str(tuple(aliases_id_list)), (player_id,))
+    c = conn.execute('update player_aliases set player_id = ? where id in (%s)' % (stringify_list_for_sql(aliases_id_list)), (player_id,))
    
         
 def output_main_page(stats):
@@ -743,7 +747,6 @@ elif req == 'modify-player':
         output_show_after_modify_player_page(stats_handler, cgi_fs)
     except StatsError, e:
         output_error_page(stats_handler, e.what)
-
 elif req == 'delete-player':
     delete_player(stats_handler, cgi_fs)
     output_show_after_delete_player_page(stats_handler)
