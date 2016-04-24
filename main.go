@@ -32,11 +32,7 @@ func doImport(c *cli.Context) {
 	log.Printf("import")
 
 	srcfile := c.Args().First()
-	err := runImport(srcfile)
-	if err != nil {
-		log.Fatalf(err.Error())
-		os.Exit(1)
-	}
+	log.Fatal(runImport(srcfile))
 }
 
 func doDaemon(c *cli.Context) {
