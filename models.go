@@ -22,3 +22,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package main
 
+import (
+	"github.com/jinzhu/gorm"
+	"time"
+)
+
+// data models
+type Match struct {
+	gorm.Model
+
+	DateTime time.Time
+	Duration uint
+	Map      string
+	Type     string
+}
+
+type Player struct {
+	gorm.Model
+
+	Name    string
+	Aliases []string
+
+	Wins uint
+}
+
+type WeaponStat struct {
+	gorm.Model
+
+	Hits  uint
+	Shots uint
+	Kills uint
+}
+
+
