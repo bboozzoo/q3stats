@@ -23,53 +23,16 @@
 package main
 
 import (
-	"github.com/codegangsta/cli"
-	"log"
-	"os"
+	"github.com/pkg/errors"
 )
 
-func doImport(c *cli.Context) {
-	log.Printf("import")
-
-	srcfile := c.Args().First()
-	err := runImport(srcfile)
+func runImport(srcfile string) error {
+	if srcfile == "" {
+		return errors.New("no path to match file")
+	}
+	_, err := LoadMatchFile(srcfile)
 	if err != nil {
-		log.Fatalf(err.Error())
-		os.Exit(1)
+		errors.Wrap(err, "import failed")
 	}
-}
-
-func doDaemon(c *cli.Context) {
-	log.Printf("starting daemon")
-
-	err := LoadConfig()
-	if err != nil {
-		log.Printf("failed to load configuration:", err)
-		os.Exit(1)
-	}
-
-	log.Printf("listen port: %d", C.port)
-}
-
-func main() {
-	log.Printf("starting up")
-
-	app := cli.NewApp()
-	app.Name = "q3stats"
-	app.HideHelp = true
-	app.HideVersion = true
-	app.Commands = []cli.Command{
-		{
-			Name:   "import",
-			Usage:  "import match logs",
-			Action: doImport,
-		},
-		{
-			Name:   "daemon",
-			Usage:  "run daemon",
-			Action: doDaemon,
-		},
-	}
-
-	app.Run(os.Args)
+	return err
 }
