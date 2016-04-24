@@ -23,50 +23,37 @@
 package main
 
 import (
-	"github.com/codegangsta/cli"
-	"log"
-	"os"
+	"github.com/spf13/viper"
 )
 
-func doImport(c *cli.Context) {
-	log.Printf("import")
-
-	srcfile := c.Args().First()
-	LoadMatchFile(srcfile)
-
+type Config struct {
+	// path to webroot
+	webroot string
+	// listen port
+	port int
+	// path to DB
+	dbpath string
 }
 
-func doDaemon(c *cli.Context) {
-	log.Printf("starting daemon")
+var (
+	C Config
+)
 
-	err := LoadConfig()
+func LoadConfig() error {
+	viper.SetConfigName("config")
+	viper.AddConfigPath("/etc/q3stats/")
+	viper.AddConfigPath("$HOME/.q3stats/")
+	viper.AddConfigPath(".")
+
+	err := viper.ReadInConfig()
 	if err != nil {
-		log.Printf("failed to load configuration:", err)
-		os.Exit(1)
+		return err
 	}
 
-	log.Printf("listen port: %d", C.port)
-}
-
-func main() {
-	log.Printf("starting up")
-
-	app := cli.NewApp()
-	app.Name = "q3stats"
-	app.HideHelp = true
-	app.HideVersion = true
-	app.Commands = []cli.Command{
-		{
-			Name:   "import",
-			Usage:  "import match logs",
-			Action: doImport,
-		},
-		{
-			Name:   "daemon",
-			Usage:  "run daemon",
-			Action: doDaemon,
-		},
+	C = Config{
+		viper.GetString("webroot"),
+		viper.GetInt("port"),
+		viper.GetString("dbpath"),
 	}
-
-	app.Run(os.Args)
+	return nil
 }
