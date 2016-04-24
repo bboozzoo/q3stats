@@ -23,42 +23,42 @@
 package main
 
 import (
-	"github.com/codegangsta/cli"
+	"fmt"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
 	"log"
+	"net/http"
 	"os"
 )
 
-func doImport(c *cli.Context) {
-	log.Printf("import")
-
-	srcfile := c.Args().First()
-	log.Fatal(runImport(srcfile))
+func apiAddMatch(w http.ResponseWriter, req *http.Request) {
+	// add new match
 }
 
-func doDaemon(c *cli.Context) {
-	log.Printf("starting daemon")
-	log.Fatal(runDaemon())
+func homeHandler(w http.ResponseWriter, req *http.Request) {
+	// homepage
 }
 
-func main() {
-	log.Printf("starting up")
+func daemonMain() error {
+	r := mux.NewRouter()
+	r.HandleFunc("/", homeHandler)
+	r.HandleFunc("/api/matches/new", apiAddMatch)
 
-	app := cli.NewApp()
-	app.Name = "q3stats"
-	app.HideHelp = true
-	app.HideVersion = true
-	app.Commands = []cli.Command{
-		{
-			Name:   "import",
-			Usage:  "import match logs",
-			Action: doImport,
-		},
-		{
-			Name:   "daemon",
-			Usage:  "run daemon",
-			Action: doDaemon,
-		},
+	// setup logging for all handlers
+	lr := handlers.LoggingHandler(os.Stdout, r)
+
+	http.Handle("/", lr)
+	return http.ListenAndServe(fmt.Sprintf(":%d", C.port), nil)
+}
+
+func runDaemon() error {
+	err := LoadConfig()
+	if err != nil {
+		return errors.Wrap(err, "daemon startup failed")
 	}
 
-	app.Run(os.Args)
+	log.Printf("listen port: %d", C.port)
+
+	return daemonMain()
 }
