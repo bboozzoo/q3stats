@@ -46,4 +46,9 @@ func setupSite() {
 func siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 	// homepage
 
+	err := site.templates.ExecuteTemplate(w, "base", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
