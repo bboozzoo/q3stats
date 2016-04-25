@@ -31,12 +31,14 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 )
 
 const (
 	defaultListenPort = 9090
 
 	uriAddMatch = "/api/matches/new"
+	uriStatic   = "/static/"
 	uriIndex    = "/"
 )
 
@@ -88,6 +90,14 @@ func daemonMain() error {
 	// matches only come through POST
 	r.HandleFunc(uriAddMatch, apiAddMatch).
 		Methods("POST")
+
+	// static files
+	staticroot := path.Join(C.webroot, "static")
+	log.Printf("serving static files from %s", staticroot)
+
+	filehandler := http.FileServer(http.Dir(staticroot))
+	r.PathPrefix(uriStatic).
+		Handler(http.StripPrefix(uriStatic, filehandler))
 
 	// setup logging for all handlers
 	lr := handlers.LoggingHandler(os.Stdout, r)
