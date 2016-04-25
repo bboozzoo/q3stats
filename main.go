@@ -57,7 +57,7 @@ func main() {
 			Action: doDaemon,
 		},
 		{
-			Name: "help",
+			Name:  "help",
 			Usage: "show command help",
 			Action: func(c *cli.Context) {
 				cli.ShowCommandHelp(c, "import")
