@@ -107,6 +107,7 @@ func setupRouting() {
 
 func daemonMain() error {
 
+	setupSite()
 	setupRouting()
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", C.port), nil)
