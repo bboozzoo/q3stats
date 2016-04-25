@@ -28,10 +28,19 @@ import (
 	"path"
 )
 
+type Site struct {
+	templates *template.Template
+}
+
+var (
+	site Site
+)
+
 func setupSite() {
 	templatedir := path.Join(C.webroot, "templates")
 
-	template.Must(template.ParseGlob(templatedir + "/*.tmpl"))
+	pattern := templatedir + "/*.tmpl"
+	site.templates = template.Must(template.ParseGlob(pattern))
 }
 
 func siteHomeHandler(w http.ResponseWriter, req *http.Request) {
