@@ -27,6 +27,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -46,6 +47,32 @@ var (
 
 func apiAddMatch(w http.ResponseWriter, req *http.Request) {
 	// add new match
+	log.Printf("add new match")
+
+	matchdata, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		log.Printf("failed to receive match data: %s", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if len(matchdata) == 0 {
+		log.Printf("no data provided")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("match data: %s", matchdata)
+
+	match, err := LoadMatchData(matchdata)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("match hash: %s", match.DataHash)
+	w.Write([]byte(match.DataHash))
 }
 
 func homeHandler(w http.ResponseWriter, req *http.Request) {
