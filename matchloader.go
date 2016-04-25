@@ -78,7 +78,10 @@ func LoadMatch(src io.Reader) (*Match, error) {
 	}
 
 	log.Printf("match: %+v", match)
-	return nil, nil
+
+	m := Match{}
+	m.DataHash = calcDataHash(raw)
+	return &m, nil
 }
 
 func LoadMatchFile(path string) (*Match, error) {
