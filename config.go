@@ -45,7 +45,7 @@ func LoadConfig() error {
 	viper.AddConfigPath("$HOME/.q3stats/")
 	viper.AddConfigPath(".")
 
-	viper.SetDefault("webroot", ".")
+	viper.SetDefault("webroot", "./webroot")
 	viper.SetDefault("port", defaultListenPort)
 	viper.SetDefault("dbpath", ".")
 	err := viper.ReadInConfig()
