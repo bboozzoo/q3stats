@@ -31,6 +31,7 @@ import (
 type Match struct {
 	gorm.Model
 
+	DataHash string
 	DateTime time.Time
 	Duration uint
 	Map      string
