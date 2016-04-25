@@ -56,6 +56,13 @@ func main() {
 			Usage:  "run daemon",
 			Action: doDaemon,
 		},
+		{
+			Name: "help",
+			Usage: "show command help",
+			Action: func(c *cli.Context) {
+				cli.ShowCommandHelp(c, "import")
+			},
+		},
 	}
 
 	app.Run(os.Args)
