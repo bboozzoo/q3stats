@@ -23,16 +23,75 @@
 package main
 
 import (
+	"fmt"
 	"github.com/pkg/errors"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
 )
 
-func runImport(srcfile string) error {
-	if srcfile == "" {
-		return errors.New("no path to match file")
-	}
-	_, err := LoadMatchFile(srcfile)
+type MatchHash string
+
+const (
+	emptyHash = ""
+)
+
+func readMatchFile(srcfile string) (*os.File, error) {
+	in, err := os.Open(srcfile)
 	if err != nil {
-		errors.Wrap(err, "import failed")
+		return nil, errors.Wrap(err,
+			fmt.Sprintf("failed to open match file %s", srcfile))
 	}
-	return err
+
+	return in, nil
+}
+
+func sendMatchData(src io.Reader, addr string) (MatchHash, error) {
+	cl := http.Client{}
+
+	url := fmt.Sprintf("http://%s%s", addr, uriAddMatch)
+
+	log.Printf("posting to URL: %s", url)
+
+	resp, err := cl.Post(url, "application/vnd.q3-match-stats", src)
+	if err != nil {
+		return emptyHash, errors.Wrap(err, "posting match data failed")
+	}
+
+	log.Printf("response: %d", resp.StatusCode)
+
+	if resp.StatusCode != http.StatusOK {
+		return emptyHash, fmt.Errorf("request failed with status: %d",
+			resp.StatusCode)
+	}
+
+	matchhash, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return emptyHash, errors.Wrap(err, "failed to receive response")
+	}
+
+	return MatchHash(matchhash), nil
+}
+
+func runImport(srcfile string, addr string) (MatchHash, error) {
+
+	if srcfile == "" {
+		return emptyHash, errors.New("no path to match file")
+	}
+
+	indata, err := readMatchFile(srcfile)
+	if err != nil {
+		return emptyHash, err
+	}
+	// close input file
+	defer indata.Close()
+
+	matchhash, err := sendMatchData(indata, addr)
+	if err != nil {
+		return emptyHash, errors.Wrap(err, "failed to send match data")
+	}
+
+	return matchhash, nil
 }

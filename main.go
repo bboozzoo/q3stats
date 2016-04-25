@@ -23,6 +23,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/codegangsta/cli"
 	"log"
 	"os"
@@ -32,7 +33,12 @@ func doImport(c *cli.Context) {
 	log.Printf("import")
 
 	srcfile := c.Args().First()
-	log.Fatal(runImport(srcfile))
+	mh, err := runImport(srcfile, c.String("host"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(mh)
 }
 
 func doDaemon(c *cli.Context) {
@@ -50,6 +56,13 @@ func main() {
 			Name:   "import",
 			Usage:  "import match logs",
 			Action: doImport,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "host, t",
+					Usage: "Daemon host address",
+					Value: defaultListenAddr,
+				},
+			},
 		},
 		{
 			Name:   "daemon",
