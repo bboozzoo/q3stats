@@ -32,6 +32,18 @@ import (
 	"os"
 )
 
+const (
+	defaultListenPort = 9090
+
+	uriAddMatch = "/api/matches/new"
+	uriIndex    = "/"
+)
+
+var (
+	defaultListenAddr = fmt.Sprintf("localhost:%d",
+		defaultListenPort)
+)
+
 func apiAddMatch(w http.ResponseWriter, req *http.Request) {
 	// add new match
 }
