@@ -72,7 +72,10 @@ func LoadMatch(src io.Reader) (*Match, error) {
 	}
 
 	var match rawMatch
-	xml.Unmarshal(raw, &match)
+	err = xml.Unmarshal(raw, &match)
+	if err != nil {
+		return nil, errors.Wrap(err, "unmarshal failed")
+	}
 
 	log.Printf("match: %+v", match)
 	return nil, nil
