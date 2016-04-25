@@ -54,8 +54,13 @@ func homeHandler(w http.ResponseWriter, req *http.Request) {
 
 func daemonMain() error {
 	r := mux.NewRouter()
-	r.HandleFunc("/", homeHandler)
-	r.HandleFunc("/api/matches/new", apiAddMatch)
+
+	r.HandleFunc(uriIndex, homeHandler).
+		Methods("GET")
+
+	// matches only come through POST
+	r.HandleFunc(uriAddMatch, apiAddMatch).
+		Methods("POST")
 
 	// setup logging for all handlers
 	lr := handlers.LoggingHandler(os.Stdout, r)
