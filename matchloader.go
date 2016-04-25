@@ -23,6 +23,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/xml"
 	"github.com/pkg/errors"
 	"io"
@@ -86,4 +87,9 @@ func LoadMatchFile(path string) (*Match, error) {
 	defer in.Close()
 
 	return LoadMatch(in)
+}
+
+func LoadMatchData(data []byte) (*Match, error) {
+	buf := bytes.NewBuffer(data)
+	return LoadMatch(buf)
 }
