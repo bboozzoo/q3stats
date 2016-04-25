@@ -77,14 +77,10 @@ func apiAddMatch(w http.ResponseWriter, req *http.Request) {
 	w.Write([]byte(match.DataHash))
 }
 
-func homeHandler(w http.ResponseWriter, req *http.Request) {
-	// homepage
-}
-
 func setupRouting() {
 	r := mux.NewRouter()
 
-	r.HandleFunc(uriIndex, homeHandler).
+	r.HandleFunc(uriIndex, siteHomeHandler).
 		Methods("GET")
 
 	// matches only come through POST

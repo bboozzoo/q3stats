@@ -24,6 +24,7 @@ package main
 
 import (
 	"html/template"
+	"net/http"
 	"path"
 )
 
@@ -31,5 +32,9 @@ func setupSite() {
 	templatedir := path.Join(C.webroot, "templates")
 
 	template.Must(template.ParseGlob(templatedir + "/*.tmpl"))
+}
+
+func siteHomeHandler(w http.ResponseWriter, req *http.Request) {
+	// homepage
 
 }
