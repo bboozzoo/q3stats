@@ -41,8 +41,6 @@ func doDaemon(c *cli.Context) {
 }
 
 func main() {
-	log.Printf("starting up")
-
 	app := cli.NewApp()
 	app.Name = "q3stats"
 	app.HideHelp = true
