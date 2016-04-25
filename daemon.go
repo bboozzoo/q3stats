@@ -81,7 +81,7 @@ func homeHandler(w http.ResponseWriter, req *http.Request) {
 	// homepage
 }
 
-func daemonMain() error {
+func setupRouting() {
 	r := mux.NewRouter()
 
 	r.HandleFunc(uriIndex, homeHandler).
@@ -103,6 +103,12 @@ func daemonMain() error {
 	lr := handlers.LoggingHandler(os.Stdout, r)
 
 	http.Handle("/", lr)
+}
+
+func daemonMain() error {
+
+	setupRouting()
+
 	return http.ListenAndServe(fmt.Sprintf(":%d", C.port), nil)
 }
 
