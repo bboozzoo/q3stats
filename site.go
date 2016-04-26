@@ -37,7 +37,7 @@ var (
 	site Site
 )
 
-func SetupSiteRouting(r *mux.Router) {
+func SetupSiteHandlers(r *mux.Router) {
 	r.HandleFunc(uriIndex, siteHomeHandler).
 		Methods("GET")
 

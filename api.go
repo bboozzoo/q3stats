@@ -64,7 +64,7 @@ func apiAddMatch(w http.ResponseWriter, req *http.Request) {
 	w.Write([]byte(match.DataHash))
 }
 
-func SetupApiRouting(r *mux.Router) {
+func SetupApiHandlers(r *mux.Router) {
 	// matches only come through POST
 	r.HandleFunc(uriApiAddMatch, apiAddMatch).
 		Methods("POST")

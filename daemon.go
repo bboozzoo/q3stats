@@ -46,13 +46,13 @@ var (
 		defaultListenPort)
 )
 
-func setupRouting() {
+func setupHandlers() {
 	r := mux.NewRouter()
 
-	SetupSiteRouting(r)
+	SetupSiteHandlers(r)
 
 	apir := r.PathPrefix(uriApi).Subrouter()
-	SetupApiRouting(apir)
+	SetupApiHandlers(apir)
 
 	// static files
 	staticroot := path.Join(C.webroot, "static")
@@ -70,7 +70,7 @@ func setupRouting() {
 
 func daemonMain() error {
 
-	setupRouting()
+	setupHandlers()
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", C.port), nil)
 }
