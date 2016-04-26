@@ -31,7 +31,7 @@ import (
 type Match struct {
 	gorm.Model
 
-	DataHash string `gorm:"not null,unique"`
+	DataHash string `sql:"not null,unique"`
 	DateTime time.Time
 	Duration uint
 	Map      string
