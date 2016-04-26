@@ -24,7 +24,6 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/bboozzoo/q3stats/loader"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -34,7 +33,15 @@ const (
 	uriApiAddMatch = "/matches/new"
 )
 
-func apiAddMatch(w http.ResponseWriter, req *http.Request) {
+type Api struct {
+	mc *MatchController
+}
+
+func NewApi(mc *MatchController) *Api {
+	return &Api{mc}
+}
+
+func (a *Api) apiAddMatch(w http.ResponseWriter, req *http.Request) {
 	// add new match
 	log.Printf("add new match")
 
@@ -53,19 +60,19 @@ func apiAddMatch(w http.ResponseWriter, req *http.Request) {
 
 	log.Printf("match data: %s", matchdata)
 
-	match, err := loader.LoadMatchData(matchdata)
+	hash, err := a.mc.AddFromData(matchdata)
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	log.Printf("match hash: %s", match.DataHash)
-	w.Write([]byte(match.DataHash))
+	log.Printf("match hash: %s", hash)
+	w.Write([]byte(hash))
 }
 
-func SetupApiHandlers(r *mux.Router) {
+func (a *Api) SetupApiHandlers(r *mux.Router) {
 	// matches only come through POST
-	r.HandleFunc(uriApiAddMatch, apiAddMatch).
+	r.HandleFunc(uriApiAddMatch, a.apiAddMatch).
 		Methods("POST")
 }
