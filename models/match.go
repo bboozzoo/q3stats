@@ -31,7 +31,7 @@ import (
 type Match struct {
 	gorm.Model
 
-	DataHash string
+	DataHash string `gorm:"not null,unique"`
 	DateTime time.Time
 	Duration uint
 	Map      string
@@ -54,5 +54,3 @@ type WeaponStat struct {
 	Shots uint
 	Kills uint
 }
-
-
