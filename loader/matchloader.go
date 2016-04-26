@@ -63,6 +63,7 @@ type RawMatch struct {
 	Datetime string      `xml:"datetime,attr"`
 	Map      string      `xml:"map,attr"`
 	Type     string      `xml:"type,attr"`
+	Duration uint         `xml:"duration,attr"`
 	Players  []RawPlayer `xml:"player"`
 	DataHash string
 }
