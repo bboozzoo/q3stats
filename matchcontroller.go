@@ -24,14 +24,17 @@ package main
 
 import (
 	"github.com/bboozzoo/q3stats/loader"
+	"github.com/bboozzoo/q3stats/models"
 	"github.com/pkg/errors"
+	"time"
 )
 
 type MatchController struct {
+	db *DB
 }
 
-func NewController() *MatchController {
-	return &MatchController{}
+func NewController(db *DB) *MatchController {
+	return &MatchController{db}
 }
 
 // Add match from raw XML data in `data`. Returns match hash or error
@@ -41,5 +44,14 @@ func (m *MatchController) AddFromData(data []byte) (string, error) {
 		return "", errors.Wrap(err, "failed to add match")
 	}
 
+	match := models.Match{
+		DataHash: rmatch.DataHash,
+		DateTime: time.Now(),
+		Duration: rmatch.Duration,
+		Map: rmatch.Map,
+		Type: rmatch.Type,
+	}
+
+	m.db.db.Create(&match)
 	return rmatch.DataHash, nil
 }

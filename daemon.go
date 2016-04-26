@@ -69,7 +69,12 @@ func setupHandlers(api *Api) {
 }
 
 func daemonMain() error {
-	matchctrl := NewController()
+	db := NewDB()
+	if err := db.Open(); err != nil {
+		log.Fatal(err)
+	}
+
+	matchctrl := NewController(db)
 	api := NewApi(matchctrl)
 
 	setupHandlers(api)
