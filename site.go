@@ -23,6 +23,7 @@
 package main
 
 import (
+	"github.com/gorilla/mux"
 	"html/template"
 	"net/http"
 	"path"
@@ -36,7 +37,10 @@ var (
 	site Site
 )
 
-func setupSite() {
+func SetupSiteRouting(r *mux.Router) {
+	r.HandleFunc(uriIndex, siteHomeHandler).
+		Methods("GET")
+
 	templatedir := path.Join(C.webroot, "templates")
 
 	pattern := templatedir + "/*.tmpl"

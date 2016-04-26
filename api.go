@@ -23,65 +23,48 @@
 package main
 
 import (
-	"fmt"
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"path"
 )
 
 const (
-	defaultListenPort = 9090
-
-	uriApi    = "/api/"
-	uriStatic = "/static/"
-	uriIndex  = "/"
+	uriAddMatch = "/matches/new"
 )
 
-var (
-	defaultListenAddr = fmt.Sprintf("localhost:%d",
-		defaultListenPort)
-)
+func apiAddMatch(w http.ResponseWriter, req *http.Request) {
+	// add new match
+	log.Printf("add new match")
 
-func setupRouting() {
-	r := mux.NewRouter()
-
-	SetupSiteRouting(r)
-
-	apir := r.PathPrefix("/api/").Subrouter()
-	SetupApiRouting(apir)
-
-	// static files
-	staticroot := path.Join(C.webroot, "static")
-	log.Printf("serving static files from %s", staticroot)
-
-	filehandler := http.FileServer(http.Dir(staticroot))
-	r.PathPrefix(uriStatic).
-		Handler(http.StripPrefix(uriStatic, filehandler))
-
-	// setup logging for all handlers
-	lr := handlers.LoggingHandler(os.Stdout, r)
-
-	http.Handle("/", lr)
-}
-
-func daemonMain() error {
-
-	setupRouting()
-
-	return http.ListenAndServe(fmt.Sprintf(":%d", C.port), nil)
-}
-
-func runDaemon() error {
-	err := LoadConfig()
+	matchdata, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		return errors.Wrap(err, "daemon startup failed")
+		log.Printf("failed to receive match data: %s", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	log.Printf("listen port: %d", C.port)
+	if len(matchdata) == 0 {
+		log.Printf("no data provided")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	return daemonMain()
+	log.Printf("match data: %s", matchdata)
+
+	match, err := LoadMatchData(matchdata)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("match hash: %s", match.DataHash)
+	w.Write([]byte(match.DataHash))
+}
+
+func SetupApiRouting(r *mux.Router) {
+	// matches only come through POST
+	r.HandleFunc(uriAddMatch, apiAddMatch).
+		Methods("POST")
 }
