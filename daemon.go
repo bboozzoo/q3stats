@@ -51,7 +51,7 @@ func setupRouting() {
 
 	SetupSiteRouting(r)
 
-	apir := r.PathPrefix("/api/").Subrouter()
+	apir := r.PathPrefix(uriApi).Subrouter()
 	SetupApiRouting(apir)
 
 	// static files
