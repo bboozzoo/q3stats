@@ -36,7 +36,7 @@ import (
 const (
 	defaultListenPort = 9090
 
-	uriApi    = "/api/"
+	uriApi    = "/api"
 	uriStatic = "/static/"
 	uriIndex  = "/"
 )
