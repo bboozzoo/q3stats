@@ -24,6 +24,7 @@ package main
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/bboozzoo/q3stats/loader"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -52,7 +53,7 @@ func apiAddMatch(w http.ResponseWriter, req *http.Request) {
 
 	log.Printf("match data: %s", matchdata)
 
-	match, err := LoadMatchData(matchdata)
+	match, err := loader.LoadMatchData(matchdata)
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusBadRequest)

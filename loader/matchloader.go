@@ -20,71 +20,72 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-package main
+package loader
 
 import (
 	"bytes"
 	"encoding/xml"
 	"github.com/pkg/errors"
+	"github.com/bboozzoo/q3stats/util"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
 )
 
-type rawStat struct {
+type RawStat struct {
 	Name  string `xml:"name,attr"`
 	Value int    `xml:"value,attr"`
 }
 
-type rawItem struct {
+type RawItem struct {
 	Name    string `xml:"name,attr"`
 	Pickups int    `xml:"pickups,attr"`
 	Time    int    `xml:"time,attr"`
 }
 
-type rawWeapon struct {
+type RawWeapon struct {
 	Name  string `xml:"name,attr"`
 	Hits  int    `xml:"hits,attr"`
 	Shots int    `xml:"shots,attr"`
 	Kills int    `xml:"kills,attr"`
 }
 
-type rawPlayer struct {
+type RawPlayer struct {
 	Name     string      `xml:"name,attr"`
-	Stats    []rawStat   `xml:"stat"`
-	Items    []rawItem   `xml:"items>item"`
-	Weapons  []rawWeapon `xml:"weapons>weapon"`
-	Powerups []rawItem   `xml:"powerups>item"`
+	Stats    []RawStat   `xml:"stat"`
+	Items    []RawItem   `xml:"items>item"`
+	Weapons  []RawWeapon `xml:"weapons>weapon"`
+	Powerups []RawItem   `xml:"powerups>item"`
 }
 
-type rawMatch struct {
+type RawMatch struct {
 	Datetime string      `xml:"datetime,attr"`
 	Map      string      `xml:"map,attr"`
 	Type     string      `xml:"type,attr"`
-	Players  []rawPlayer `xml:"player"`
+	Players  []RawPlayer `xml:"player"`
+	DataHash string
 }
 
-func LoadMatch(src io.Reader) (*Match, error) {
+func LoadMatch(src io.Reader) (*RawMatch, error) {
 	raw, err := ioutil.ReadAll(src)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load match data")
 	}
 
-	var match rawMatch
+	var match RawMatch
 	err = xml.Unmarshal(raw, &match)
 	if err != nil {
 		return nil, errors.Wrap(err, "unmarshal failed")
 	}
 
+	match.DataHash = util.DataHash(raw)
+	
 	log.Printf("match: %+v", match)
-
-	m := Match{}
-	m.DataHash = calcDataHash(raw)
-	return &m, nil
+	return &match, nil
 }
 
-func LoadMatchFile(path string) (*Match, error) {
+func LoadMatchFile(path string) (*RawMatch, error) {
 
 	in, err := os.Open(path)
 	if err != nil {
@@ -95,7 +96,7 @@ func LoadMatchFile(path string) (*Match, error) {
 	return LoadMatch(in)
 }
 
-func LoadMatchData(data []byte) (*Match, error) {
+func LoadMatchData(data []byte) (*RawMatch, error) {
 	buf := bytes.NewBuffer(data)
 	return LoadMatch(buf)
 }
