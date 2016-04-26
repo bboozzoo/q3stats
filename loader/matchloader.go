@@ -25,8 +25,8 @@ package loader
 import (
 	"bytes"
 	"encoding/xml"
-	"github.com/pkg/errors"
 	"github.com/bboozzoo/q3stats/util"
+	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
 	"log"
@@ -63,7 +63,7 @@ type RawMatch struct {
 	Datetime string      `xml:"datetime,attr"`
 	Map      string      `xml:"map,attr"`
 	Type     string      `xml:"type,attr"`
-	Duration uint         `xml:"duration,attr"`
+	Duration uint        `xml:"duration,attr"`
 	Players  []RawPlayer `xml:"player"`
 	DataHash string
 }
@@ -81,7 +81,7 @@ func LoadMatch(src io.Reader) (*RawMatch, error) {
 	}
 
 	match.DataHash = util.DataHash(raw)
-	
+
 	log.Printf("match: %+v", match)
 	return &match, nil
 }
