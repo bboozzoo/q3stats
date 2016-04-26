@@ -30,7 +30,7 @@ import (
 )
 
 const (
-	uriAddMatch = "/matches/new"
+	uriApiAddMatch = "/matches/new"
 )
 
 func apiAddMatch(w http.ResponseWriter, req *http.Request) {
@@ -65,6 +65,6 @@ func apiAddMatch(w http.ResponseWriter, req *http.Request) {
 
 func SetupApiRouting(r *mux.Router) {
 	// matches only come through POST
-	r.HandleFunc(uriAddMatch, apiAddMatch).
+	r.HandleFunc(uriApiAddMatch, apiAddMatch).
 		Methods("POST")
 }

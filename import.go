@@ -51,7 +51,7 @@ func readMatchFile(srcfile string) (*os.File, error) {
 func sendMatchData(src io.Reader, addr string) (MatchHash, error) {
 	cl := http.Client{}
 
-	url := fmt.Sprintf("http://%s%s", addr, uriAddMatch)
+	url := fmt.Sprintf("http://%s%s%s", addr, uriApi, uriApiAddMatch)
 
 	log.Printf("posting to URL: %s", url)
 
