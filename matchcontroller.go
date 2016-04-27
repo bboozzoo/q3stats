@@ -50,8 +50,8 @@ func (m *MatchController) AddFromData(data []byte) (string, error) {
 		DataHash: rmatch.DataHash,
 		DateTime: time.Now(),
 		Duration: rmatch.Duration,
-		Map: rmatch.Map,
-		Type: rmatch.Type,
+		Map:      rmatch.Map,
+		Type:     rmatch.Type,
 	}
 
 	m.db.db.Create(&match)
