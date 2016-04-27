@@ -27,30 +27,99 @@ import (
 	"time"
 )
 
-// data models
+// Match data
 type Match struct {
 	gorm.Model
 
+	// match data hash
 	DataHash string `sql:"not null,unique"`
+	// when the match was played
 	DateTime time.Time
+	// duration in seconds
 	Duration uint
-	Map      string
-	Type     string
+	// map, ex. q3dm17
+	Map string
+	// type of match, 1v1, FFA, CTF
+	Type string
 }
 
+// Alias is a nickname used during the match.
+type Alias struct {
+	gorm.Model
+
+	// alias, ex. 'honeybunny', 'Klesk'
+	Alias string
+
+	// player claiming this alias
+	PlayerID int
+}
+
+// Registered players
 type Player struct {
 	gorm.Model
 
-	Name    string
-	Aliases []string
-
-	Wins uint
+	// user defined name, ex. joe
+	Name string
 }
 
+// Per weapon statistics achieved during the match
 type WeaponStat struct {
 	gorm.Model
 
-	Hits  uint
+	// weapon type
+	Type string
+	// number of hits
+	Hits uint
+	// number of shots
 	Shots uint
+	// number of kills
 	Kills uint
+
+	// match the stats were collected from
+	MatchID int
+
+	// player's match stats this weapon is part of
+	PlayerMatchStatID int
+}
+
+// Overall statistics achieved by player during a match
+type PlayerMatchStat struct {
+	gorm.Model
+
+	// score
+	Score int
+	// kills count
+	Kills int
+	// number of deaths
+	Deaths int
+	// self-kills count
+	Suicides int
+	// net (kills - deaths - suicides)
+	Net int
+	// damage given in HP
+	DamageGiven int
+	// damage taken in HP
+	DamageTaken int
+	// total health taken in HP
+	HealthTotal int
+	// total armor points
+	ArmorTotal int
+
+	// alias used
+	AliasID int
+}
+
+// Per item statistics achieved during the match
+type ItemStat struct {
+	gorm.Model
+
+	// item type (RA, YA, GA, MH)
+	Type string
+	// pickups count
+	Pickups uint
+	// time held (when applicable, ex. for quad)
+	Time time.Duration
+
+	// player's match stats this item is part of
+	PlayerMatchStatID int
 }
