@@ -23,9 +23,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/bboozzoo/q3stats/loader"
 	"github.com/bboozzoo/q3stats/models"
 	"github.com/pkg/errors"
+	"log"
 	"time"
 )
 
@@ -41,11 +43,47 @@ func NewController(db *DB) *MatchController {
 	return &MatchController{db}
 }
 
+func makePlayerMatchStat(stats []loader.RawStat) models.PlayerMatchStat {
+	var pms models.PlayerMatchStat
+	mapping := map[string]*int{
+		"Score":       &pms.Score,
+		"Kills":       &pms.Kills,
+		"Deaths":      &pms.Deaths,
+		"Suicides":    &pms.Suicides,
+		"Net":         &pms.Net,
+		"DamageGiven": &pms.DamageGiven,
+		"DamageTaken": &pms.DamageTaken,
+		"HealthTotal": &pms.HealthTotal,
+		"ArmorTotal":  &pms.ArmorTotal,
+	}
+
+	for _, stat := range stats {
+		ival, ok := mapping[stat.Name]
+		if ok == false {
+			log.Printf("skipping unknown stat: %s: %d",
+				stat.Name, stat.Value)
+			continue
+		}
+
+		*ival = stat.Value
+	}
+	return pms
+}
+
 // Add match from raw XML data in `data`. Returns match hash or error
 func (m *MatchController) AddFromData(data []byte) (string, error) {
 	rmatch, err := loader.LoadMatchData(data)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to add match")
+	}
+
+	db := m.db.Conn()
+
+	var mfound models.Match
+	db.Where("data_hash = ?", rmatch.DataHash).Find(&mfound)
+	if mfound.ID != 0 {
+		log.Printf("record found: %+v", mfound)
+		return "", fmt.Errorf("already present")
 	}
 
 	match := models.Match{
@@ -56,6 +94,46 @@ func (m *MatchController) AddFromData(data []byte) (string, error) {
 		Type:     rmatch.Type,
 	}
 
-	m.db.db.Create(&match)
+	db.Create(&match)
+
+	log.Printf("got match: %+v", match)
+
+	for _, player := range rmatch.Players {
+		var alias models.Alias
+		db.FirstOrCreate(&alias, models.Alias{Alias: player.Name})
+		log.Printf("got alias: %+v", alias)
+
+		pms := makePlayerMatchStat(player.Stats)
+		pms.MatchID = match.ID
+		pms.AliasID = alias.ID
+
+		db.Create(&pms)
+
+		log.Printf("created PMS: %+v", pms)
+
+		for _, wep := range player.Weapons {
+			db.Create(&models.WeaponStat{
+				Type:              wep.Name,
+				Hits:              wep.Hits,
+				Shots:             wep.Shots,
+				Kills:             wep.Kills,
+				PlayerMatchStatID: pms.ID,
+			})
+		}
+
+		// join items and powerups
+		itms := []loader.RawItem{}
+		itms = append(itms, player.Items...)
+		itms = append(itms, player.Powerups...)
+
+		for _, itm := range itms {
+			db.Create(&models.ItemStat{
+				Type:              itm.Name,
+				Pickups:           itm.Pickups,
+				PlayerMatchStatID: pms.ID,
+				// fill duration
+			})
+		}
+	}
 	return rmatch.DataHash, nil
 }
