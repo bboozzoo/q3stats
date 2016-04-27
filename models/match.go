@@ -75,9 +75,6 @@ type WeaponStat struct {
 	// number of kills
 	Kills uint
 
-	// match the stats were collected from
-	MatchID int
-
 	// player's match stats this weapon is part of
 	PlayerMatchStatID int
 }
