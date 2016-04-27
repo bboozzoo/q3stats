@@ -51,7 +51,7 @@ type Alias struct {
 	Alias string
 
 	// player claiming this alias
-	PlayerID int
+	PlayerID uint
 }
 
 // Registered players
@@ -76,7 +76,7 @@ type WeaponStat struct {
 	Kills uint
 
 	// player's match stats this weapon is part of
-	PlayerMatchStatID int
+	PlayerMatchStatID uint
 }
 
 // Overall statistics achieved by player during a match
@@ -103,7 +103,10 @@ type PlayerMatchStat struct {
 	ArmorTotal int
 
 	// alias used
-	AliasID int
+	AliasID uint
+
+	// match
+	MatchID uint
 }
 
 // Per item statistics achieved during the match
@@ -118,5 +121,5 @@ type ItemStat struct {
 	Time time.Duration
 
 	// player's match stats this item is part of
-	PlayerMatchStatID int
+	PlayerMatchStatID uint
 }
