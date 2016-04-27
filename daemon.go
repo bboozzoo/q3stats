@@ -73,6 +73,7 @@ func daemonMain() error {
 	if err := db.Open(); err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 
 	matchctrl := NewController(db)
 	api := NewApi(matchctrl)
