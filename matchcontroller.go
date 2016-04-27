@@ -35,7 +35,9 @@ type MatchController struct {
 
 func NewController(db *DB) *MatchController {
 
-	db.db.CreateTable(&models.Match{})
+	// move this somewhere else?
+	models.CreateSchema(db.Conn())
+
 	return &MatchController{db}
 }
 

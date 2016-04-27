@@ -62,6 +62,10 @@ func (d *DB) Open() error {
 	return nil
 }
 
+func (d *DB) Conn() *gorm.DB {
+	return d.db
+}
+
 func (d *DB) Close() {
 	if d.db != nil {
 		d.db.Close()
