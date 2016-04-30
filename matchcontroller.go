@@ -161,3 +161,14 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 
 	return nil
 }
+
+func (m *MatchController) ListMatches() []models.Match {
+	db := m.db.Conn()
+
+	var matches []models.Match
+	db.Find(&matches)
+
+	log.Printf("matches found: %u", len(matches))
+
+	return matches
+}
