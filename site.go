@@ -46,11 +46,17 @@ func NewSite(m *MatchController) *Site {
 func (s *Site) SetupHandlers(r *mux.Router) {
 	r.HandleFunc(uriIndex, s.siteHomeHandler).
 		Methods("GET")
+	r.HandleFunc("/matches", s.matchesViewHandler).
+		Methods("GET")
 }
 
 func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
+	log.Printf("site / handler")
+	http.Redirect(w, req, "/matches", http.StatusFound)
+}
 
-	log.Printf("site home handler")
+func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
+	log.Printf("site matches view handler")
 
 	matches := s.m.ListMatches()
 	mt := s.loadTemplates("matches.tmpl", "base.tmpl")
@@ -66,6 +72,7 @@ func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 }
 
 func (s *Site) loadTemplates(names ...string) *template.Template {
