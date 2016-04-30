@@ -24,7 +24,6 @@ package site
 
 import (
 	"github.com/bboozzoo/q3stats/controllers/match"
-	"github.com/bboozzoo/q3stats/models"
 	"github.com/gorilla/mux"
 	"html/template"
 	"log"
@@ -55,47 +54,6 @@ func (s *Site) SetupHandlers(r *mux.Router) {
 
 	// keep track of router
 	s.r = r
-}
-
-func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
-	log.Printf("site / handler")
-
-	url, _ := s.r.Get("matches").URL()
-	http.Redirect(w, req, url.String(), http.StatusFound)
-}
-
-func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
-	log.Printf("site matches view handler")
-
-	matches := s.m.ListMatches()
-	data := struct {
-		Matches []models.Match
-	}{
-		matches,
-	}
-
-	s.loadRenderOrError(w, data, "matches.tmpl", "base.tmpl")
-}
-
-func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
-	log.Printf("site match view handler")
-	id := mux.Vars(req)["id"]
-
-	log.Printf("match ID: %s", id)
-
-	m := s.m.GetMatchInfo(id)
-	if m == nil {
-		http.Error(w, "match not found", http.StatusNotFound)
-	}
-
-	data := struct {
-		models.MatchInfo
-	}{
-		*m,
-	}
-
-	s.loadRenderOrError(w, data, "match.tmpl", "base.tmpl")
-
 }
 
 func (s *Site) loadRenderOrError(w http.ResponseWriter, data interface{},
