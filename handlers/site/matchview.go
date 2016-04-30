@@ -29,6 +29,14 @@ import (
 	"net/http"
 )
 
+type matchViewPlayerData struct {
+	PlayerID     uint
+	Alias        string
+	GeneralStats models.PlayerMatchStat
+	Weapons      map[string]models.WeaponStat
+	Items        map[string]models.ItemStat
+}
+
 func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
 	log.Printf("site match view handler")
 	id := mux.Vars(req)["id"]
@@ -41,9 +49,29 @@ func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	data := struct {
-		models.MatchInfo
+		// data of all players
+		Players []matchViewPlayerData
 	}{
-		*m,
+		make([]matchViewPlayerData, len(m.PlayerData)),
+	}
+
+	// repack to a format expected by the template
+	for i, pd := range m.PlayerData {
+		mvpd := matchViewPlayerData{
+			pd.Alias.PlayerID,
+			pd.Alias.Alias,
+			pd.Stats,
+			make(map[string]models.WeaponStat),
+			make(map[string]models.ItemStat),
+		}
+		for _, wd := range pd.Weapons {
+			mvpd.Weapons[wd.Type] = wd
+		}
+
+		for _, itd := range pd.Items {
+			mvpd.Items[itd.Type] = itd
+		}
+		data.Players[i] = mvpd
 	}
 
 	s.loadRenderOrError(w, data, "match.tmpl", "base.tmpl")

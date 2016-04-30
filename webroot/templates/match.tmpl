@@ -32,27 +32,69 @@
             <th>CS</th><!-- combat suit -->
         </tr>
     </thead>
-    {{range .PlayerData}}
+    {{range .Players}}
     <tr>
         <td>
-            {{if .Alias.PlayerID}}
-            <a href="players/{{- .Alias.PlayerID}}">
-                {{.Alias.Alias}}
+            {{if .PlayerID}}
+            <a href="players/{{- .PlayerID}}">
+                {{.Alias}}
             </a>
             {{else}}
-            {{.Alias.Alias}}
+            {{.Alias}}
             {{end}}
         </td>
         <!-- general stats -->
-        {{with .Stats}}
+        {{with .GeneralStats}}
         <td>{{.Kills}}</td>
         <td>{{.Deaths}}</td>
         <td>{{.Suicides}}</td>
         <td>{{.Score}}</td>
         {{end}}
         <!-- weapon stats -->
+        {{with .Weapons}}
+        {{template "weapon" .G}}
+        {{template "weapon" .MG}}
+        {{template "weapon" .SG}}
+        {{template "weapon" .PG}}
+        {{template "weapon" .GL}}
+        {{template "weapon" .RL}}
+        {{template "weapon" .LG}}
+        {{template "weapon" .RG}}
+        {{end}}
         <!-- item stats -->
+        {{with .Items}}
+        {{template "item" .GA}}
+        {{template "item" .YA}}
+        {{template "item" .RA}}
+        {{template "item" .MH}}
+        {{template "item" .Q}}
+        {{template "item" .CS}}
+        {{end}}
     </tr>
     {{end}}
 </table>
+{{end}}
+
+{{define "weapon"}}
+{{if or .Shots .Hits}}
+<td data-toggle="tooltip" data-placement="left"
+    data-container="body"
+    title="Shots: {{.Shots}} Hits: {{.Hits}}">{{.Hits}}</td>
+{{else}}
+<td>-</td>
+{{end}}
+{{end}}
+
+{{define "item"}}
+<td data-toggle="tooltip" data-placement="left"
+    data-container="body"
+    title="{{.Type}}">{{.Pickups}}</td>
+{{end}}
+
+{{define "head"}}
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
 {{end}}
