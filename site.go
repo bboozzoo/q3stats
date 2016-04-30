@@ -59,20 +59,26 @@ func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
 	log.Printf("site matches view handler")
 
 	matches := s.m.ListMatches()
-	mt := s.loadTemplates("matches.tmpl", "base.tmpl")
-
 	data := struct {
 		Matches []models.Match
 	}{
 		matches,
 	}
+
+	s.loadRenderOrError(w, data, "matches.tmpl", "base.tmpl")
+}
+
+func (s *Site) loadRenderOrError(w http.ResponseWriter, data interface{},
+	templates ...string) {
+
+	mt := s.loadTemplates("match.tmpl", "base.tmpl")
+	// got match info
 	err := renderTemplate(w, mt, data)
 	if err != nil {
 		log.Printf("failed to execute template: %s", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 }
 
 func (s *Site) loadTemplates(names ...string) *template.Template {
