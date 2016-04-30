@@ -44,7 +44,7 @@ func NewDB() *DB {
 }
 
 func (d *DB) Open() error {
-	p := C.dbpath
+	p := C.Dbpath
 	fi, _ := os.Stat(p)
 	if fi.IsDir() == true {
 		p = path.Join(p, defaultDbName)

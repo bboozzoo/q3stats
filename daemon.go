@@ -54,7 +54,7 @@ func setupHandlers(api *Api) {
 	api.SetupApiHandlers(apir)
 
 	// static files
-	staticroot := path.Join(C.webroot, "static")
+	staticroot := path.Join(C.Webroot, "static")
 	log.Printf("serving static files from %s", staticroot)
 
 	filehandler := http.FileServer(http.Dir(staticroot))
@@ -79,12 +79,11 @@ func daemonMain() error {
 
 	setupHandlers(api)
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", C.port), nil)
+	return http.ListenAndServe(fmt.Sprintf(":%d", C.Port), nil)
 }
 
 func runDaemon() error {
-
-	log.Printf("listen port: %d", C.port)
+	log.Printf("listen port: %d", C.Port)
 
 	return daemonMain()
 }
