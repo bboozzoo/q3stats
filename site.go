@@ -25,34 +25,49 @@ package main
 import (
 	"github.com/gorilla/mux"
 	"html/template"
+	"log"
 	"net/http"
 	"path"
 )
 
 type Site struct {
-	templates *template.Template
+	m    *MatchController
+	tdir string
 }
 
-var (
-	site Site
-)
+func NewSite(m *MatchController) *Site {
+	return &Site{
+		m:    m,
+		tdir: path.Join(C.Webroot, "templates"),
+	}
+}
 
-func SetupSiteHandlers(r *mux.Router) {
-	r.HandleFunc(uriIndex, siteHomeHandler).
+func (s *Site) SetupHandlers(r *mux.Router) {
+	r.HandleFunc(uriIndex, s.siteHomeHandler).
 		Methods("GET")
-
-	templatedir := path.Join(C.webroot, "templates")
-
-	pattern := templatedir + "/*.tmpl"
-	site.templates = template.Must(template.ParseGlob(pattern))
 }
 
-func siteHomeHandler(w http.ResponseWriter, req *http.Request) {
-	// homepage
+func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 
-	err := site.templates.ExecuteTemplate(w, "base", nil)
+	log.Printf("site home handler")
+
+	t := s.loadTemplate("base.tmpl")
+	err := t.Execute(w, nil)
 	if err != nil {
+		log.Printf("failed to execute template: %s", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (s *Site) loadTemplate(name string) *template.Template {
+	tpath := path.Join(s.tdir, "base.tmpl")
+	log.Printf("template path: %s", tpath)
+	// homepage
+	t, err := template.ParseFiles(tpath)
+	if err != nil {
+		log.Printf("failed to parse template: %s", err)
+		return nil
+	}
+	return t
 }

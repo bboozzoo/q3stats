@@ -45,10 +45,10 @@ var (
 		defaultListenPort)
 )
 
-func setupHandlers(api *Api) {
+func setupHandlers(api *Api, site *Site) {
 	r := mux.NewRouter()
 
-	SetupSiteHandlers(r)
+	site.SetupHandlers(r)
 
 	apir := r.PathPrefix(uriApi).Subrouter()
 	api.SetupApiHandlers(apir)
@@ -76,8 +76,9 @@ func daemonMain() error {
 
 	matchctrl := NewController(db)
 	api := NewApi(matchctrl)
+	site := NewSite(matchctrl)
 
-	setupHandlers(api)
+	setupHandlers(api, site)
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", C.Port), nil)
 }
