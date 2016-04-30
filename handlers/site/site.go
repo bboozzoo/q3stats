@@ -59,7 +59,7 @@ func (s *Site) SetupHandlers(r *mux.Router) {
 func (s *Site) loadRenderOrError(w http.ResponseWriter, data interface{},
 	templates ...string) {
 
-	mt := s.loadTemplates("match.tmpl", "base.tmpl")
+	mt := s.loadTemplates(templates...)
 	// got match info
 	err := renderTemplate(w, mt, data)
 	if err != nil {
