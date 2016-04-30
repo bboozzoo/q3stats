@@ -23,32 +23,47 @@
 package site
 
 import (
-	"github.com/bboozzoo/q3stats/controllers/match"
-	"github.com/gorilla/mux"
+	"html/template"
+	"log"
+	"net/http"
 	"path"
 )
 
-type Site struct {
-	m    *match.MatchController
-	tdir string
-	r    *mux.Router
-}
+func (s *Site) loadRenderOrError(w http.ResponseWriter, data interface{},
+	templates ...string) {
 
-func NewSite(m *match.MatchController, webroot string) *Site {
-	return &Site{
-		m:    m,
-		tdir: path.Join(webroot, "templates"),
+	mt := s.loadTemplates(templates...)
+	// got match info
+	err := renderTemplate(w, mt, data)
+	if err != nil {
+		log.Printf("failed to execute template: %s", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
 
-func (s *Site) SetupHandlers(r *mux.Router) {
-	r.HandleFunc("/", s.siteHomeHandler).
-		Methods("GET")
-	r.HandleFunc("/matches", s.matchesViewHandler).
-		Methods("GET").Name("matches")
-	r.HandleFunc("/matches/{id}", s.matchViewHandler).
-		Methods("GET")
+func (s *Site) loadTemplates(names ...string) *template.Template {
+	paths := make([]string, 0, len(names))
+	for _, n := range names {
+		tpath := path.Join(s.tdir, n)
+		paths = append(paths, tpath)
+	}
 
-	// keep track of router
-	s.r = r
+	log.Printf("loading templates: %s", paths)
+
+	t, err := template.ParseFiles(paths...)
+	if err != nil {
+		log.Printf("failed to parse templates: %s", err)
+		return nil
+	}
+	return t
+}
+
+func renderTemplate(w http.ResponseWriter, t *template.Template,
+	data interface{}) error {
+
+	// set header?
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	return t.ExecuteTemplate(w, "base", data)
 }
