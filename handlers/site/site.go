@@ -20,9 +20,10 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-package main
+package site
 
 import (
+	"github.com/bboozzoo/q3stats/controllers/match"
 	"github.com/bboozzoo/q3stats/models"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -32,29 +33,35 @@ import (
 )
 
 type Site struct {
-	m    *MatchController
+	m    *match.MatchController
 	tdir string
+	r    *mux.Router
 }
 
-func NewSite(m *MatchController) *Site {
+func NewSite(m *match.MatchController, webroot string) *Site {
 	return &Site{
 		m:    m,
-		tdir: path.Join(C.Webroot, "templates"),
+		tdir: path.Join(webroot, "templates"),
 	}
 }
 
 func (s *Site) SetupHandlers(r *mux.Router) {
-	r.HandleFunc(uriIndex, s.siteHomeHandler).
+	r.HandleFunc("/", s.siteHomeHandler).
 		Methods("GET")
 	r.HandleFunc("/matches", s.matchesViewHandler).
-		Methods("GET")
+		Methods("GET").Name("matches")
 	r.HandleFunc("/matches/{id}", s.matchViewHandler).
 		Methods("GET")
+
+	// keep track of router
+	s.r = r
 }
 
 func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 	log.Printf("site / handler")
-	http.Redirect(w, req, "/matches", http.StatusFound)
+
+	url, _ := s.r.Get("matches").URL()
+	http.Redirect(w, req, url.String(), http.StatusFound)
 }
 
 func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
