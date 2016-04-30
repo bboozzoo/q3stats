@@ -24,8 +24,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/handlers"
 	"github.com/bboozzoo/q3stats/controllers/match"
+	"github.com/bboozzoo/q3stats/handlers"
+	"github.com/bboozzoo/q3stats/handlers/api"
+	"github.com/bboozzoo/q3stats/handlers/site"
+	ghandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -38,7 +41,7 @@ const (
 
 	uriApi    = "/api"
 	uriStatic = "/static/"
-	uriIndex  = "/"
+	uriSite   = "/site/"
 )
 
 var (
@@ -46,13 +49,23 @@ var (
 		defaultListenPort)
 )
 
-func setupHandlers(api *Api, site *Site) {
+type handlerRouting struct {
+	prefix  string
+	handler handlers.Handler
+}
+
+func setupHandlers(handlers []handlerRouting) {
 	r := mux.NewRouter()
 
-	site.SetupHandlers(r)
+	for _, h := range handlers {
+		subr := r.PathPrefix(h.prefix).Subrouter()
+		h.handler.SetupHandlers(subr)
+	}
 
-	apir := r.PathPrefix(uriApi).Subrouter()
-	api.SetupApiHandlers(apir)
+	// redirect to site by default
+	r.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		http.Redirect(w, req, uriSite, http.StatusFound)
+	})
 
 	// static files
 	staticroot := path.Join(C.Webroot, "static")
@@ -63,7 +76,7 @@ func setupHandlers(api *Api, site *Site) {
 		Handler(http.StripPrefix(uriStatic, filehandler))
 
 	// setup logging for all handlers
-	lr := handlers.LoggingHandler(os.Stdout, r)
+	lr := ghandlers.LoggingHandler(os.Stdout, r)
 
 	http.Handle("/", lr)
 }
@@ -75,11 +88,15 @@ func daemonMain() error {
 	}
 	defer db.Close()
 
-	api := NewApi(matchctrl)
-	site := NewSite(matchctrl)
 	matchctrl := match.NewController(db)
+	api := api.NewApi(matchctrl)
+	site := site.NewSite(matchctrl, C.Webroot)
 
-	setupHandlers(api, site)
+	hrouting := []handlerRouting{
+		{uriApi, api},
+		{uriSite, site},
+	}
+	setupHandlers(hrouting)
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", C.Port), nil)
 }
