@@ -74,17 +74,36 @@ func makePlayerMatchStat(stats []loader.RawStat) models.PlayerMatchStat {
 func (m *MatchController) AddFromData(data []byte) (string, error) {
 	rmatch, err := loader.LoadMatchData(data)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to add match")
+		return "", errors.Wrap(err, "failed to load match data")
 	}
 
+	if m.isMatchIndexed(rmatch) == true {
+		return "", fmt.Errorf("already present")
+	}
+
+	if err := m.storeMatch(rmatch); err != nil {
+		return "", errors.Wrap(err, "failed to store match data")
+	}
+
+	return rmatch.DataHash, nil
+}
+
+func (m *MatchController) isMatchIndexed(rmatch *loader.RawMatch) bool {
 	db := m.db.Conn()
 
 	var mfound models.Match
-	db.Where("data_hash = ?", rmatch.DataHash).Find(&mfound)
-	if mfound.ID != 0 {
+	notfound := db.Where("data_hash = ?", rmatch.DataHash).
+		Find(&mfound).
+		RecordNotFound()
+	if notfound == false {
 		log.Printf("record found: %+v", mfound)
-		return "", fmt.Errorf("already present")
+		return true
 	}
+
+	return false
+}
+
+func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 
 	match := models.Match{
 		DataHash: rmatch.DataHash,
@@ -94,25 +113,27 @@ func (m *MatchController) AddFromData(data []byte) (string, error) {
 		Type:     rmatch.Type,
 	}
 
-	db.Create(&match)
+	tx := m.db.Conn().Begin()
+
+	tx.Create(&match)
 
 	log.Printf("got match: %+v", match)
 
 	for _, player := range rmatch.Players {
 		var alias models.Alias
-		db.FirstOrCreate(&alias, models.Alias{Alias: player.Name})
+		tx.FirstOrCreate(&alias, models.Alias{Alias: player.Name})
 		log.Printf("got alias: %+v", alias)
 
 		pms := makePlayerMatchStat(player.Stats)
 		pms.MatchID = match.ID
 		pms.AliasID = alias.ID
 
-		db.Create(&pms)
+		tx.Create(&pms)
 
 		log.Printf("created PMS: %+v", pms)
 
 		for _, wep := range player.Weapons {
-			db.Create(&models.WeaponStat{
+			tx.Create(&models.WeaponStat{
 				Type:              wep.Name,
 				Hits:              wep.Hits,
 				Shots:             wep.Shots,
@@ -127,7 +148,7 @@ func (m *MatchController) AddFromData(data []byte) (string, error) {
 		itms = append(itms, player.Powerups...)
 
 		for _, itm := range itms {
-			db.Create(&models.ItemStat{
+			tx.Create(&models.ItemStat{
 				Type:              itm.Name,
 				Pickups:           itm.Pickups,
 				PlayerMatchStatID: pms.ID,
@@ -135,5 +156,8 @@ func (m *MatchController) AddFromData(data []byte) (string, error) {
 			})
 		}
 	}
-	return rmatch.DataHash, nil
+
+	tx.Commit()
+
+	return nil
 }
