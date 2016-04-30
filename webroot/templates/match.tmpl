@@ -79,7 +79,9 @@
 {{if or .Shots .Hits}}
 <td data-toggle="tooltip" data-placement="left"
     data-container="body"
-    title="Shots: {{.Shots}} Hits: {{.Hits}}">{{.Hits}}</td>
+    title="Shots: {{.Shots}} Hits: {{.Hits}} Kills: {{.Kills}}">
+    {{.Accuracy}}%
+</td>
 {{else}}
 <td>-</td>
 {{end}}

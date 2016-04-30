@@ -29,11 +29,16 @@ import (
 	"net/http"
 )
 
+type matchViewWeaponStat struct {
+	models.WeaponStat
+	Accuracy uint
+}
+
 type matchViewPlayerData struct {
 	PlayerID     uint
 	Alias        string
 	GeneralStats models.PlayerMatchStat
-	Weapons      map[string]models.WeaponStat
+	Weapons      map[string]matchViewWeaponStat
 	Items        map[string]models.ItemStat
 }
 
@@ -61,11 +66,18 @@ func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
 			pd.Alias.PlayerID,
 			pd.Alias.Alias,
 			pd.Stats,
-			make(map[string]models.WeaponStat),
+			make(map[string]matchViewWeaponStat),
 			make(map[string]models.ItemStat),
 		}
 		for _, wd := range pd.Weapons {
-			mvpd.Weapons[wd.Type] = wd
+			var acc uint = 0
+			if wd.Shots != 0 {
+				acc = (100 * wd.Hits) / wd.Shots
+			}
+			mvpd.Weapons[wd.Type] = matchViewWeaponStat{
+				wd,
+				acc,
+			}
 		}
 
 		for _, itd := range pd.Items {
@@ -75,5 +87,4 @@ func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.loadRenderOrError(w, data, "match.tmpl", "base.tmpl")
-
 }
