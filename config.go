@@ -23,40 +23,38 @@
 package main
 
 import (
-	"github.com/spf13/viper"
+	"github.com/pkg/errors"
+	"gopkg.in/gcfg.v1"
+	"log"
 )
 
 type Config struct {
+
 	// path to webroot
-	webroot string
+	Webroot string
 	// listen port
-	port int
+	Port int
 	// path to DB
-	dbpath string
+	Dbpath string
 }
 
 var (
 	C Config
 )
 
-func LoadConfig() error {
-	viper.SetConfigName("config")
-	viper.AddConfigPath("/etc/q3stats/")
-	viper.AddConfigPath("$HOME/.q3stats/")
-	viper.AddConfigPath(".")
+func LoadConfig(path string) error {
 
-	viper.SetDefault("webroot", "./webroot")
-	viper.SetDefault("port", defaultListenPort)
-	viper.SetDefault("dbpath", ".")
-	err := viper.ReadInConfig()
+	cfg := struct {
+		Config Config
+	}{}
+
+	err := gcfg.ReadFileInto(&cfg, path)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to load configuration")
 	}
 
-	C = Config{
-		viper.GetString("webroot"),
-		viper.GetInt("port"),
-		viper.GetString("dbpath"),
-	}
+	log.Printf("configuration: %+v", cfg.Config)
+	C = cfg.Config
+
 	return nil
 }
