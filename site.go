@@ -51,8 +51,10 @@ func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 
 	log.Printf("site home handler")
 
-	t := s.loadTemplate("base.tmpl")
-	err := t.Execute(w, nil)
+	matches := s.m.ListMatches()
+	mt := s.loadTemplates("matches.tmpl", "base.tmpl")
+
+	err := renderTemplate(w, mt, matches)
 	if err != nil {
 		log.Printf("failed to execute template: %s", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -60,14 +62,28 @@ func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (s *Site) loadTemplate(name string) *template.Template {
-	tpath := path.Join(s.tdir, "base.tmpl")
-	log.Printf("template path: %s", tpath)
-	// homepage
-	t, err := template.ParseFiles(tpath)
+func (s *Site) loadTemplates(names ...string) *template.Template {
+	paths := make([]string, 0, len(names))
+	for _, n := range names {
+		tpath := path.Join(s.tdir, n)
+		paths = append(paths, tpath)
+	}
+
+	log.Printf("loading templates: %s", paths)
+
+	t, err := template.ParseFiles(paths...)
 	if err != nil {
-		log.Printf("failed to parse template: %s", err)
+		log.Printf("failed to parse templates: %s", err)
 		return nil
 	}
 	return t
+}
+
+func renderTemplate(w http.ResponseWriter, t *template.Template,
+	data interface{}) error {
+
+	// set header?
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	return t.ExecuteTemplate(w, "base", data)
 }

@@ -1,0 +1,21 @@
+{{define "content"}}
+<table class="table">
+    {{if .Matches}}
+    <tr>
+        <th>When<th>
+        <th>Map</th>
+        <th>Duration</th>
+        <th>Mode</th>
+    </tr>
+    {{range .Matches}}
+    <tr>
+        <td>{{.DateTime}}</td>
+        <td>{{.Map}}</td>
+        <td>{{.Duration}}</td>
+        <td>{{.Type}}</td>
+    {{end}}
+    {{else}}
+    No matches to show
+    {{end}}
+</table>
+{{end}}

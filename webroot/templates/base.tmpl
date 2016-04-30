@@ -1,3 +1,4 @@
+{{define "base"}}
 <!DOCTYPE html>
 
 <html lang="en">
@@ -19,16 +20,15 @@
                 integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
                 crossorigin="anonymous">
         </script>
-        {{ .Head }}
+        {{ template "head" }}
     </head>
     <body>
         <div class="container">
-            <div class="page-header">
-                <h1>{{ .Title }}</h1>
-            </div>
-            <div class="container">
-                {{ .Content }}
-            </div>
+                {{ template "content" }}
         </div>
     </body>
 </html>
+{{end}}
+
+{{define "head"}}{{end}}
+{{define "content"}}{{end}}
