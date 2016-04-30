@@ -51,6 +51,12 @@ func main() {
 	app.Name = "q3stats"
 	app.HideHelp = true
 	app.HideVersion = true
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "config, c",
+			Usage: "Path to configuration file",
+		},
+	}
 	app.Commands = []cli.Command{
 		{
 			Name:   "import",
