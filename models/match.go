@@ -123,3 +123,19 @@ type ItemStat struct {
 	// player's match stats this item is part of
 	PlayerMatchStatID uint
 }
+
+// aggregate player data from particular match
+type PlayerDataItem struct {
+	// use Alias to access PlayerID
+	Alias   Alias
+	Weapons []WeaponStat
+	Items   []ItemStat
+	Stats   PlayerMatchStat
+}
+
+// aggregate match info
+type MatchInfo struct {
+	Map string
+	// stats of all players who attended this match
+	PlayerData []PlayerDataItem
+}
