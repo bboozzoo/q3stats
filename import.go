@@ -24,6 +24,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/bboozzoo/q3stats/handlers/api"
 	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
@@ -51,7 +52,7 @@ func readMatchFile(srcfile string) (*os.File, error) {
 func sendMatchData(src io.Reader, addr string) (MatchHash, error) {
 	cl := http.Client{}
 
-	url := fmt.Sprintf("http://%s%s%s", addr, uriApi, uriApiAddMatch)
+	url := fmt.Sprintf("http://%s%s%s", addr, uriApi, api.UriAddMatch)
 
 	log.Printf("posting to URL: %s", url)
 
