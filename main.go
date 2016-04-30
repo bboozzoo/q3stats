@@ -43,6 +43,9 @@ func doImport(c *cli.Context) {
 
 func doDaemon(c *cli.Context) {
 	log.Printf("starting daemon")
+	if err := LoadConfig(c.GlobalString("config")); err != nil {
+		log.Fatal(err)
+	}
 	log.Fatal(runDaemon())
 }
 

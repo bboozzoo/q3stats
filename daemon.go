@@ -26,7 +26,6 @@ import (
 	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	"log"
 	"net/http"
 	"os"
@@ -84,10 +83,6 @@ func daemonMain() error {
 }
 
 func runDaemon() error {
-	err := LoadConfig()
-	if err != nil {
-		return errors.Wrap(err, "daemon startup failed")
-	}
 
 	log.Printf("listen port: %d", C.port)
 
