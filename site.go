@@ -23,6 +23,7 @@
 package main
 
 import (
+	"github.com/bboozzoo/q3stats/models"
 	"github.com/gorilla/mux"
 	"html/template"
 	"log"
@@ -54,7 +55,12 @@ func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 	matches := s.m.ListMatches()
 	mt := s.loadTemplates("matches.tmpl", "base.tmpl")
 
-	err := renderTemplate(w, mt, matches)
+	data := struct {
+		Matches []models.Match
+	}{
+		matches,
+	}
+	err := renderTemplate(w, mt, data)
 	if err != nil {
 		log.Printf("failed to execute template: %s", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
