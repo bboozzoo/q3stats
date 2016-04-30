@@ -25,6 +25,7 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/handlers"
+	"github.com/bboozzoo/q3stats/controllers/match"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -74,9 +75,9 @@ func daemonMain() error {
 	}
 	defer db.Close()
 
-	matchctrl := NewController(db)
 	api := NewApi(matchctrl)
 	site := NewSite(matchctrl)
+	matchctrl := match.NewController(db)
 
 	setupHandlers(api, site)
 
