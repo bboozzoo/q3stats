@@ -20,9 +20,10 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-package main
+package api
 
 import (
+	"github.com/bboozzoo/q3stats/controllers/match"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
@@ -30,14 +31,14 @@ import (
 )
 
 const (
-	uriApiAddMatch = "/matches/new"
+	UriAddMatch = "/matches/new"
 )
 
 type Api struct {
-	mc *MatchController
+	mc *match.MatchController
 }
 
-func NewApi(mc *MatchController) *Api {
+func NewApi(mc *match.MatchController) *Api {
 	return &Api{mc}
 }
 
@@ -71,8 +72,8 @@ func (a *Api) apiAddMatch(w http.ResponseWriter, req *http.Request) {
 	w.Write([]byte(hash))
 }
 
-func (a *Api) SetupApiHandlers(r *mux.Router) {
+func (a *Api) SetupHandlers(r *mux.Router) {
 	// matches only come through POST
-	r.HandleFunc(uriApiAddMatch, a.apiAddMatch).
+	r.HandleFunc(UriAddMatch, a.apiAddMatch).
 		Methods("POST")
 }
