@@ -1,0 +1,58 @@
+{{define "content"}}
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th colspan="4">General</th>
+            <th colspan="8">Weapons</th>
+            <th colspan="6">Items</th>
+        </tr>
+        <tr>
+            <th>Player</th>
+            <!-- general -->
+            <th>Kills</th>
+            <th>Deaths</th>
+            <th>Suicides</th>
+            <th>Score</th>
+            <!-- weapons -->
+            <th>G</th><!-- gauntlet -->
+            <th>MG</th><!-- machinegun -->
+            <th>SG</th><!-- shotgun -->
+            <th>PG</th><!-- plasmagun -->
+            <th>GL</th><!-- grenade launcher -->
+            <th>RL</th><!-- rocket launcher -->
+            <th>LG</th><!-- lightning gun -->
+            <th>RG</th><!-- railgun -->
+            <!-- items -->
+            <th>GA</th><!-- green armor -->
+            <th>YA</th><!-- yellow armor -->
+            <th>RA</th><!-- red armor -->
+            <th>MH</th><!-- mega health -->
+            <th>Q</th><!-- quad damage -->
+            <th>CS</th><!-- combat suit -->
+        </tr>
+    </thead>
+    {{range .PlayerData}}
+    <tr>
+        <td>
+            {{if .Alias.PlayerID}}
+            <a href="players/{{- .Alias.PlayerID}}">
+                {{.Alias.Alias}}
+            </a>
+            {{else}}
+            {{.Alias.Alias}}
+            {{end}}
+        </td>
+        <!-- general stats -->
+        {{with .Stats}}
+        <td>{{.Kills}}</td>
+        <td>{{.Deaths}}</td>
+        <td>{{.Suicides}}</td>
+        <td>{{.Score}}</td>
+        {{end}}
+        <!-- weapon stats -->
+        <!-- item stats -->
+    </tr>
+    {{end}}
+</table>
+{{end}}
