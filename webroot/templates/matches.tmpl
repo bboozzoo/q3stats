@@ -9,7 +9,11 @@
     </tr>
     {{range .Matches}}
     <tr>
-        <td>{{.DateTime}}</td>
+        <td>
+            <a href="matches/{{- .DataHash}}">
+                {{.DateTime}}
+            </a>
+        </td>
         <td>{{.Map}}</td>
         <td>{{.Duration}}</td>
         <td>{{.Type}}</td>
