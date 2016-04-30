@@ -48,6 +48,8 @@ func (s *Site) SetupHandlers(r *mux.Router) {
 		Methods("GET")
 	r.HandleFunc("/matches", s.matchesViewHandler).
 		Methods("GET")
+	r.HandleFunc("/matches/{id}", s.matchViewHandler).
+		Methods("GET")
 }
 
 func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
@@ -66,6 +68,27 @@ func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.loadRenderOrError(w, data, "matches.tmpl", "base.tmpl")
+}
+
+func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
+	log.Printf("site match view handler")
+	id := mux.Vars(req)["id"]
+
+	log.Printf("match ID: %s", id)
+
+	m := s.m.GetMatchInfo(id)
+	if m == nil {
+		http.Error(w, "match not found", http.StatusNotFound)
+	}
+
+	data := struct {
+		models.MatchInfo
+	}{
+		*m,
+	}
+
+	s.loadRenderOrError(w, data, "match.tmpl", "base.tmpl")
+
 }
 
 func (s *Site) loadRenderOrError(w http.ResponseWriter, data interface{},
