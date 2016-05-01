@@ -46,3 +46,7 @@ type Match struct {
 func (m Match) DurationDesc() string {
 	return (time.Duration(m.Duration) * time.Second).String()
 }
+
+func (m Match) NiceDateTime() string {
+	return m.DateTime.Format("02-01-2006 15:04:05")
+}
