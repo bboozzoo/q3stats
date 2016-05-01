@@ -42,3 +42,7 @@ type Match struct {
 	// type of match, 1v1, FFA, CTF
 	Type string
 }
+
+func (m Match) DurationDesc() string {
+	return (time.Duration(m.Duration) * time.Second).String()
+}
