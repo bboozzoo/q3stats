@@ -46,9 +46,9 @@ type RawItem struct {
 
 type RawWeapon struct {
 	Name  string `xml:"name,attr"`
-	Hits  uint    `xml:"hits,attr"`
-	Shots uint    `xml:"shots,attr"`
-	Kills uint    `xml:"kills,attr"`
+	Hits  uint   `xml:"hits,attr"`
+	Shots uint   `xml:"shots,attr"`
+	Kills uint   `xml:"kills,attr"`
 }
 
 type RawPlayer struct {
