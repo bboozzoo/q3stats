@@ -13,7 +13,7 @@
 </div>
 
 <div class="container">
-    <table class="table">
+    <table class="table tablesorter" id="matchresults">
         <thead>
             <tr>
                 <th></th>
@@ -21,13 +21,13 @@
                 <th colspan="8">Weapons</th>
                 <th colspan="6">Items</th>
             </tr>
-            <tr>
+            <tr id="statsheader">
                 <th>Player</th>
                 <!-- general -->
                 <th>Kills</th>
                 <th>Deaths</th>
                 <th>Suicides</th>
-                <th>Score</th>
+                <th id="score">Score</th>
                 <!-- weapons -->
                 {{with .Desc.ItemMap}}
                 {{template "item-desc" .G}}
@@ -134,9 +134,26 @@
 {{end}}
 
 {{define "head"}}
+<link rel="stylesheet" href="/static/local.css">
+<script src="/static/scripts/jquery.tablesorter.js"></script>
+
 <script>
 $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-    })
+     $('[data-toggle="tooltip"]').tooltip();
+ });
+
+ $(document).ready(function() {
+     /* find which column to sort on */
+     var o = $("thead > tr#statsheader > th")
+     var sortidx = 0
+     for (var i = 0; i < o.length; i++) {
+         if (o[i].id == "score") {
+             sortidx = i;
+             break;
+         }
+     }
+     /* sort on 4th columy by default */
+     $("#matchresults").tablesorter({ sortList: [[sortidx]]});
+ });
 </script>
 {{end}}
