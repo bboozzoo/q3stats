@@ -100,9 +100,15 @@
 {{end}}
 
 {{define "item"}}
-<td data-toggle="tooltip" data-placement="left"
+<td
+    {{if .HasDuration}}
+    data-toggle="tooltip" data-placement="left"
     data-container="body"
-    title="{{.Type}}">{{.Pickups}}</td>
+    title="{{.DurationDesc}}"
+    {{end}}
+    >
+    {{.Pickups}}
+</td>
 {{end}}
 
 {{define "head"}}
