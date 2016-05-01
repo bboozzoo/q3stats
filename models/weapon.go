@@ -42,3 +42,11 @@ type WeaponStat struct {
 	// player's match stats this weapon is part of
 	PlayerMatchStatID uint
 }
+
+func (w WeaponStat) Accuracy() uint {
+	var acc uint = 0
+	if w.Shots != 0 {
+		acc = (100 * w.Hits) / w.Shots
+	}
+	return acc
+}
