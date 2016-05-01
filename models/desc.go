@@ -62,3 +62,12 @@ var (
 func GetItemDesc() *DescData {
 	return descData
 }
+
+// returns true if effects of given item are time bounded
+func ItemHasDuration(itype string) bool {
+	switch itype {
+	case "Q", "BS":
+		return true
+	}
+	return false
+}
