@@ -49,5 +49,5 @@ func (i ItemStat) HasDuration() bool {
 }
 
 func (i ItemStat) DurationDesc() string {
-	return (i.Time * time.Second).String()
+	return (i.Time).String()
 }
