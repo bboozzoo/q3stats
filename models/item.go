@@ -47,3 +47,7 @@ type ItemStat struct {
 func (i ItemStat) HasDuration() bool {
 	return ItemHasDuration(i.Type)
 }
+
+func (i ItemStat) DurationDesc() string {
+	return (i.Time * time.Second).String()
+}
