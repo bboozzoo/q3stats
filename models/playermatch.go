@@ -24,21 +24,34 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
-// Match data
-type Match struct {
+// Overall statistics achieved by player during a match
+type PlayerMatchStat struct {
 	gorm.Model
 
-	// match data hash
-	DataHash string `sql:"not null,unique"`
-	// when the match was played
-	DateTime time.Time
-	// duration in seconds
-	Duration uint
-	// map, ex. q3dm17
-	Map string
-	// type of match, 1v1, FFA, CTF
-	Type string
+	// score
+	Score int
+	// kills count
+	Kills int
+	// number of deaths
+	Deaths int
+	// self-kills count
+	Suicides int
+	// net (kills - deaths - suicides)
+	Net int
+	// damage given in HP
+	DamageGiven int
+	// damage taken in HP
+	DamageTaken int
+	// total health taken in HP
+	HealthTotal int
+	// total armor points
+	ArmorTotal int
+
+	// alias used
+	AliasID uint
+
+	// match
+	MatchID uint
 }

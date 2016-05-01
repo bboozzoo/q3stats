@@ -22,23 +22,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package models
 
-import (
-	"github.com/jinzhu/gorm"
-	"time"
-)
+// aggregate player data from particular match
+type PlayerDataItem struct {
+	// use Alias to access PlayerID
+	Alias   Alias
+	Weapons []WeaponStat
+	Items   []ItemStat
+	Stats   PlayerMatchStat
+}
 
-// Match data
-type Match struct {
-	gorm.Model
-
-	// match data hash
-	DataHash string `sql:"not null,unique"`
-	// when the match was played
-	DateTime time.Time
-	// duration in seconds
-	Duration uint
-	// map, ex. q3dm17
+// aggregate match info
+type MatchInfo struct {
 	Map string
-	// type of match, 1v1, FFA, CTF
-	Type string
+	// stats of all players who attended this match
+	PlayerData []PlayerDataItem
 }

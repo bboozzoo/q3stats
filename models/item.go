@@ -27,18 +27,17 @@ import (
 	"time"
 )
 
-// Match data
-type Match struct {
+// Per item statistics achieved during the match
+type ItemStat struct {
 	gorm.Model
 
-	// match data hash
-	DataHash string `sql:"not null,unique"`
-	// when the match was played
-	DateTime time.Time
-	// duration in seconds
-	Duration uint
-	// map, ex. q3dm17
-	Map string
-	// type of match, 1v1, FFA, CTF
+	// item type (RA, YA, GA, MH)
 	Type string
+	// pickups count
+	Pickups uint
+	// time held (when applicable, ex. for quad)
+	Time time.Duration
+
+	// player's match stats this item is part of
+	PlayerMatchStatID uint
 }

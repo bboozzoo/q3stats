@@ -24,21 +24,15 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
-// Match data
-type Match struct {
+// Alias is a nickname used during the match.
+type Alias struct {
 	gorm.Model
 
-	// match data hash
-	DataHash string `sql:"not null,unique"`
-	// when the match was played
-	DateTime time.Time
-	// duration in seconds
-	Duration uint
-	// map, ex. q3dm17
-	Map string
-	// type of match, 1v1, FFA, CTF
-	Type string
+	// alias, ex. 'honeybunny', 'Klesk'
+	Alias string
+
+	// player claiming this alias
+	PlayerID uint
 }

@@ -24,21 +24,12 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
-// Match data
-type Match struct {
+// Registered players
+type Player struct {
 	gorm.Model
 
-	// match data hash
-	DataHash string `sql:"not null,unique"`
-	// when the match was played
-	DateTime time.Time
-	// duration in seconds
-	Duration uint
-	// map, ex. q3dm17
-	Map string
-	// type of match, 1v1, FFA, CTF
-	Type string
+	// user defined name, ex. joe
+	Name string
 }

@@ -24,21 +24,21 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
-// Match data
-type Match struct {
+// Per weapon statistics achieved during the match
+type WeaponStat struct {
 	gorm.Model
 
-	// match data hash
-	DataHash string `sql:"not null,unique"`
-	// when the match was played
-	DateTime time.Time
-	// duration in seconds
-	Duration uint
-	// map, ex. q3dm17
-	Map string
-	// type of match, 1v1, FFA, CTF
+	// weapon type
 	Type string
+	// number of hits
+	Hits uint
+	// number of shots
+	Shots uint
+	// number of kills
+	Kills uint
+
+	// player's match stats this weapon is part of
+	PlayerMatchStatID uint
 }
