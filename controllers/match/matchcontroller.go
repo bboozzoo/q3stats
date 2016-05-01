@@ -108,11 +108,17 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 
 	match := models.Match{
 		DataHash: rmatch.DataHash,
-		DateTime: time.Now(),
 		Duration: rmatch.Duration,
 		Map:      rmatch.Map,
 		Type:     rmatch.Type,
 	}
+
+	tm, err := time.Parse("2006/01/02 15:04:05",
+		rmatch.Datetime)
+	if err != nil {
+		return errors.Wrap(err, "failed to parse time")
+	}
+	match.DateTime = tm
 
 	tx := m.db.Conn().Begin()
 
