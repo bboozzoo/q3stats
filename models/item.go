@@ -41,3 +41,9 @@ type ItemStat struct {
 	// player's match stats this item is part of
 	PlayerMatchStatID uint
 }
+
+// true if effect of given item is time bounded, such as Quad Damage,
+// Regeneration, Battle Suit
+func (i ItemStat) HasDuration() bool {
+	return ItemHasDuration(i.Type)
+}
