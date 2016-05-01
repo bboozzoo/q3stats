@@ -22,6 +22,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package models
 
+const (
+	// for sake of simplicity define item types using names
+	// matching data coming from CPMA Q3 server
+	RedArmor     = "RA"
+	YellowArmor  = "YA"
+	GreenArmor   = "GA"
+	MegaHealth   = "MH"
+	QuadDamage   = "Quad"
+	BattleSuit   = "BattleSuit"
+	Regeneration = "Regen"
+	Haste        = "Haste"
+	Flight       = "Flight"
+	Invisibility = "Invis"
+
+	// weapons
+	Gauntlet        = "G"
+	Machinegun      = "MG"
+	Shotgun         = "SG"
+	Plasmagun       = "PG"
+	GrenadeLauncher = "GL"
+	RocketLauncher  = "RL"
+	Railgun         = "RG"
+	BFG             = "BFG"
+	LightningGun    = "LG"
+)
+
 // item (such as rocket launcher, railgun, red armor) descriptor
 type ItemDesc struct {
 	// short name, ex. RA (red armor), RL (rocket launcher)
@@ -39,21 +65,28 @@ type DescData struct {
 var (
 	descData = &DescData{
 		ItemMap: map[string]ItemDesc{
-			"G":   ItemDesc{"G", "Gauntlet"},
-			"MG":  ItemDesc{"MG", "Machine Gun"},
-			"SG":  ItemDesc{"SG", "Shotgun"},
-			"PG":  ItemDesc{"PG", "Plasma Gun"},
-			"GL":  ItemDesc{"GL", "Grenade Launcher"},
-			"RL":  ItemDesc{"RL", "Rocket Launcher"},
-			"RG":  ItemDesc{"RG", "Railgun"},
-			"LG":  ItemDesc{"LG", "Lightning Gun"},
-			"BFG": ItemDesc{"BFG", "BFG"},
-			"Q":   ItemDesc{"Q", "Quad Damage"},
-			"MH":  ItemDesc{"MH", "Mega Health"},
-			"BS":  ItemDesc{"BS", "Battle Suit"},
-			"RA":  ItemDesc{"RA", "Red Armor"},
-			"YA":  ItemDesc{"YA", "Yellow Armor"},
-			"GA":  ItemDesc{"GA", "Green Armor"},
+			// weapons
+			Gauntlet:        ItemDesc{"G", "Gauntlet"},
+			Machinegun:      ItemDesc{"MG", "Machine Gun"},
+			Shotgun:         ItemDesc{"SG", "Shotgun"},
+			Plasmagun:       ItemDesc{"PG", "Plasma Gun"},
+			GrenadeLauncher: ItemDesc{"GL", "Grenade Launcher"},
+			RocketLauncher:  ItemDesc{"RL", "Rocket Launcher"},
+			Railgun:         ItemDesc{"RG", "Railgun"},
+			LightningGun:    ItemDesc{"LG", "Lightning Gun"},
+			BFG:             ItemDesc{"BFG", "BFG"},
+
+			// items
+			RedArmor:     ItemDesc{"RA", "Red Armor"},
+			YellowArmor:  ItemDesc{"YA", "Yellow Armor"},
+			GreenArmor:   ItemDesc{"GA", "Green Armor"},
+			MegaHealth:   ItemDesc{"MH", "Mega Health"},
+			QuadDamage:   ItemDesc{"Q", "Quad Damage"},
+			BattleSuit:   ItemDesc{"BS", "Battle Suit"},
+			Regeneration: ItemDesc{"REG", "Regeneration"},
+			Haste:        ItemDesc{"HS", "Haste"},
+			Flight:       ItemDesc{"FL", "Flight"},
+			Invisibility: ItemDesc{"INV", "Invisibility"},
 		},
 	}
 )
