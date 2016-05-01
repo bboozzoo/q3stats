@@ -1,82 +1,95 @@
 {{define "content"}}
 <h3>Match Statistics</h3>
 
-<table class="table">
-    <thead>
+<div class="container">
+    <div class="row">
+        <div class="col-md-1">Map</div>
+        <div class="col-md-1">{{.Match.Map}}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">Duration</div>
+        <div class="col-md-1">{{ .Match.DurationDesc}}</div>
+    </div>
+</div>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th colspan="4">General</th>
+                <th colspan="8">Weapons</th>
+                <th colspan="6">Items</th>
+            </tr>
+            <tr>
+                <th>Player</th>
+                <!-- general -->
+                <th>Kills</th>
+                <th>Deaths</th>
+                <th>Suicides</th>
+                <th>Score</th>
+                <!-- weapons -->
+                {{with .Desc.ItemMap}}
+                {{template "item-desc" .G}}
+                {{template "item-desc" .MG}}
+                {{template "item-desc" .SG}}
+                {{template "item-desc" .PG}}
+                {{template "item-desc" .GL}}
+                {{template "item-desc" .RL}}
+                {{template "item-desc" .LG}}
+                {{template "item-desc" .RG}}
+                <!-- items -->
+                {{template "item-desc" .GA}}
+                {{template "item-desc" .YA}}
+                {{template "item-desc" .RA}}
+                {{template "item-desc" .MH}}
+                {{template "item-desc" .Q}}
+                {{template "item-desc" .BS}}
+                {{end}}
+            </tr>
+        </thead>
+        {{range .Players}}
         <tr>
-            <th></th>
-            <th colspan="4">General</th>
-            <th colspan="8">Weapons</th>
-            <th colspan="6">Items</th>
-        </tr>
-        <tr>
-            <th>Player</th>
-            <!-- general -->
-            <th>Kills</th>
-            <th>Deaths</th>
-            <th>Suicides</th>
-            <th>Score</th>
-            <!-- weapons -->
-            {{with .Desc.ItemMap}}
-            {{template "item-desc" .G}}
-            {{template "item-desc" .MG}}
-            {{template "item-desc" .SG}}
-            {{template "item-desc" .PG}}
-            {{template "item-desc" .GL}}
-            {{template "item-desc" .RL}}
-            {{template "item-desc" .LG}}
-            {{template "item-desc" .RG}}
-            <!-- items -->
-            {{template "item-desc" .GA}}
-            {{template "item-desc" .YA}}
-            {{template "item-desc" .RA}}
-            {{template "item-desc" .MH}}
-            {{template "item-desc" .Q}}
-            {{template "item-desc" .BS}}
-            {{end}}
-        </tr>
-    </thead>
-    {{range .Players}}
-    <tr>
-        <td>
-            {{if .PlayerID}}
-            <a href="players/{{- .PlayerID}}">
+            <td>
+                {{if .PlayerID}}
+                <a href="players/{{- .PlayerID}}">
+                    {{.Alias}}
+                </a>
+                {{else}}
                 {{.Alias}}
-            </a>
-            {{else}}
-            {{.Alias}}
+                {{end}}
+            </td>
+            <!-- general stats -->
+            {{with .GeneralStats}}
+            <td>{{.Kills}}</td>
+            <td>{{.Deaths}}</td>
+            <td>{{.Suicides}}</td>
+            <td>{{.Score}}</td>
             {{end}}
-        </td>
-        <!-- general stats -->
-        {{with .GeneralStats}}
-        <td>{{.Kills}}</td>
-        <td>{{.Deaths}}</td>
-        <td>{{.Suicides}}</td>
-        <td>{{.Score}}</td>
+            <!-- weapon stats -->
+            {{with .Weapons}}
+            {{template "weapon" .G}}
+            {{template "weapon" .MG}}
+            {{template "weapon" .SG}}
+            {{template "weapon" .PG}}
+            {{template "weapon" .GL}}
+            {{template "weapon" .RL}}
+            {{template "weapon" .LG}}
+            {{template "weapon" .RG}}
+            {{end}}
+            <!-- item stats -->
+            {{with .Items}}
+            {{template "item" .GA}}
+            {{template "item" .YA}}
+            {{template "item" .RA}}
+            {{template "item" .MH}}
+            {{template "item" .Q}}
+            {{template "item" .CS}}
+            {{end}}
+        </tr>
         {{end}}
-        <!-- weapon stats -->
-        {{with .Weapons}}
-        {{template "weapon" .G}}
-        {{template "weapon" .MG}}
-        {{template "weapon" .SG}}
-        {{template "weapon" .PG}}
-        {{template "weapon" .GL}}
-        {{template "weapon" .RL}}
-        {{template "weapon" .LG}}
-        {{template "weapon" .RG}}
-        {{end}}
-        <!-- item stats -->
-        {{with .Items}}
-        {{template "item" .GA}}
-        {{template "item" .YA}}
-        {{template "item" .RA}}
-        {{template "item" .MH}}
-        {{template "item" .Q}}
-        {{template "item" .CS}}
-        {{end}}
-    </tr>
-    {{end}}
-</table>
+    </table>
+</div>
 {{end}}
 
 {{define "weapon"}}
