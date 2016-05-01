@@ -26,12 +26,10 @@ import (
 	"github.com/bboozzoo/q3stats/models"
 	"log"
 	"net/http"
-	"time"
 )
 
 type matchesViewMatchData struct {
 	models.Match
-	DurationDesc string
 }
 
 func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
@@ -47,7 +45,6 @@ func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
 	for i, m := range matches {
 		data.Matches[i] = matchesViewMatchData{
 			m,
-			(time.Duration(m.Duration) * time.Second).String(),
 		}
 	}
 
