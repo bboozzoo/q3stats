@@ -153,7 +153,8 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 				Type:              itm.Name,
 				Pickups:           itm.Pickups,
 				PlayerMatchStatID: pms.ID,
-				// fill duration
+				// fill duration, rawItem time is in ms
+				Time: time.Duration(itm.Time) * time.Millisecond,
 			})
 		}
 	}
