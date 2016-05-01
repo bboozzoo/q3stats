@@ -99,7 +99,7 @@ func GetItemDesc() *DescData {
 // returns true if effects of given item are time bounded
 func ItemHasDuration(itype string) bool {
 	switch itype {
-	case "Q", "BS":
+	case QuadDamage, BattleSuit, Regeneration, Haste, Flight:
 		return true
 	}
 	return false
