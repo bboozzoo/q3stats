@@ -33,7 +33,7 @@ type PlayerDataItem struct {
 
 // aggregate match info
 type MatchInfo struct {
-	Map string
+	Match Match
 	// stats of all players who attended this match
 	PlayerData []PlayerDataItem
 }
