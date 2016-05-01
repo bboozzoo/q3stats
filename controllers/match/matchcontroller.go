@@ -193,7 +193,7 @@ func (m *MatchController) GetMatchInfo(id string) *models.MatchInfo {
 	mi := models.MatchInfo{}
 
 	// already know map
-	mi.Map = match.Map
+	mi.Match = match
 
 	// locate all players in this match
 	var pls []models.PlayerMatchStat
