@@ -26,16 +26,29 @@ import (
 	"github.com/bboozzoo/q3stats/models"
 	"log"
 	"net/http"
+	"time"
 )
+
+type matchesViewMatchData struct {
+	models.Match
+	DurationDesc string
+}
 
 func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
 	log.Printf("site matches view handler")
 
 	matches := s.m.ListMatches()
+
 	data := struct {
-		Matches []models.Match
+		Matches []matchesViewMatchData
 	}{
-		matches,
+		make([]matchesViewMatchData, len(matches)),
+	}
+	for i, m := range matches {
+		data.Matches[i] = matchesViewMatchData{
+			m,
+			(time.Duration(m.Duration) * time.Second).String(),
+		}
 	}
 
 	s.loadRenderOrError(w, data, "matches.tmpl", "base.tmpl")
