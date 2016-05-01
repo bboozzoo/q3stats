@@ -17,21 +17,23 @@
             <th>Suicides</th>
             <th>Score</th>
             <!-- weapons -->
-            <th>G</th><!-- gauntlet -->
-            <th>MG</th><!-- machinegun -->
-            <th>SG</th><!-- shotgun -->
-            <th>PG</th><!-- plasmagun -->
-            <th>GL</th><!-- grenade launcher -->
-            <th>RL</th><!-- rocket launcher -->
-            <th>LG</th><!-- lightning gun -->
-            <th>RG</th><!-- railgun -->
+            {{with .Desc.ItemMap}}
+            {{template "item-desc" .G}}
+            {{template "item-desc" .MG}}
+            {{template "item-desc" .SG}}
+            {{template "item-desc" .PG}}
+            {{template "item-desc" .GL}}
+            {{template "item-desc" .RL}}
+            {{template "item-desc" .LG}}
+            {{template "item-desc" .RG}}
             <!-- items -->
-            <th>GA</th><!-- green armor -->
-            <th>YA</th><!-- yellow armor -->
-            <th>RA</th><!-- red armor -->
-            <th>MH</th><!-- mega health -->
-            <th>Q</th><!-- quad damage -->
-            <th>CS</th><!-- combat suit -->
+            {{template "item-desc" .GA}}
+            {{template "item-desc" .YA}}
+            {{template "item-desc" .RA}}
+            {{template "item-desc" .MH}}
+            {{template "item-desc" .Q}}
+            {{template "item-desc" .BS}}
+            {{end}}
         </tr>
     </thead>
     {{range .Players}}
@@ -87,6 +89,14 @@
 {{else}}
 <td>-</td>
 {{end}}
+{{end}}
+
+{{define "item-desc"}}
+<!-- {{.Name}} -->
+<th data-toggle="tooltip" data-placement="left"
+    data-container="body"
+    title="{{.Name}}">{{.Short}}
+</th>
 {{end}}
 
 {{define "item"}}
