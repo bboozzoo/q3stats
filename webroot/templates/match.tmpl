@@ -48,46 +48,48 @@
                 {{end}}
             </tr>
         </thead>
-        {{range .Players}}
-        <tr>
-            <td>
-                {{if .PlayerID}}
-                <a href="players/{{- .PlayerID}}">
+        <tbody>
+            {{range .Players}}
+            <tr>
+                <td>
+                    {{if .PlayerID}}
+                    <a href="players/{{- .PlayerID}}">
+                        {{.Alias}}
+                    </a>
+                    {{else}}
                     {{.Alias}}
-                </a>
-                {{else}}
-                {{.Alias}}
+                    {{end}}
+                </td>
+                <!-- general stats -->
+                {{with .GeneralStats}}
+                <td>{{.Kills}}</td>
+                <td>{{.Deaths}}</td>
+                <td>{{.Suicides}}</td>
+                <td>{{.Score}}</td>
                 {{end}}
-            </td>
-            <!-- general stats -->
-            {{with .GeneralStats}}
-            <td>{{.Kills}}</td>
-            <td>{{.Deaths}}</td>
-            <td>{{.Suicides}}</td>
-            <td>{{.Score}}</td>
+                <!-- weapon stats -->
+                {{with .Weapons}}
+                {{template "weapon" .G}}
+                {{template "weapon" .MG}}
+                {{template "weapon" .SG}}
+                {{template "weapon" .PG}}
+                {{template "weapon" .GL}}
+                {{template "weapon" .RL}}
+                {{template "weapon" .LG}}
+                {{template "weapon" .RG}}
+                {{end}}
+                <!-- item stats -->
+                {{with .Items}}
+                {{template "item" .GA}}
+                {{template "item" .YA}}
+                {{template "item" .RA}}
+                {{template "item" .MH}}
+                {{template "item" .Quad}}
+                {{template "item" .BattleSuit}}
+                {{end}}
+            </tr>
             {{end}}
-            <!-- weapon stats -->
-            {{with .Weapons}}
-            {{template "weapon" .G}}
-            {{template "weapon" .MG}}
-            {{template "weapon" .SG}}
-            {{template "weapon" .PG}}
-            {{template "weapon" .GL}}
-            {{template "weapon" .RL}}
-            {{template "weapon" .LG}}
-            {{template "weapon" .RG}}
-            {{end}}
-            <!-- item stats -->
-            {{with .Items}}
-            {{template "item" .GA}}
-            {{template "item" .YA}}
-            {{template "item" .RA}}
-            {{template "item" .MH}}
-            {{template "item" .Quad}}
-            {{template "item" .BattleSuit}}
-            {{end}}
-        </tr>
-        {{end}}
+        </tbody>
     </table>
 </div>
 {{end}}
