@@ -40,8 +40,9 @@ type RawStat struct {
 
 type RawItem struct {
 	Name    string `xml:"name,attr"`
-	Pickups uint    `xml:"pickups,attr"`
-	Time    uint    `xml:"time,attr"`
+	Pickups uint   `xml:"pickups,attr"`
+	// item held time in ms
+	Time uint `xml:"time,attr"`
 }
 
 type RawWeapon struct {
