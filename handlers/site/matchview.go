@@ -31,7 +31,6 @@ import (
 
 type matchViewWeaponStat struct {
 	models.WeaponStat
-	Accuracy uint
 }
 
 type matchViewPlayerData struct {
@@ -72,13 +71,8 @@ func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
 			make(map[string]models.ItemStat),
 		}
 		for _, wd := range pd.Weapons {
-			var acc uint = 0
-			if wd.Shots != 0 {
-				acc = (100 * wd.Hits) / wd.Shots
-			}
 			mvpd.Weapons[wd.Type] = matchViewWeaponStat{
 				wd,
-				acc,
 			}
 		}
 
