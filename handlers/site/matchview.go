@@ -55,10 +55,14 @@ func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
 	data := struct {
 		// data of all players
 		Players []matchViewPlayerData
-		Desc    *models.DescData
+		// user presentable data descriptor
+		Desc *models.DescData
+		// match information
+		Match models.Match
 	}{
 		make([]matchViewPlayerData, len(m.PlayerData)),
 		models.GetItemDesc(),
+		m.Match,
 	}
 
 	// repack to a format expected by the template
