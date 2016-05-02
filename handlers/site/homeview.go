@@ -23,6 +23,7 @@
 package site
 
 import (
+	"github.com/bboozzoo/q3stats/controllers/match"
 	"log"
 	"net/http"
 )
@@ -30,6 +31,24 @@ import (
 func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 	log.Printf("site / handler")
 
-	url, _ := s.r.Get("matches").URL()
-	http.Redirect(w, req, url.String(), http.StatusFound)
+	// show only 10 last matches
+	matches := s.m.ListMatches(match.MatchListParams{
+		TimeSort: true,
+		SortDesc: true,
+		Limit:    10,
+	})
+
+	data := struct {
+		RecentMatches []matchesViewMatchData
+	}{
+		make([]matchesViewMatchData, len(matches)),
+	}
+	for i, m := range matches {
+		data.RecentMatches[i] = matchesViewMatchData{
+			m,
+		}
+	}
+
+	s.loadRenderOrError(w, data,
+		"home.tmpl", "matchlist.tmpl", "base.tmpl")
 }
