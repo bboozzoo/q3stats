@@ -24,6 +24,7 @@ package site
 
 import (
 	"github.com/bboozzoo/q3stats/controllers/match"
+	"github.com/bboozzoo/q3stats/models"
 	"log"
 	"net/http"
 )
@@ -40,14 +41,18 @@ func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 
 	data := struct {
 		RecentMatches []matchesViewMatchData
+		Global        models.GlobalStats
 	}{
 		make([]matchesViewMatchData, len(matches)),
+		models.GlobalStats{},
 	}
 	for i, m := range matches {
 		data.RecentMatches[i] = matchesViewMatchData{
 			m,
 		}
 	}
+
+	data.Global = s.m.GetGlobalStats()
 
 	s.loadRenderOrError(w, data,
 		"home.tmpl", "matchlist.tmpl", "base.tmpl")
