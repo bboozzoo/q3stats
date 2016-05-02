@@ -1,32 +1,4 @@
 {{define "content"}}
-<h3>Recent Matches</h3>
-
-<table class="table">
-    {{if .Matches}}
-    <thead>
-        <tr>
-            <th>When</th>
-            <th>Map</th>
-            <th>Duration</th>
-            <th>Mode</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{range .Matches}}
-        <tr>
-            <td>
-                <a href="matches/{{- .DataHash}}">
-                    {{.NiceDateTime}}
-                </a>
-            </td>
-            <td>{{.Map}}</td>
-            <td>{{.DurationDesc}}</td>
-            <td>{{.Type}}</td>
-        </tr>
-        {{end}}
-    </tbody>
-    {{else}}
-    No matches to show
-    {{end}}
-</table>
+<h3>Matches</h3>
+{{template "matchlist" .}}
 {{end}}
