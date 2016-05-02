@@ -31,8 +31,8 @@ type GlobalStats struct {
 	Matches uint
 	// total number of unique maps
 	Maps uint
-	// number of rockets fired
-	RocketsFired uint
+	// number of rockets launched
+	RocketsLaunched uint
 	// players
 	Players uint
 }
