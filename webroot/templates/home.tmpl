@@ -3,18 +3,33 @@
     <h3>General Stats</h3>
     <div class="row">
         <div class="col-md-1"></div>
-        <div class="col-md-1">Matches:</div>
+        <div class="col-md-2">Players:</div>
+        <div class="col-md-1">{{.Global.Players}}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-2">Matches:</div>
         <div class="col-md-1">{{.Global.Matches}}</div>
     </div>
     <div class="row">
         <div class="col-md-1"></div>
-        <div class="col-md-1">Frags:</div>
+        <div class="col-md-2">Maps:</div>
+        <div class="col-md-1">{{.Global.Maps}}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-2">Frags:</div>
         <div class="col-md-1">{{.Global.Frags}}</div>
     </div>
     <div class="row">
         <div class="col-md-1"></div>
-        <div class="col-md-1">Suicides:</div>
+        <div class="col-md-2">Suicides:</div>
         <div class="col-md-1">{{.Global.Suicides}}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-2">Rockets Launched:</div>
+        <div class="col-md-1">{{.Global.RocketsLaunched}}</div>
     </div>
 
 </div>
