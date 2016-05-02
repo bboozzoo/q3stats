@@ -1,17 +1,20 @@
 {{define "content"}}
-<h3>Match Statistics</h3>
+<h3>Match Info</h3>
 
 <div class="container">
     <div class="row">
+        <div class="col-md-1"></div>
         <div class="col-md-1">Map</div>
         <div class="col-md-1">{{.Match.Map}}</div>
     </div>
     <div class="row">
+        <div class="col-md-1"></div>
         <div class="col-md-1">Duration</div>
         <div class="col-md-1">{{ .Match.DurationDesc}}</div>
     </div>
 </div>
 
+<h3>Match Statistics</h3>
 <div class="container">
     <table class="table tablesorter" id="matchresults">
         <thead>
