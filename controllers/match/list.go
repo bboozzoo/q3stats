@@ -27,10 +27,27 @@ import (
 	"log"
 )
 
-func (m *MatchController) ListMatches() []models.Match {
+type MatchListParams struct {
+	Limit    int
+	TimeSort bool
+	SortDesc bool
+}
+
+func (m *MatchController) ListMatches(params MatchListParams) []models.Match {
 	db := m.db.Conn()
 
 	var matches []models.Match
+	if params.Limit != 0 {
+		db = db.Limit(params.Limit)
+	}
+	if params.TimeSort == true {
+		ord := "date_time"
+		if params.SortDesc == true {
+			ord += " desc"
+		}
+		db = db.Order(ord)
+	}
+
 	db.Find(&matches)
 
 	log.Printf("matches found: %u", len(matches))
