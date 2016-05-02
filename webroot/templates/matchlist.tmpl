@@ -1,0 +1,30 @@
+{{define "matchlist"}}
+<table class="table">
+    {{if .Matches}}
+    <thead>
+        <tr>
+            <th>When</th>
+            <th>Map</th>
+            <th>Duration</th>
+            <th>Mode</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Matches}}
+        <tr>
+            <td>
+                <a href="matches/{{- .DataHash}}">
+                    {{.NiceDateTime}}
+                </a>
+            </td>
+            <td>{{.Map}}</td>
+            <td>{{.DurationDesc}}</td>
+            <td>{{.Type}}</td>
+        </tr>
+        {{end}}
+    </tbody>
+    {{else}}
+    No matches to show
+    {{end}}
+</table>
+{{end}}

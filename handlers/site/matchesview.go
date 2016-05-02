@@ -48,5 +48,6 @@ func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	s.loadRenderOrError(w, data, "matches.tmpl", "base.tmpl")
+	s.loadRenderOrError(w, data,
+		"matches.tmpl", "matchlist.tmpl", "base.tmpl")
 }
