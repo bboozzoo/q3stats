@@ -1,0 +1,37 @@
+{{define "content"}}
+<h3>{{.Name}}</h3>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-1">Matches:</div>
+        <div class="col-md-1">TBD</div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-1">Duration</div>
+        <div class="col-md-1">TBD</div>
+    </div>
+</div>
+
+<div class="container col-md-4">
+    <h4>Personal Stats</h4>
+    {{template "playerstats" .}}
+</div>
+
+{{end}}
+
+{{define "playerstats"}}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Weapon</th>
+            <th>Shots</th>
+            <th>Kills</th>
+            <th>Accuracy</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+{{end}}

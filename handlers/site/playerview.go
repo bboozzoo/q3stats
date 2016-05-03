@@ -29,6 +29,7 @@ import (
 
 func (s *Site) playerViewHandler(w http.ResponseWriter, req *http.Request) {
 	// player view handler
+	s.loadRenderOrError(w, nil, "player.tmpl", "base.tmpl")
 }
 
 func (s *Site) playerViewURL(id uint) string {
