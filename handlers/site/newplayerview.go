@@ -23,7 +23,9 @@
 package site
 
 import (
+	"fmt"
 	"github.com/bboozzoo/q3stats/models"
+	"github.com/pkg/errors"
 	"log"
 	"net/http"
 )
@@ -46,22 +48,28 @@ func (s *Site) newPlayerViewHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Site) createNewPlayerViewHandler(w http.ResponseWriter, req *http.Request) {
+	defer func() {
+		if r := recover(); r != nil {
+			s.commonNewPlayerViewHandler(w, req,
+				fmt.Sprintf("%v", r))
+		}
+	}()
+
 	if err := req.ParseForm(); err != nil {
-		log.Printf("failed to parse form data: %s", err)
+		panic(errors.Wrap(err, "error processing form data"))
 	}
-	log.Printf("form params: %s", req.Form)
 
 	names := req.Form["name"]
 	aliases := req.Form["aliases"]
 	// expecting name to be 1 element list, aliases a list with
 	// many aliases
 	if len(names) != 1 || len(aliases) == 0 {
-		log.Printf("incorrect input")
+		panic(errors.New("empty name or no aliases selected"))
 	}
 
 	name := names[0]
 	if len(name) == 0 {
-		log.Printf("incorrect input, empty name")
+		panic(errors.New("empty name"))
 	}
 
 	log.Printf("new player name: %s", name)
@@ -69,9 +77,9 @@ func (s *Site) createNewPlayerViewHandler(w http.ResponseWriter, req *http.Reque
 
 	id, err := s.p.CreateNewPlayer(name, aliases)
 	if err != nil {
-		log.Printf("error creating player: %s", err)
-		// error creating player
+		panic(errors.Wrap(err, "error creating player"))
 	}
+
 	log.Printf("created player: %d", id)
 
 	// redirect to player view
