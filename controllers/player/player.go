@@ -22,7 +22,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package player
 
+import (
+	"github.com/bboozzoo/q3stats/models"
+	"github.com/pkg/errors"
+)
+
 // create new player and return assigned ID or an error
 func (p *PlayerController) CreateNewPlayer(name string, aliases []string) (uint, error) {
-	return 0, nil
+
+	if models.HasPlayer(p.db, name) == true {
+		return 0, errors.New("player already present")
+	}
+
+	id := models.NewPlayer(p.db, name, "")
+
+	// claim aliases
+
+	return id, nil
 }
