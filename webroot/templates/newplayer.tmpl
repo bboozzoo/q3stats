@@ -1,4 +1,11 @@
 {{define "content"}}
+{{if .Error}}
+<div class="alert alert-warning alert-dismissable" role="alert">
+    {{.Error}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+{{end}}
+
 <div class="col-md-4">
 <form method="POST">
     <div class="form-group">

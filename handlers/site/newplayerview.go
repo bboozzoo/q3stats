@@ -28,14 +28,21 @@ import (
 	"net/http"
 )
 
-func (s *Site) newPlayerViewHandler(w http.ResponseWriter, req *http.Request) {
+func (s *Site) commonNewPlayerViewHandler(w http.ResponseWriter, req *http.Request, err string) {
 
 	var data = struct {
 		Aliases []models.Alias
-	}{}
+		Error   string
+	}{
+		Error: err,
+	}
 
 	data.Aliases = s.p.ListUnclaimedAliases()
 	s.loadRenderOrError(w, data, "newplayer.tmpl", "base.tmpl")
+}
+
+func (s *Site) newPlayerViewHandler(w http.ResponseWriter, req *http.Request) {
+	s.commonNewPlayerViewHandler(w, req, "")
 }
 
 func (s *Site) createNewPlayerViewHandler(w http.ResponseWriter, req *http.Request) {
