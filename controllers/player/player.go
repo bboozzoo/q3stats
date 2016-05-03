@@ -37,6 +37,7 @@ func (p *PlayerController) CreateNewPlayer(name string, aliases []string) (uint,
 	id := models.NewPlayer(p.db, name, "")
 
 	// claim aliases
+	models.ClaimAliasesByPlayer(p.db, id, aliases)
 
 	return id, nil
 }
