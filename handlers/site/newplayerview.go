@@ -65,4 +65,7 @@ func (s *Site) createNewPlayerViewHandler(w http.ResponseWriter, req *http.Reque
 		// error creating player
 	}
 	log.Printf("created player: %d", id)
+
+	// redirect to player view
+	http.Redirect(w, req, s.playerViewURL(id), http.StatusFound)
 }
