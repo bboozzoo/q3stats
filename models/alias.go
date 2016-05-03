@@ -42,7 +42,7 @@ type Alias struct {
 	PlayerID uint
 }
 
-func GetAliases(store store.DB, user int) []Alias {
+func GetAliases(store store.DB, user uint) []Alias {
 	var aliases []Alias
 	store.Conn().
 		Model(&Alias{}).
