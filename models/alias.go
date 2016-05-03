@@ -45,7 +45,8 @@ type Alias struct {
 func GetAliases(store store.DB, user int) []Alias {
 	var aliases []Alias
 	store.Conn().
-		Where(&Alias{PlayerID: 0}).
+		Model(&Alias{}).
+		Where("player_id = ?", user).
 		Find(&aliases)
 
 	return aliases
