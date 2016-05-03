@@ -23,42 +23,15 @@
 package site
 
 import (
-	"github.com/bboozzoo/q3stats/controllers"
-	"github.com/bboozzoo/q3stats/controllers/match"
-	"github.com/bboozzoo/q3stats/controllers/player"
-	"github.com/gorilla/mux"
-	"path"
+	"net/http"
+	"strconv"
 )
 
-type Site struct {
-	m    *match.MatchController
-	p    *player.PlayerController
-	tdir string
-	r    *mux.Router
+func (s *Site) playerViewHandler(w http.ResponseWriter, req *http.Request) {
+	// player view handler
 }
 
-func NewSite(c controllers.Controllers, webroot string) *Site {
-	return &Site{
-		m:    c.M,
-		p:    c.P,
-		tdir: path.Join(webroot, "templates"),
-	}
-}
-
-func (s *Site) SetupHandlers(r *mux.Router) {
-	r.HandleFunc("/", s.siteHomeHandler).
-		Methods("GET")
-	r.HandleFunc("/matches", s.matchesViewHandler).
-		Methods("GET").Name("matches")
-	r.HandleFunc("/matches/{id}", s.matchViewHandler).
-		Methods("GET")
-	r.HandleFunc("/players/new", s.newPlayerViewHandler).
-		Methods("GET")
-	r.HandleFunc("/players/new", s.createNewPlayerViewHandler).
-		Methods("POST")
-	r.HandleFunc("/players/{id}", s.playerViewHandler).
-		Methods("GET").Name("player")
-
-	// keep track of router
-	s.r = r
+func (s *Site) playerViewURL(id uint) string {
+	u, _ := s.r.Get("player").URL("id", strconv.FormatUint(uint64(id), 10))
+	return u.String()
 }
