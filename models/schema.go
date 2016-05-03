@@ -38,6 +38,6 @@ var (
 )
 
 func CreateSchema(db *gorm.DB) error {
-	db.CreateTable(schemaModels...)
+	db.AutoMigrate(schemaModels...)
 	return nil
 }
