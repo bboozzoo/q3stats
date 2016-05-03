@@ -66,3 +66,12 @@ func HasPlayer(store store.DB, name string) bool {
 	}
 	return true
 }
+
+func ListPlayers(store store.DB) []Player {
+	db := store.Conn()
+
+	var players []Player
+	db.Find(&players)
+
+	return players
+}
