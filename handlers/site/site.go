@@ -23,20 +23,24 @@
 package site
 
 import (
+	"github.com/bboozzoo/q3stats/controllers"
 	"github.com/bboozzoo/q3stats/controllers/match"
+	"github.com/bboozzoo/q3stats/controllers/player"
 	"github.com/gorilla/mux"
 	"path"
 )
 
 type Site struct {
 	m    *match.MatchController
+	p    *player.PlayerController
 	tdir string
 	r    *mux.Router
 }
 
-func NewSite(m *match.MatchController, webroot string) *Site {
+func NewSite(c controllers.Controllers, webroot string) *Site {
 	return &Site{
-		m:    m,
+		m:    c.M,
+		p:    c.P,
 		tdir: path.Join(webroot, "templates"),
 	}
 }
