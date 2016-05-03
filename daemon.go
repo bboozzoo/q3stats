@@ -24,7 +24,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/bboozzoo/q3stats/controllers"
 	"github.com/bboozzoo/q3stats/controllers/match"
+	"github.com/bboozzoo/q3stats/controllers/player"
 	"github.com/bboozzoo/q3stats/handlers"
 	"github.com/bboozzoo/q3stats/handlers/api"
 	"github.com/bboozzoo/q3stats/handlers/site"
@@ -89,8 +91,13 @@ func daemonMain() error {
 	defer db.Close()
 
 	matchctrl := match.NewController(db)
+	userctrl := player.NewController(db)
 	api := api.NewApi(matchctrl)
-	site := site.NewSite(matchctrl, C.Webroot)
+	ctrls := controllers.Controllers{
+		matchctrl,
+		userctrl,
+	}
+	site := site.NewSite(ctrls, C.Webroot)
 
 	hrouting := []handlerRouting{
 		{uriApi, api},
