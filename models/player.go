@@ -32,4 +32,7 @@ type Player struct {
 
 	// user defined name, ex. joe
 	Name string
+
+	// password hash
+	PasswordHash string
 }
