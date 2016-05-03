@@ -54,4 +54,12 @@ func GetAliases(store store.DB, user int) []Alias {
 func ClaimAliasesByPlayer(store store.DB, player uint, aliases []string) {
 	// update aliases set player_id = `player` where aliases in
 	// `aliases`?
+
+	db := store.Conn()
+
+	for _, a := range aliases {
+		db.Model(&Alias{}).
+			Where(&Alias{Alias: a}).
+			Update("player_id", player)
+	}
 }
