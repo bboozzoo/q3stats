@@ -62,6 +62,7 @@ func (s *Site) createNewPlayerViewHandler(w http.ResponseWriter, req *http.Reque
 
 	id, err := s.p.CreateNewPlayer(name, aliases)
 	if err != nil {
+		log.Printf("error creating player: %s", err)
 		// error creating player
 	}
 	log.Printf("created player: %d", id)
