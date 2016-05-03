@@ -50,3 +50,8 @@ func GetAliases(store store.DB, user int) []Alias {
 
 	return aliases
 }
+
+func ClaimAliasesByPlayer(store store.DB, player uint, aliases []string) {
+	// update aliases set player_id = `player` where aliases in
+	// `aliases`?
+}
