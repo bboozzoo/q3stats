@@ -23,6 +23,6 @@
 package player
 
 // create new player and return assigned ID or an error
-func (p *PlayerController) CreateNewPlayer(name string, aliases []string) (int, error) {
+func (p *PlayerController) CreateNewPlayer(name string, aliases []string) (uint, error) {
 	return 0, nil
 }
