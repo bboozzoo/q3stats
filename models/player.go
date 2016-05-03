@@ -23,6 +23,7 @@
 package models
 
 import (
+	"github.com/bboozzoo/q3stats/store"
 	"github.com/jinzhu/gorm"
 )
 
@@ -35,4 +36,33 @@ type Player struct {
 
 	// password hash
 	PasswordHash string
+}
+
+// create new player returning its ID
+func NewPlayer(store store.DB, name string, passwordhash string) uint {
+	player := Player{
+		Name:         name,
+		PasswordHash: passwordhash,
+	}
+
+	db := store.Conn()
+
+	db.Create(&player)
+
+	return player.ID
+}
+
+func HasPlayer(store store.DB, name string) bool {
+	db := store.Conn()
+
+	var player Player
+
+	notfound := db.Where(&Player{Name: name}).
+		First(&player).
+		RecordNotFound()
+
+	if notfound == true {
+		return false
+	}
+	return true
 }
