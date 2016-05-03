@@ -23,7 +23,12 @@
 package models
 
 import (
+	"github.com/bboozzoo/q3stats/store"
 	"github.com/jinzhu/gorm"
+)
+
+const (
+	NoUser = 0
 )
 
 // Alias is a nickname used during the match.
@@ -35,4 +40,13 @@ type Alias struct {
 
 	// player claiming this alias
 	PlayerID uint
+}
+
+func GetAliases(store store.DB, user int) []Alias {
+	var aliases []Alias
+	store.Conn().
+		Where(&Alias{PlayerID: 0}).
+		Find(&aliases)
+
+	return aliases
 }
