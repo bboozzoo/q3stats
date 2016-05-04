@@ -63,3 +63,21 @@ func GetStore(t *testing.T) store.DB {
 	}
 	return db
 }
+
+func (d *DB) Begin() store.DBTransaction {
+	return &dbTx{
+		db: d.db.Begin(),
+	}
+}
+
+type dbTx struct {
+	db *gorm.DB
+}
+
+func (dbt *dbTx) Conn() *gorm.DB {
+	return dbt.db
+}
+
+func (dbt *dbTx) Commit() {
+	dbt.db.Commit()
+}
