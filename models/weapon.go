@@ -53,7 +53,7 @@ func (w WeaponStat) Accuracy() uint {
 }
 
 // create new weapon stat and return its ID
-func NewWeaponStat(store store.DB, ws WeaponStat) uint {
+func NewWeaponStat(store store.DBConn, ws WeaponStat) uint {
 	db := store.Conn()
 
 	db.Create(&ws)

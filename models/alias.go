@@ -43,7 +43,7 @@ type Alias struct {
 }
 
 // create or lookup a matching alias and return its ID
-func NewAliasOrCurrent(store store.DB, newalias Alias) uint {
+func NewAliasOrCurrent(store store.DBConn, newalias Alias) uint {
 	db := store.Conn()
 
 	var alias Alias
@@ -52,7 +52,7 @@ func NewAliasOrCurrent(store store.DB, newalias Alias) uint {
 	return alias.ID
 }
 
-func GetAliases(store store.DB, user uint) []Alias {
+func GetAliases(store store.DBConn, user uint) []Alias {
 	var aliases []Alias
 	store.Conn().
 		Model(&Alias{}).
@@ -62,7 +62,7 @@ func GetAliases(store store.DB, user uint) []Alias {
 	return aliases
 }
 
-func ClaimAliasesByPlayer(store store.DB, player uint, aliases []string) {
+func ClaimAliasesByPlayer(store store.DBConn, player uint, aliases []string) {
 	// update aliases set player_id = `player` where aliases in
 	// `aliases`?
 

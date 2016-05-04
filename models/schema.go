@@ -37,7 +37,7 @@ var (
 	}
 )
 
-func CreateSchema(store store.DB) error {
+func CreateSchema(store store.DBConn) error {
 	store.Conn().AutoMigrate(schemaModels...)
 	return nil
 }

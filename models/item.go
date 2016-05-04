@@ -54,7 +54,7 @@ func (i ItemStat) DurationDesc() string {
 }
 
 // create new item stat and return its ID
-func NewItemStat(store store.DB, is ItemStat) uint {
+func NewItemStat(store store.DBConn, is ItemStat) uint {
 	db := store.Conn()
 
 	db.Create(&is)

@@ -58,7 +58,7 @@ func (m Match) NiceDateTime() string {
 	return m.DateTime.Format("02-01-2006 15:04:05")
 }
 
-func FindMatchByHash(store store.DB, hash string) *Match {
+func FindMatchByHash(store store.DBConn, hash string) *Match {
 
 	db := store.Conn()
 
@@ -72,7 +72,7 @@ func FindMatchByHash(store store.DB, hash string) *Match {
 	return &mfound
 }
 
-func ListMatches(store store.DB, params MatchListParams) []Match {
+func ListMatches(store store.DBConn, params MatchListParams) []Match {
 	db := store.Conn()
 
 	var matches []Match
@@ -95,7 +95,7 @@ func ListMatches(store store.DB, params MatchListParams) []Match {
 }
 
 // create new match and return its ID
-func NewMatch(store store.DB, match Match) uint {
+func NewMatch(store store.DBConn, match Match) uint {
 
 	db := store.Conn()
 

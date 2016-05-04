@@ -39,7 +39,7 @@ type Player struct {
 }
 
 // create new player returning its ID
-func NewPlayer(store store.DB, name string, passwordhash string) uint {
+func NewPlayer(store store.DBConn, name string, passwordhash string) uint {
 	player := Player{
 		Name:         name,
 		PasswordHash: passwordhash,
@@ -52,7 +52,7 @@ func NewPlayer(store store.DB, name string, passwordhash string) uint {
 	return player.ID
 }
 
-func HasPlayer(store store.DB, name string) bool {
+func HasPlayer(store store.DBConn, name string) bool {
 	db := store.Conn()
 
 	var player Player
@@ -67,7 +67,7 @@ func HasPlayer(store store.DB, name string) bool {
 	return true
 }
 
-func ListPlayers(store store.DB) []Player {
+func ListPlayers(store store.DBConn) []Player {
 	db := store.Conn()
 
 	var players []Player

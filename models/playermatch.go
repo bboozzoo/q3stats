@@ -57,7 +57,7 @@ type PlayerMatchStat struct {
 	MatchID uint
 }
 
-func NewPlayerMatchStat(store store.DB, pms PlayerMatchStat) uint {
+func NewPlayerMatchStat(store store.DBConn, pms PlayerMatchStat) uint {
 	db := store.Conn()
 
 	db.Create(&pms)
