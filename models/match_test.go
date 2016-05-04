@@ -53,3 +53,30 @@ func TestFindMatchByHash(t *testing.T) {
 			hash, mf.DataHash)
 	}
 }
+
+func TestNewMatch(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	m := Match{
+		Map:  "foo",
+		Type: "FFA",
+	}
+
+	mid := NewMatch(store, m)
+
+	var fm Match
+	nf := db.Find(&fm, mid).RecordNotFound()
+	if nf == true {
+		t.Fatalf("expected to find match of ID %u", mid)
+	}
+
+	if m.Map != fm.Map || m.Type != fm.Type ||
+		mid != fm.ID {
+		t.Fatalf("found data mismatch in player stat data")
+	}
+}

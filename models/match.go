@@ -65,3 +65,12 @@ func FindMatchByHash(store store.DB, hash string) *Match {
 	}
 	return &mfound
 }
+// create new match and return its ID
+func NewMatch(store store.DB, match Match) uint {
+
+	db := store.Conn()
+
+	db.Create(&match)
+
+	return match.ID
+}
