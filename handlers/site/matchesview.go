@@ -23,7 +23,6 @@
 package site
 
 import (
-	"github.com/bboozzoo/q3stats/controllers/match"
 	"github.com/bboozzoo/q3stats/models"
 	"log"
 	"net/http"
@@ -36,7 +35,7 @@ type matchesViewMatchData struct {
 func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
 	log.Printf("site matches view handler")
 
-	matches := s.m.ListMatches(match.MatchListParams{
+	matches := s.m.ListMatches(models.MatchListParams{
 		TimeSort: true,
 		SortDesc: true,
 	})

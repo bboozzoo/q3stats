@@ -23,7 +23,6 @@
 package site
 
 import (
-	"github.com/bboozzoo/q3stats/controllers/match"
 	"github.com/bboozzoo/q3stats/models"
 	"log"
 	"net/http"
@@ -39,7 +38,7 @@ func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 	log.Printf("site / handler")
 
 	// show only 10 last matches
-	matches := s.m.ListMatches(match.MatchListParams{
+	matches := s.m.ListMatches(models.MatchListParams{
 		TimeSort: true,
 		SortDesc: true,
 		Limit:    10,
