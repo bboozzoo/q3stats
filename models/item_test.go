@@ -23,6 +23,7 @@
 package models
 
 import (
+	"github.com/bboozzoo/q3stats/models/test"
 	"testing"
 	"time"
 )
@@ -59,5 +60,33 @@ func TestDurationDesc(t *testing.T) {
 	dd := i.DurationDesc()
 	if dd != "1m1s" {
 		t.Fatalf("expected duration 1m1s, got %s", dd)
+	}
+}
+
+func TestNewItemStat(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	is := ItemStat{
+		Type:              MegaHealth,
+		Pickups:           1,
+		PlayerMatchStatID: 2,
+	}
+	isid := NewItemStat(store, is)
+
+	var fis ItemStat
+	nf := db.Find(&fis, isid).RecordNotFound()
+	if nf == true {
+		t.Fatalf("expected to find itemstat with ID %u", isid)
+	}
+
+	if is.Type != fis.Type ||
+		is.PlayerMatchStatID != fis.PlayerMatchStatID ||
+		is.Pickups != fis.Pickups {
+		t.Fatalf("item stat and found item stat are different")
 	}
 }

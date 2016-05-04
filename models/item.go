@@ -23,6 +23,7 @@
 package models
 
 import (
+	"github.com/bboozzoo/q3stats/store"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -50,4 +51,13 @@ func (i ItemStat) HasDuration() bool {
 
 func (i ItemStat) DurationDesc() string {
 	return (i.Time).String()
+}
+
+// create new item stat and return its ID
+func NewItemStat(store store.DB, is ItemStat) uint {
+	db := store.Conn()
+
+	db.Create(&is)
+
+	return is.ID
 }
