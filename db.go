@@ -23,6 +23,7 @@
 package main
 
 import (
+	"github.com/bboozzoo/q3stats/store"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/pkg/errors"
@@ -70,4 +71,24 @@ func (d *DB) Close() {
 	if d.db != nil {
 		d.db.Close()
 	}
+}
+
+// return DB transaction wrapper
+func (db *DB) Begin() store.DBTransaction {
+	return &dbTx{
+		db: db.db.Begin(),
+	}
+}
+
+// helper DB transaction wrapper
+type dbTx struct {
+	db *gorm.DB
+}
+
+func (dbt *dbTx) Conn() *gorm.DB {
+	return dbt.db
+}
+
+func (dbt *dbTx) Commit() {
+	dbt.db.Commit()
 }
