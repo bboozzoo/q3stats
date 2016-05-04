@@ -109,3 +109,29 @@ func TestClaimAlias(t *testing.T) {
 			ua.Alias)
 	}
 }
+
+func TestNewAlias(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	// add bogus alias first
+	aidfoo := NewAliasOrCurrent(store, Alias{Alias: "foo"})
+	// now the one we're going to track
+	aidbar := NewAliasOrCurrent(store, Alias{Alias: "bar"})
+
+	if aidfoo == aidbar {
+		t.Fatalf("expected IDs to be different, got %u %u",
+			aidfoo, aidbar)
+	}
+
+	// try again, we should get the same alias
+	aidbar2 := NewAliasOrCurrent(store, Alias{Alias: "bar"})
+	if aidbar2 != aidbar {
+		t.Fatalf("expected the same ID, got %u %u",
+			aidbar, aidbar2)
+	}
+}

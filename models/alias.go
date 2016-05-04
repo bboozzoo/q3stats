@@ -42,6 +42,16 @@ type Alias struct {
 	PlayerID uint
 }
 
+// create or lookup a matching alias and return its ID
+func NewAliasOrCurrent(store store.DB, newalias Alias) uint {
+	db := store.Conn()
+
+	var alias Alias
+	db.FirstOrCreate(&alias, newalias)
+
+	return alias.ID
+}
+
 func GetAliases(store store.DB, user uint) []Alias {
 	var aliases []Alias
 	store.Conn().
