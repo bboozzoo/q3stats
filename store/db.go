@@ -26,8 +26,32 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type DB interface {
+// DB opener interface
+type Opener interface {
+	// open DB access, return error or nil
 	Open() error
+	// close DB access
 	Close()
+}
+
+// connectable DB interface
+type DBConn interface {
+	// return connection to gorm.DB
 	Conn() *gorm.DB
+}
+
+// DB wrapper
+type DB interface {
+	DBConn
+	// start transaction, return transactional interface
+	Begin() DBTransaction
+}
+
+// DB transaction interface
+type DBTransaction interface {
+	// implements connectable (we need to acces and manipulate the
+	// DBe)
+	DBConn
+	// and commit operation
+	Commit()
 }
