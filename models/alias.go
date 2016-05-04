@@ -58,9 +58,11 @@ func ClaimAliasesByPlayer(store store.DB, player uint, aliases []string) {
 
 	db := store.Conn()
 
+	tx := db.Begin()
 	for _, a := range aliases {
-		db.Model(&Alias{}).
+		tx.Model(&Alias{}).
 			Where(&Alias{Alias: a}).
 			Update("player_id", player)
 	}
+	tx.Commit()
 }
