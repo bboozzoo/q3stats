@@ -23,6 +23,7 @@
 package models
 
 import (
+	"github.com/bboozzoo/q3stats/store"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -49,4 +50,18 @@ func (m Match) DurationDesc() string {
 
 func (m Match) NiceDateTime() string {
 	return m.DateTime.Format("02-01-2006 15:04:05")
+}
+
+func FindMatchByHash(store store.DB, hash string) *Match {
+
+	db := store.Conn()
+
+	var mfound Match
+	notfound := db.Where("data_hash = ?", hash).
+		Find(&mfound).
+		RecordNotFound()
+	if notfound == true {
+		return nil
+	}
+	return &mfound
 }
