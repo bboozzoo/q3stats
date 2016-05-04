@@ -67,3 +67,45 @@ func TestGetAliases(t *testing.T) {
 	}
 
 }
+
+func TestClaimAlias(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	db.Create(&Alias{Alias: "foo"})
+	db.Create(&Alias{Alias: "bar"})
+	db.Create(&Alias{Alias: "baz"})
+
+	ClaimAliasesByPlayer(store, 1, []string{"foo", "bar"})
+
+	player1_aliases := GetAliases(store, 1)
+	if len(player1_aliases) != 2 {
+		t.Fatalf("expected 2 aliases, got %u",
+			len(player1_aliases))
+	}
+
+	for _, a := range player1_aliases {
+		if a.Alias != "foo" && a.Alias != "bar" {
+			t.Fatalf("unexpected alias: %s", a.Alias)
+		}
+		if a.PlayerID != 1 {
+			t.Fatalf("alias with incorrect player ID %u",
+				a.PlayerID)
+		}
+	}
+
+	unclaimed := GetAliases(store, NoUser)
+	if len(unclaimed) != 1 {
+		t.Fatal("expected 1 unclaimed alias, got %u",
+			len(unclaimed))
+	}
+	ua := unclaimed[0]
+	if ua.Alias != "baz" {
+		t.Fatalf("expected 'baz' to be unclaimed, got %s",
+			ua.Alias)
+	}
+}
