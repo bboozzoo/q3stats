@@ -23,44 +23,35 @@
 package models
 
 import (
-	"github.com/bboozzoo/q3stats/store"
-	"github.com/jinzhu/gorm"
+	"github.com/bboozzoo/q3stats/models/test"
+	"testing"
 )
 
-// Overall statistics achieved by player during a match
-type PlayerMatchStat struct {
-	gorm.Model
+func TestNewPlayerMatchStat(t *testing.T) {
+	store := test.GetStore(t)
 
-	// score
-	Score int
-	// kills count
-	Kills int
-	// number of deaths
-	Deaths int
-	// self-kills count
-	Suicides int
-	// net (kills - deaths - suicides)
-	Net int
-	// damage given in HP
-	DamageGiven int
-	// damage taken in HP
-	DamageTaken int
-	// total health taken in HP
-	HealthTotal int
-	// total armor points
-	ArmorTotal int
-
-	// alias used
-	AliasID uint
-
-	// match
-	MatchID uint
-}
-
-func NewPlayerMatchStat(store store.DB, pms PlayerMatchStat) uint {
 	db := store.Conn()
+	defer db.Close()
 
-	db.Create(&pms)
+	CreateSchema(store)
 
-	return pms.ID
+	pms := PlayerMatchStat{
+		Score:   10,
+		Kills:   10,
+		AliasID: 2,
+		MatchID: 3,
+	}
+
+	pmsid := NewPlayerMatchStat(store, pms)
+
+	var fpms PlayerMatchStat
+	nf := db.Find(&fpms, pmsid).RecordNotFound()
+	if nf == true {
+		t.Fatalf("expected to find player-match stat of ID %u", pmsid)
+	}
+
+	if pms.AliasID != fpms.AliasID || pms.MatchID != fpms.MatchID ||
+		pms.Score != fpms.Score {
+		t.Fatalf("found data mismatch in player-match stat data")
+	}
 }
