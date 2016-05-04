@@ -25,6 +25,7 @@ package models
 import (
 	"github.com/bboozzoo/q3stats/models/test"
 	"testing"
+	"time"
 )
 
 func TestFindMatchByHash(t *testing.T) {
@@ -78,5 +79,61 @@ func TestNewMatch(t *testing.T) {
 	if m.Map != fm.Map || m.Type != fm.Type ||
 		mid != fm.ID {
 		t.Fatalf("found data mismatch in player stat data")
+	}
+}
+
+func TestListMatches(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	NewMatch(store, Match{Map: "foo", Type: "FFA",
+		DateTime: time.Now().Add(time.Duration(1) * time.Hour),
+	})
+	NewMatch(store, Match{Map: "bar", Type: "TDM",
+		DateTime: time.Now(),
+	})
+	NewMatch(store, Match{Map: "baz", Type: "FFA",
+		DateTime: time.Now().Add(time.Duration(2) * time.Hour),
+	})
+	NewMatch(store, Match{Map: "zab", Type: "FFA",
+		DateTime: time.Now().Add(time.Duration(3) * time.Hour),
+	})
+	// time order (newest to oldest):
+	// - zab
+	// - baz
+	// - foo
+	// - bar
+
+	m := ListMatches(store, MatchListParams{})
+	if len(m) != 4 {
+		t.Fatalf("expected 4 matches, got %u", len(m))
+	}
+
+	m = ListMatches(store, MatchListParams{Limit: 2})
+	if len(m) != 2 {
+		t.Fatalf("expected 2 matches, got %u", len(m))
+	}
+
+	m = ListMatches(store, MatchListParams{TimeSort: true})
+	exp := []string{"bar", "foo", "baz", "zab"}
+	for i := range m {
+		if exp[i] != m[i].Map {
+			t.Fatalf("mismatch in time ordered matches, idx %u, got %s, expected %s",
+				i, m[i].Map, exp[i])
+		}
+	}
+
+	m = ListMatches(store, MatchListParams{TimeSort: true,
+		SortDesc: true})
+	exp = []string{"zab", "baz", "foo", "bar"}
+	for i := range m {
+		if exp[i] != m[i].Map {
+			t.Fatalf("mismatch in time ordered matches, idx %u, got %s, expected %s",
+				i, m[i].Map, exp[i])
+		}
 	}
 }
