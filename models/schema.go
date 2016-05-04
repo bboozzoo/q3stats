@@ -23,7 +23,7 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"github.com/bboozzoo/q3stats/store"
 )
 
 var (
@@ -37,7 +37,7 @@ var (
 	}
 )
 
-func CreateSchema(db *gorm.DB) error {
-	db.AutoMigrate(schemaModels...)
+func CreateSchema(store store.DB) error {
+	store.Conn().AutoMigrate(schemaModels...)
 	return nil
 }
