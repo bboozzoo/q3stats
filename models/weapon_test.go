@@ -23,40 +23,46 @@
 package models
 
 import (
-	"github.com/bboozzoo/q3stats/store"
-	"github.com/jinzhu/gorm"
+	"github.com/bboozzoo/q3stats/models/test"
+	"testing"
 )
 
-// Per weapon statistics achieved during the match
-type WeaponStat struct {
-	gorm.Model
-
-	// weapon type
-	Type string
-	// number of hits
-	Hits uint
-	// number of shots
-	Shots uint
-	// number of kills
-	Kills uint
-
-	// player's match stats this weapon is part of
-	PlayerMatchStatID uint
-}
-
-func (w WeaponStat) Accuracy() uint {
-	var acc uint = 0
-	if w.Shots != 0 {
-		acc = (100 * w.Hits) / w.Shots
+func TestWeaponAccuracy(t *testing.T) {
+	w := WeaponStat{
+		Hits:  10,
+		Shots: 100,
 	}
-	return acc
+
+	if w.Accuracy() != 10 {
+		t.Fatalf("incorrect accuracy, expected 10, got %u",
+			w.Accuracy())
+	}
 }
 
-// create new weapon stat and return its ID
-func NewWeaponStat(store store.DB, ws WeaponStat) uint {
+func TestNewWeaponStat(t *testing.T) {
+	store := test.GetStore(t)
+
 	db := store.Conn()
+	defer db.Close()
 
-	db.Create(&ws)
+	CreateSchema(store)
 
-	return ws.ID
+	w := WeaponStat{
+		Hits:              10,
+		Shots:             100,
+		PlayerMatchStatID: 2,
+	}
+
+	wid := NewWeaponStat(store, w)
+
+	var fw WeaponStat
+	nf := db.Find(&fw, wid).RecordNotFound()
+	if nf == true {
+		t.Fatalf("expected to find weapon stat of ID %u", wid)
+	}
+
+	if w.Hits != fw.Hits || w.Shots != fw.Shots ||
+		w.PlayerMatchStatID != fw.PlayerMatchStatID {
+		t.Fatalf("found data mismatch in weapon stat data")
+	}
 }
