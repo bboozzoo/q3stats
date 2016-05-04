@@ -46,12 +46,14 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 	}
 	match.DateTime = tm
 
-	mid := models.NewMatch(m.db, match)
+	tx := m.db.Begin()
+
+	mid := models.NewMatch(tx, match)
 
 	log.Printf("got match: %u", mid)
 
 	for _, player := range rmatch.Players {
-		aid := models.NewAliasOrCurrent(m.db,
+		aid := models.NewAliasOrCurrent(tx,
 			models.Alias{Alias: player.Name})
 
 		log.Printf("got alias: %u", aid)
@@ -60,12 +62,12 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 		pms.MatchID = mid
 		pms.AliasID = aid
 
-		pmsid := models.NewPlayerMatchStat(m.db, pms)
+		pmsid := models.NewPlayerMatchStat(tx, pms)
 
 		log.Printf("created PMS: %u", pmsid)
 
 		for _, wep := range player.Weapons {
-			models.NewWeaponStat(m.db,
+			models.NewWeaponStat(tx,
 				models.WeaponStat{
 					Type:              wep.Name,
 					Hits:              wep.Hits,
@@ -81,7 +83,7 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 		itms = append(itms, player.Powerups...)
 
 		for _, itm := range itms {
-			models.NewItemStat(m.db,
+			models.NewItemStat(tx,
 				models.ItemStat{
 					Type:              itm.Name,
 					Pickups:           itm.Pickups,
@@ -91,6 +93,8 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 				})
 		}
 	}
+
+	tx.Commit()
 
 	return nil
 }
