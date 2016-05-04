@@ -46,33 +46,33 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 	}
 	match.DateTime = tm
 
-	tx := m.db.Conn().Begin()
+	mid := models.NewMatch(m.db, match)
 
-	tx.Create(&match)
-
-	log.Printf("got match: %+v", match)
+	log.Printf("got match: %u", mid)
 
 	for _, player := range rmatch.Players {
-		var alias models.Alias
-		tx.FirstOrCreate(&alias, models.Alias{Alias: player.Name})
-		log.Printf("got alias: %+v", alias)
+		aid := models.NewAliasOrCurrent(m.db,
+			models.Alias{Alias: player.Name})
+
+		log.Printf("got alias: %u", aid)
 
 		pms := makePlayerMatchStat(player.Stats)
-		pms.MatchID = match.ID
-		pms.AliasID = alias.ID
+		pms.MatchID = mid
+		pms.AliasID = aid
 
-		tx.Create(&pms)
+		pmsid := models.NewPlayerMatchStat(m.db, pms)
 
-		log.Printf("created PMS: %+v", pms)
+		log.Printf("created PMS: %u", pmsid)
 
 		for _, wep := range player.Weapons {
-			tx.Create(&models.WeaponStat{
-				Type:              wep.Name,
-				Hits:              wep.Hits,
-				Shots:             wep.Shots,
-				Kills:             wep.Kills,
-				PlayerMatchStatID: pms.ID,
-			})
+			models.NewWeaponStat(m.db,
+				models.WeaponStat{
+					Type:              wep.Name,
+					Hits:              wep.Hits,
+					Shots:             wep.Shots,
+					Kills:             wep.Kills,
+					PlayerMatchStatID: pmsid,
+				})
 		}
 
 		// join items and powerups
@@ -81,17 +81,16 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 		itms = append(itms, player.Powerups...)
 
 		for _, itm := range itms {
-			tx.Create(&models.ItemStat{
-				Type:              itm.Name,
-				Pickups:           itm.Pickups,
-				PlayerMatchStatID: pms.ID,
-				// fill duration, rawItem time is in ms
-				Time: time.Duration(itm.Time) * time.Millisecond,
-			})
+			models.NewItemStat(m.db,
+				models.ItemStat{
+					Type:              itm.Name,
+					Pickups:           itm.Pickups,
+					PlayerMatchStatID: pmsid,
+					// fill duration, rawItem time is in ms
+					Time: time.Duration(itm.Time) * time.Millisecond,
+				})
 		}
 	}
-
-	tx.Commit()
 
 	return nil
 }
