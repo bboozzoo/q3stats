@@ -89,16 +89,10 @@ func (m *MatchController) AddFromData(data []byte) (string, error) {
 }
 
 func (m *MatchController) isMatchIndexed(rmatch *loader.RawMatch) bool {
-	db := m.db.Conn()
 
-	var mfound models.Match
-	notfound := db.Where("data_hash = ?", rmatch.DataHash).
-		Find(&mfound).
-		RecordNotFound()
-	if notfound == false {
-		log.Printf("record found: %+v", mfound)
-		return true
+	match := models.FindMatchByHash(m.db, rmatch.DataHash)
+	if match == nil {
+		return false
 	}
-
-	return false
+	return true
 }
