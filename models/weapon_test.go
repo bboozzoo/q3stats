@@ -24,6 +24,7 @@ package models
 
 import (
 	"github.com/bboozzoo/q3stats/models/test"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -65,4 +66,26 @@ func TestNewWeaponStat(t *testing.T) {
 		w.PlayerMatchStatID != fw.PlayerMatchStatID {
 		t.Fatalf("found data mismatch in weapon stat data")
 	}
+}
+
+func TestListWeaponStat(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	w := WeaponStat{
+		Hits:              10,
+		Shots:             100,
+		PlayerMatchStatID: 2,
+	}
+
+	NewWeaponStat(store, w)
+
+	wfs := ListWeaponStats(store, 2)
+	assert.Len(t, wfs, 1)
+
+	assert.Len(t, ListWeaponStats(store, 9999), 0)
 }
