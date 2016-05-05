@@ -24,6 +24,7 @@ package models
 
 import (
 	"github.com/bboozzoo/q3stats/models/test"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -134,4 +135,21 @@ func TestNewAlias(t *testing.T) {
 		t.Fatalf("expected the same ID, got %u %u",
 			aidbar, aidbar2)
 	}
+}
+
+func TestGetAlias(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	// add bogus alias first
+	aidfoo := NewAliasOrCurrent(store, Alias{Alias: "foo"})
+
+	afoo := GetAlias(store, aidfoo)
+	assert.NotNil(t, afoo)
+
+	assert.Nil(t, GetAlias(store, 999))
 }

@@ -62,6 +62,18 @@ func GetAliases(store store.DBConn, user uint) []Alias {
 	return aliases
 }
 
+// find alias using alias ID
+func GetAlias(store store.DBConn, aliasID uint) *Alias {
+	db := store.Conn()
+
+	var alias Alias
+	nf := db.First(&alias, aliasID).RecordNotFound()
+	if nf == true {
+		return nil
+	}
+	return &alias
+}
+
 func ClaimAliasesByPlayer(store store.DBConn, player uint, aliases []string) {
 	// update aliases set player_id = `player` where aliases in
 	// `aliases`?
