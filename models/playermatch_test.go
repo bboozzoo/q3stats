@@ -53,3 +53,37 @@ func TestNewPlayerMatchStat(t *testing.T) {
 	assert.Equal(t, pms.MatchID, fpms.MatchID)
 	assert.Equal(t, pms.Score, fpms.Score)
 }
+
+func TestListPlayerMatchStat(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	NewPlayerMatchStat(store, PlayerMatchStat{
+		Score:   1,
+		AliasID: 1,
+		MatchID: 2,
+	})
+	NewPlayerMatchStat(store, PlayerMatchStat{
+		Score:   -1,
+		AliasID: 2,
+		MatchID: 2,
+	})
+	NewPlayerMatchStat(store, PlayerMatchStat{
+		Score:   -1,
+		AliasID: 2,
+		MatchID: 1,
+	})
+
+	pls := ListPlayerMatchStat(store, 2)
+	assert.Len(t, pls, 2)
+
+	pls = ListPlayerMatchStat(store, 1)
+	assert.Len(t, pls, 1)
+
+	pls = ListPlayerMatchStat(store, 5)
+	assert.Len(t, pls, 0)
+}

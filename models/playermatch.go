@@ -64,3 +64,15 @@ func NewPlayerMatchStat(store store.DBConn, pms PlayerMatchStat) uint {
 
 	return pms.ID
 }
+
+func ListPlayerMatchStat(store store.DBConn, matchID uint) []PlayerMatchStat {
+	db := store.Conn()
+
+	// locate all players in this match
+	var pls []PlayerMatchStat
+
+	db.Where(&PlayerMatchStat{MatchID: matchID}).
+		Find(&pls)
+
+	return pls
+}
