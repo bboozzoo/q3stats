@@ -81,15 +81,11 @@ func TestNewItemStat(t *testing.T) {
 
 	var fis ItemStat
 	nf := db.Find(&fis, isid).RecordNotFound()
-	if nf == true {
-		t.Fatalf("expected to find itemstat with ID %u", isid)
-	}
+	assert.False(t, nf)
 
-	if is.Type != fis.Type ||
-		is.PlayerMatchStatID != fis.PlayerMatchStatID ||
-		is.Pickups != fis.Pickups {
-		t.Fatalf("item stat and found item stat are different")
-	}
+	assert.Equal(t, is.Type, fis.Type)
+	assert.Equal(t, is.Pickups, fis.Pickups)
+	assert.Equal(t, is.PlayerMatchStatID, fis.PlayerMatchStatID)
 }
 
 func TestListItemStat(t *testing.T) {
