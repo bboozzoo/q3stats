@@ -24,6 +24,7 @@ package models
 
 import (
 	"github.com/bboozzoo/q3stats/models/test"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -46,12 +47,9 @@ func TestNewPlayerMatchStat(t *testing.T) {
 
 	var fpms PlayerMatchStat
 	nf := db.Find(&fpms, pmsid).RecordNotFound()
-	if nf == true {
-		t.Fatalf("expected to find player-match stat of ID %u", pmsid)
-	}
+	assert.False(t, nf, "expected to find player-match stat of ID %u", pmsid)
 
-	if pms.AliasID != fpms.AliasID || pms.MatchID != fpms.MatchID ||
-		pms.Score != fpms.Score {
-		t.Fatalf("found data mismatch in player-match stat data")
-	}
+	assert.Equal(t, pms.AliasID, fpms.AliasID)
+	assert.Equal(t, pms.MatchID, fpms.MatchID)
+	assert.Equal(t, pms.Score, fpms.Score)
 }
