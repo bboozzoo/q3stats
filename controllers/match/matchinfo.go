@@ -29,52 +29,7 @@ import (
 
 func (m *MatchController) GetMatchInfo(id string) *models.MatchInfo {
 
-	log.Printf("get match infor for %s", id)
+	log.Printf("get match info for %s", id)
 
-	db := m.db.Conn()
-
-	var match models.Match
-	// grab match data first
-	notfound := db.Where(&models.Match{DataHash: id}).
-		First(&match).
-		RecordNotFound()
-	if notfound == true {
-		return nil
-	}
-
-	// filling up
-	mi := models.MatchInfo{}
-
-	// already know map
-	mi.Match = match
-
-	// locate all players in this match
-	var pls []models.PlayerMatchStat
-	db.Where(&models.PlayerMatchStat{MatchID: match.ID}).
-		Find(&pls)
-	log.Printf("found %u players", len(pls))
-
-	mi.PlayerData = make([]models.PlayerDataItem, len(pls))
-	// start populating PlayerData
-	for i, p := range pls {
-		log.Printf("processing player %u", p.ID)
-		// already have player stats
-		mi.PlayerData[i].Stats = p
-
-		// fill alias info for this player
-		db.First(&mi.PlayerData[i].Alias, p.AliasID)
-		log.Printf("   found alias: %s", mi.PlayerData[i].Alias.Alias)
-
-		// fill weapon statistics
-		db.Where(&models.WeaponStat{
-			PlayerMatchStatID: p.ID,
-		}).Find(&mi.PlayerData[i].Weapons)
-
-		// fill items
-		db.Where(&models.ItemStat{
-			PlayerMatchStatID: p.ID,
-		}).Find(&mi.PlayerData[i].Items)
-	}
-
-	return &mi
+	return models.GetMatchInfo(m.db, id)
 }

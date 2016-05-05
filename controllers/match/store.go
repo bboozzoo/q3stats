@@ -32,6 +32,8 @@ import (
 
 func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 
+	mi := models.MatchInfo{}
+
 	match := models.Match{
 		DataHash: rmatch.DataHash,
 		Duration: rmatch.Duration,
@@ -45,36 +47,24 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 		return errors.Wrap(err, "failed to parse time")
 	}
 	match.DateTime = tm
+	// copy match data
+	mi.Match = match
+	mi.PlayerData = make([]models.PlayerDataItem, len(rmatch.Players))
 
-	tx := m.db.Begin()
+	for i, player := range rmatch.Players {
+		pd := &mi.PlayerData[i]
 
-	mid := models.NewMatch(tx, match)
+		pd.Alias.Alias = player.Name
+		pd.Stats = makePlayerMatchStat(player.Stats)
 
-	log.Printf("got match: %u", mid)
-
-	for _, player := range rmatch.Players {
-		aid := models.NewAliasOrCurrent(tx,
-			models.Alias{Alias: player.Name})
-
-		log.Printf("got alias: %u", aid)
-
-		pms := makePlayerMatchStat(player.Stats)
-		pms.MatchID = mid
-		pms.AliasID = aid
-
-		pmsid := models.NewPlayerMatchStat(tx, pms)
-
-		log.Printf("created PMS: %u", pmsid)
-
-		for _, wep := range player.Weapons {
-			models.NewWeaponStat(tx,
-				models.WeaponStat{
-					Type:              wep.Name,
-					Hits:              wep.Hits,
-					Shots:             wep.Shots,
-					Kills:             wep.Kills,
-					PlayerMatchStatID: pmsid,
-				})
+		pd.Weapons = make([]models.WeaponStat, len(player.Weapons))
+		for w, wep := range player.Weapons {
+			pd.Weapons[w] = models.WeaponStat{
+				Type:  wep.Name,
+				Hits:  wep.Hits,
+				Shots: wep.Shots,
+				Kills: wep.Kills,
+			}
 		}
 
 		// join items and powerups
@@ -82,19 +72,19 @@ func (m *MatchController) storeMatch(rmatch *loader.RawMatch) error {
 		itms = append(itms, player.Items...)
 		itms = append(itms, player.Powerups...)
 
-		for _, itm := range itms {
-			models.NewItemStat(tx,
-				models.ItemStat{
-					Type:              itm.Name,
-					Pickups:           itm.Pickups,
-					PlayerMatchStatID: pmsid,
-					// fill duration, rawItem time is in ms
-					Time: time.Duration(itm.Time) * time.Millisecond,
-				})
+		pd.Items = make([]models.ItemStat, len(itms))
+		for t, itm := range itms {
+			pd.Items[t] = models.ItemStat{
+				Type:    itm.Name,
+				Pickups: itm.Pickups,
+				// fill duration, rawItem time is in ms
+				Time: time.Duration(itm.Time) * time.Millisecond,
+			}
 		}
 	}
 
-	tx.Commit()
+	id, hash := models.NewMatchInfo(m.db, &mi)
+	log.Printf("matchinfo %v hash %s", id, hash)
 
 	return nil
 }
