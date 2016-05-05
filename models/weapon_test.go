@@ -58,14 +58,11 @@ func TestNewWeaponStat(t *testing.T) {
 
 	var fw WeaponStat
 	nf := db.Find(&fw, wid).RecordNotFound()
-	if nf == true {
-		t.Fatalf("expected to find weapon stat of ID %u", wid)
-	}
+	assert.False(t, nf)
 
-	if w.Hits != fw.Hits || w.Shots != fw.Shots ||
-		w.PlayerMatchStatID != fw.PlayerMatchStatID {
-		t.Fatalf("found data mismatch in weapon stat data")
-	}
+	assert.Equal(t, w.Hits, fw.Hits)
+	assert.Equal(t, w.Shots, fw.Shots)
+	assert.Equal(t, w.PlayerMatchStatID, fw.PlayerMatchStatID)
 }
 
 func TestListWeaponStat(t *testing.T) {
