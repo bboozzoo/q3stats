@@ -61,3 +61,15 @@ func NewItemStat(store store.DBConn, is ItemStat) uint {
 
 	return is.ID
 }
+
+// list weapon statistics for given player match stat ID
+func ListItemStats(store store.DBConn, pmsID uint) []ItemStat {
+	db := store.Conn()
+
+	var is []ItemStat
+	db.Where(&ItemStat{
+		PlayerMatchStatID: pmsID,
+	}).Find(&is)
+
+	return is
+}

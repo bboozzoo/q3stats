@@ -24,6 +24,7 @@ package models
 
 import (
 	"github.com/bboozzoo/q3stats/models/test"
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
@@ -89,4 +90,25 @@ func TestNewItemStat(t *testing.T) {
 		is.Pickups != fis.Pickups {
 		t.Fatalf("item stat and found item stat are different")
 	}
+}
+
+func TestListItemStat(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	is := ItemStat{
+		Type:              MegaHealth,
+		Pickups:           1,
+		PlayerMatchStatID: 2,
+	}
+	NewItemStat(store, is)
+
+	iss := ListItemStats(store, 2)
+	assert.Len(t, iss, 1)
+
+	assert.Len(t, ListItemStats(store, 9999), 0)
 }
