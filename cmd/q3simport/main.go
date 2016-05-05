@@ -23,17 +23,22 @@
 package main
 
 import (
+	"fmt"
 	"github.com/codegangsta/cli"
 	"log"
 	"os"
 )
 
-func doDaemon(c *cli.Context) {
-	log.Printf("starting daemon")
-	if err := LoadConfig(c.GlobalString("config")); err != nil {
+func doImport(c *cli.Context) {
+	log.Printf("import")
+
+	srcfile := c.Args().First()
+	mh, err := runImport(srcfile, c.String("host"))
+	if err != nil {
 		log.Fatal(err)
 	}
-	log.Fatal(runDaemon())
+
+	fmt.Println(mh)
 }
 
 func main() {
@@ -41,17 +46,22 @@ func main() {
 	app.Name = "q3stats"
 	app.HideHelp = true
 	app.HideVersion = true
-	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:  "config, c",
-			Usage: "Path to configuration file",
-		},
+	cli.VersionFlag = cli.BoolFlag{
+		Name:  "version, v",
+		Usage: "print version information",
 	}
 	app.Commands = []cli.Command{
 		{
-			Name:   "daemon",
-			Usage:  "run daemon",
-			Action: doDaemon,
+			Name:   "import",
+			Usage:  "import match logs",
+			Action: doImport,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "host, t",
+					Usage: "Daemon host address",
+					Value: "localhost:9090",
+				},
+			},
 		},
 		{
 			Name:  "help",
