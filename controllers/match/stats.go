@@ -24,76 +24,8 @@ package match
 
 import (
 	"github.com/bboozzoo/q3stats/models"
-	"github.com/jinzhu/gorm"
-	"log"
 )
 
-// obtain kills/suicidees/deaths counts
-func getKillSuicideDeathCount(db *gorm.DB) (uint, uint, uint) {
-	var result = struct {
-		Kills    uint
-		Deaths   uint
-		Suicides uint
-	}{}
-	db.Model(&models.PlayerMatchStat{}).
-		Select("sum(kills) as kills, sum(deaths) as deaths, sum(suicides)as suicides").
-		Scan(&result)
-	log.Printf("kills: %u deaths: %u suicides: %u",
-		result.Kills, result.Deaths, result.Suicides)
-
-	return result.Kills, result.Deaths, result.Suicides
-}
-
-func getUniqueMapsCount(db *gorm.DB) uint {
-	var result = struct {
-		Maps uint
-	}{}
-	db.Raw("select count(map) as maps from (select distinct map from matches)").
-		Scan(&result)
-	log.Printf("unique maps: %u", result.Maps)
-	return result.Maps
-}
-
-func getUniquePlayersCount(db *gorm.DB) uint {
-	var count uint
-	db.Model(&models.Alias{}).Count(&count)
-	log.Printf("unique players: %u", count)
-	return count
-}
-
-func getRocketsLaunchedCount(db *gorm.DB) uint {
-	var result = struct {
-		Launched uint
-	}{}
-
-	db.Model(&models.WeaponStat{}).
-		Where(&models.WeaponStat{Type: models.RocketLauncher}).
-		Select("sum(shots) as launched").
-		Scan(&result)
-	log.Printf("launched rockets: %u", result.Launched)
-
-	return result.Launched
-}
-
-func getMatchCount(db *gorm.DB) uint {
-	var count uint
-	db.Model(&models.Match{}).Count(&count)
-	return count
-}
-
 func (m *MatchController) GetGlobalStats() models.GlobalStats {
-	db := m.db.Conn()
-
-	gs := models.GlobalStats{}
-
-	gs.Matches = getMatchCount(db)
-	k, _, s := getKillSuicideDeathCount(db)
-
-	gs.Frags = k
-	gs.Suicides = s
-	gs.Players = getUniquePlayersCount(db)
-	gs.Maps = getUniqueMapsCount(db)
-	gs.RocketsLaunched = getRocketsLaunchedCount(db)
-
-	return gs
+	return models.GetGlobalStats(m.db)
 }
