@@ -38,9 +38,9 @@ func doDaemon(c *cli.Context) {
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "q3stats"
+	app.Usage = "Q3 Match Statistics"
+	app.Version = "0.0.1"
 	app.HideHelp = true
-	app.HideVersion = true
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "config, c",
@@ -50,12 +50,12 @@ func main() {
 	app.Commands = []cli.Command{
 		{
 			Name:   "daemon",
-			Usage:  "run daemon",
+			Usage:  "Run in daemon mode",
 			Action: doDaemon,
 		},
 		{
 			Name:  "help",
-			Usage: "show command help",
+			Usage: "Show command help",
 			Action: func(c *cli.Context) {
 				cli.ShowCommandHelp(c, c.Args().First())
 			},
