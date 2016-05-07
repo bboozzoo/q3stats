@@ -47,7 +47,7 @@ func NewSite(c controllers.Controllers, webroot string) *Site {
 
 func (s *Site) SetupHandlers(r *mux.Router) {
 	r.HandleFunc("/", s.siteHomeHandler).
-		Methods("GET")
+		Methods("GET").Name("home")
 	r.HandleFunc("/matches", s.matchesViewHandler).
 		Methods("GET").Name("matches")
 	r.HandleFunc("/matches/{id}", s.matchViewHandler).
