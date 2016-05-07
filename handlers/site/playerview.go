@@ -23,13 +23,36 @@
 package site
 
 import (
+	"github.com/bboozzoo/q3stats/models"
+	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 func (s *Site) playerViewHandler(w http.ResponseWriter, req *http.Request) {
 	// player view handler
-	s.loadRenderOrError(w, nil, "player.tmpl", "base.tmpl")
+	log.Printf("player view handler")
+	id := mux.Vars(req)["id"]
+
+	log.Printf("player ID: %s", id)
+
+	uid, _ := strconv.ParseUint(id, 10, 32)
+	uuid := uint(uid)
+
+	pl := s.p.GetPlayer(uuid)
+	pgs := s.p.GetPlayerGlobaStats(uuid)
+
+	data := struct {
+		// palayer global stats
+		PlayerGlobalStats *models.PlayerGlobalStats
+		Name              string
+	}{
+		pgs,
+		pl.Name,
+	}
+
+	s.loadRenderOrError(w, data, "player.tmpl", "base.tmpl")
 }
 
 func (s *Site) playerViewURL(id uint) string {
