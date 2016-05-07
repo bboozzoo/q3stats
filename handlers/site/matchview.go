@@ -35,6 +35,7 @@ type matchViewWeaponStat struct {
 
 type matchViewPlayerData struct {
 	PlayerID     uint
+	PlayerUrl    string
 	Alias        string
 	GeneralStats models.PlayerMatchStat
 	Weapons      map[string]matchViewWeaponStat
@@ -69,6 +70,7 @@ func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
 	for i, pd := range m.PlayerData {
 		mvpd := matchViewPlayerData{
 			pd.Alias.PlayerID,
+			s.playerViewURL(pd.Alias.PlayerID),
 			pd.Alias.Alias,
 			pd.Stats,
 			make(map[string]matchViewWeaponStat),
