@@ -24,6 +24,7 @@ package models
 
 import (
 	"github.com/bboozzoo/q3stats/models/test"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -39,14 +40,10 @@ func TestPlayer(t *testing.T) {
 
 	var p Player
 	nf := db.First(&p, id).RecordNotFound()
-	if nf == true {
-		t.Fatalf("expected to find player with ID %u", id)
-	}
+	assert.False(t, nf)
 
-	if p.Name != "foo" {
-		t.Fatalf("player of ID %u has unexpected name %s",
-			id, p.Name)
-	}
+	assert.Equal(t, "foo", p.Name)
+	assert.Equal(t, "123", p.PasswordHash)
 }
 
 func TestHasPlayer(t *testing.T) {
@@ -59,13 +56,8 @@ func TestHasPlayer(t *testing.T) {
 
 	NewPlayer(store, "foo", "123")
 
-	if HasPlayer(store, "foo") != true {
-		t.Fatalf("expected to find player foo")
-	}
-
-	if HasPlayer(store, "bar") != false {
-		t.Fatalf("expected player bar not to be found")
-	}
+	assert.True(t, HasPlayer(store, "foo"))
+	assert.False(t, HasPlayer(store, "bar"))
 }
 
 func TestListPlayers(t *testing.T) {
@@ -82,9 +74,7 @@ func TestListPlayers(t *testing.T) {
 
 	players := ListPlayers(store)
 
-	if len(players) != 3 {
-		t.Fatalf("expected 3 players, got %u", len(players))
-	}
+	assert.Len(t, players, 3)
 
 	d := map[string]int{
 		"foo": 0,
