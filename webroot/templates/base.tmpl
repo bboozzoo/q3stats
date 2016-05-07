@@ -11,11 +11,27 @@
         {{ template "head" .}}
     </head>
     <body>
-        <div class="container">
-            <div class="header clearfix">
-                <h3 class="text-muted">Q3 Match Statistics</h3>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Q3 Stats</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="{{if .Active.Home}}active{{end}}"><a href="{{.Urls.Home}}">Home</a></li>
+                        <li class="{{if .Active.Players}}active{{end}}"><a href="{{.Urls.Players}}">Players</a></li>
+                        <li class="{{if .Active.Matches}}active{{end}}"><a href="{{.Urls.Matches}}">Matches</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
             </div>
-        </div>
+        </nav>
+
         <div class="container">
             {{ template "content" .ContentData}}
         </div>
