@@ -75,3 +75,24 @@ func ListPlayers(store store.DBConn) []Player {
 
 	return players
 }
+
+func HasPlayerId(store store.DBConn, pid uint) bool {
+	player := GetPlayer(store, pid)
+	if player == nil {
+		return false
+	}
+	return true
+}
+
+func GetPlayer(store store.DBConn, pid uint) *Player {
+	db := store.Conn()
+
+	var player Player
+
+	notfound := db.First(&player, pid).
+		RecordNotFound()
+	if notfound == true {
+		return nil
+	}
+	return &player
+}

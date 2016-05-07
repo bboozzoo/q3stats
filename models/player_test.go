@@ -90,3 +90,36 @@ func TestListPlayers(t *testing.T) {
 		}
 	}
 }
+
+func TestHasPlayerId(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	p1 := NewPlayer(store, "foo", "123")
+	p2 := NewPlayer(store, "bar", "123")
+
+	assert.True(t, HasPlayerId(store, p1))
+	assert.True(t, HasPlayerId(store, p2))
+	assert.False(t, HasPlayerId(store, p1+p2))
+}
+
+func TestGetPlayer(t *testing.T) {
+	store := test.GetStore(t)
+
+	db := store.Conn()
+	defer db.Close()
+
+	CreateSchema(store)
+
+	pid1 := NewPlayer(store, "foo", "123")
+
+	p := GetPlayer(store, pid1)
+
+	assert.Equal(t, "foo", p.Name)
+	assert.Equal(t, "123", p.PasswordHash)
+	assert.Equal(t, pid1, p.ID)
+}
