@@ -29,3 +29,13 @@ import (
 func (p *PlayerController) ListUnclaimedAliases() []models.Alias {
 	return models.GetAliases(p.db, models.NoUser)
 }
+
+func (p *PlayerController) ListPlayerAliases(player uint) []models.Alias {
+	return models.GetAliases(p.db, player)
+}
+
+// update aliases so that the player owns only the aliases passed as
+// `aliases` parameter
+func (p *PlayerController) UpdatePlayerAliases(player uint, alises []string) error {
+	return nil
+}
