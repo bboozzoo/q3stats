@@ -51,6 +51,7 @@ func (s *Site) matchesViewHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	s.loadRenderOrError(w, data,
+	p := s.NewPage(catMatches, data)
+	s.loadRenderOrError(w, p,
 		"matches.tmpl", "matchlist.tmpl", "base.tmpl")
 }

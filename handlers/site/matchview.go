@@ -88,5 +88,6 @@ func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
 		data.Players[i] = mvpd
 	}
 
-	s.loadRenderOrError(w, data, "match.tmpl", "base.tmpl")
+	p := s.NewPage(catMatches, data)
+	s.loadRenderOrError(w, p, "match.tmpl", "base.tmpl")
 }

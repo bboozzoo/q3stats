@@ -83,7 +83,8 @@ func (s *Site) playerViewHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	s.loadRenderOrError(w, data, "player.tmpl", "base.tmpl")
+	p := s.NewPage(catPlayers, data)
+	s.loadRenderOrError(w, p, "player.tmpl", "base.tmpl")
 }
 
 func (s *Site) playerViewURL(id uint) string {

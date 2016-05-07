@@ -70,6 +70,7 @@ func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 
 	data.Global = s.m.GetGlobalStats()
 
-	s.loadRenderOrError(w, data,
+	p := s.NewPage(catHome, data)
+	s.loadRenderOrError(w, p,
 		"home.tmpl", "matchlist.tmpl", "base.tmpl")
 }

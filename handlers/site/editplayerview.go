@@ -66,7 +66,9 @@ func (s *Site) commonEditPlayerViewHandler(w http.ResponseWriter, req *http.Requ
 			false,
 		})
 	}
-	s.loadRenderOrError(w, data, "editplayer.tmpl", "base.tmpl")
+
+	p := s.NewPage(catPlayers, data)
+	s.loadRenderOrError(w, p, "editplayer.tmpl", "base.tmpl")
 }
 
 func (s *Site) editPlayerViewHandler(w http.ResponseWriter, req *http.Request) {
