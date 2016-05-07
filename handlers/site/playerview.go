@@ -30,6 +30,20 @@ import (
 	"strconv"
 )
 
+// wrap weapon stat
+type playerViewWeapon struct {
+	models.WeaponStat
+	// weapon description
+	Desc models.ItemDesc
+}
+
+// wrap item stat
+type playerViewItem struct {
+	models.ItemStat
+	// item descripion
+	Desc models.ItemDesc
+}
+
 func (s *Site) playerViewHandler(w http.ResponseWriter, req *http.Request) {
 	// player view handler
 	log.Printf("player view handler")
@@ -47,19 +61,25 @@ func (s *Site) playerViewHandler(w http.ResponseWriter, req *http.Request) {
 		// palayer global stats
 		PlayerGlobalStats *models.PlayerGlobalStats
 		Name              string
-		Weapons           map[string]models.WeaponStat
-		Items             map[string]models.ItemStat
+		Weapons           map[string]playerViewWeapon
+		Items             map[string]playerViewItem
 	}{
 		pgs,
 		pl.Name,
-		make(map[string]models.WeaponStat),
-		make(map[string]models.ItemStat),
+		make(map[string]playerViewWeapon),
+		make(map[string]playerViewItem),
 	}
 	for _, w := range pgs.Weapons {
-		data.Weapons[w.Type] = w
+		data.Weapons[w.Type] = playerViewWeapon{
+			w,
+			models.GetItemDesc(w.Type),
+		}
 	}
 	for _, i := range pgs.Items {
-		data.Items[i.Type] = i
+		data.Items[i.Type] = playerViewItem{
+			i,
+			models.GetItemDesc(i.Type),
+		}
 	}
 
 	s.loadRenderOrError(w, data, "player.tmpl", "base.tmpl")
