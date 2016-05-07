@@ -24,7 +24,7 @@ package player
 
 import (
 	"github.com/bboozzoo/q3stats/models"
-	"github.com/pkg/errors"
+	"log"
 )
 
 func (p *PlayerController) ListUnclaimedAliases() []models.Alias {
@@ -37,6 +37,49 @@ func (p *PlayerController) ListPlayerAliases(player uint) []models.Alias {
 
 // update aliases so that the player owns only the aliases passed as
 // `aliases` parameter
-func (p *PlayerController) UpdatePlayerAliases(player uint, alises []string) error {
-	return errors.New("not implemented")
+func (p *PlayerController) UpdatePlayerAliases(player uint, aliases []string) error {
+	// repack aliases to map, value true indicates that alias was
+	// acted upon
+	am := make(map[string]bool)
+	for _, a := range aliases {
+		am[a] = false
+	}
+
+	// grab the list of currently owned aliases
+	current := models.GetAliases(p.db, player)
+
+	to_claim := make([]string, 0)
+	to_unclaim := make([]string, 0)
+
+	for _, a := range current {
+		// if currently owned alias is in map, things don't change
+		_, ok := am[a.Alias]
+		if ok == false {
+			// but if it's not, we unclaim it
+			to_unclaim = append(to_unclaim, a.Alias)
+		}
+		// alias already looked at
+		am[a.Alias] = true
+	}
+
+	// scan remaining aliases, if alias was not acted upon, means
+	// we must claim it
+	for k, v := range am {
+		if v == false {
+			// alias was not acted upon, since we're
+			// passing a list of aliases that a player
+			// should own, it means that this alias will
+			// be claimed by this player
+			to_claim = append(to_claim, k)
+		}
+	}
+
+	// claim new ones
+	log.Printf("claim new aliases: %v", to_claim)
+	models.ClaimAliasesByPlayer(p.db, player, to_claim)
+	// clear old ones
+	log.Printf("release aliases: %v", to_unclaim)
+	models.ClaimAliasesByPlayer(p.db, models.NoUser, to_unclaim)
+
+	return nil
 }
