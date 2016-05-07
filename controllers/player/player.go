@@ -41,3 +41,7 @@ func (p *PlayerController) CreateNewPlayer(name string, aliases []string) (uint,
 
 	return id, nil
 }
+
+func (p *PlayerController) GetPlayer(player uint) *models.Player {
+	return models.GetPlayer(p.db, player)
+}
