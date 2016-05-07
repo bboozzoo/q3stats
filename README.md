@@ -21,7 +21,7 @@ sure that `upx` is available).
 First start the server process:
 
 ```
-q3stats daemon
+q3stats -c q3stats.conf daemon
 ```
 
 The daemon will open port `9090`, use your browser to access
