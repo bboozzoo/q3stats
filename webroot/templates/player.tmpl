@@ -92,7 +92,7 @@
 {{define "weapon"}}
 {{if .}}
 <tr>
-    <td>{{.Type}}</td>
+    <td>{{.Desc.Name}}</td>
 
     {{if .Shots}}
     <td>{{.Shots}}</td>
@@ -114,7 +114,7 @@
 {{define "item"}}
 {{if .}}
 <tr>
-    <td>{{.Type}}</td>
+    <td>{{.Desc.Name}}</td>
     <td>{{.Pickups}}</td>
     
     {{if .Time}}
