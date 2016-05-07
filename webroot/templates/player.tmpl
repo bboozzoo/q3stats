@@ -23,6 +23,16 @@
         <div class="col-md-1">Suicides:</div>
         <div class="col-md-1">{{.Suicides}}</div>
     </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-1">Kills/match:</div>
+        <div class="col-md-1">{{printf "%.02f" .KillsPerMatch}}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-1">Efficiency:</div>
+        <div class="col-md-1">{{printf "%.02f" .Efficiency}}</div>
+    </div>
 </div>
 
 <div class="container col-md-4">
