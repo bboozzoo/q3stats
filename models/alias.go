@@ -52,11 +52,13 @@ func NewAliasOrCurrent(store store.DBConn, newalias Alias) uint {
 	return alias.ID
 }
 
+// return alphabetically ordered list of aliases
 func GetAliases(store store.DBConn, user uint) []Alias {
 	var aliases []Alias
 	store.Conn().
 		Model(&Alias{}).
 		Where("player_id = ?", user).
+		Order("alias").
 		Find(&aliases)
 
 	return aliases
