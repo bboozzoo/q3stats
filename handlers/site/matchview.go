@@ -62,7 +62,7 @@ func (s *Site) matchViewHandler(w http.ResponseWriter, req *http.Request) {
 		Match models.Match
 	}{
 		make([]matchViewPlayerData, len(m.PlayerData)),
-		models.GetItemDesc(),
+		models.GetDesc(),
 		m.Match,
 	}
 

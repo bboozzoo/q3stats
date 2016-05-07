@@ -92,8 +92,13 @@ var (
 )
 
 // obtain pointer to item descriptor
-func GetItemDesc() *DescData {
+func GetDesc() *DescData {
 	return descData
+}
+
+// obtain description of given item/weapon
+func GetItemDesc(name string) ItemDesc {
+	return descData.ItemMap[name]
 }
 
 // returns true if effects of given item are time bounded
