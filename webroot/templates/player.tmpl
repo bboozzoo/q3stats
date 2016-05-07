@@ -110,6 +110,7 @@
 {{end}}
 
 {{define "item"}}
+{{if .}}
 <tr>
     <td>{{.Type}}</td>
     <td>{{.Pickups}}</td>
@@ -121,5 +122,6 @@
     {{end}}
     
 </tr>
+{{end}}
 {{end}}
 
