@@ -90,6 +90,7 @@
 {{end}}
 
 {{define "weapon"}}
+{{if .}}
 <tr>
     <td>{{.Type}}</td>
 
@@ -107,6 +108,7 @@
     <td>-</td>
     {{end}}
 </tr>
+{{end}}
 {{end}}
 
 {{define "item"}}
