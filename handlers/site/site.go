@@ -56,6 +56,10 @@ func (s *Site) SetupHandlers(r *mux.Router) {
 		Methods("GET")
 	r.HandleFunc("/players/new", s.createNewPlayerViewHandler).
 		Methods("POST")
+	r.HandleFunc("/players/{id}/edit", s.editPlayerViewHandler).
+		Methods("GET").Name("playeredit")
+	r.HandleFunc("/players/{id}/edit", s.editSubmitPlayerViewHandler).
+		Methods("POST")
 	r.HandleFunc("/players/{id}", s.playerViewHandler).
 		Methods("GET").Name("player")
 
