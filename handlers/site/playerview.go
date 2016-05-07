@@ -51,11 +51,10 @@ func (s *Site) playerViewHandler(w http.ResponseWriter, req *http.Request) {
 
 	log.Printf("player ID: %s", id)
 
-	uid, _ := strconv.ParseUint(id, 10, 32)
-	uuid := uint(uid)
+	pid := strToUint(id)
 
-	pl := s.p.GetPlayer(uuid)
-	pgs := s.p.GetPlayerGlobaStats(uuid)
+	pl := s.p.GetPlayer(pid)
+	pgs := s.p.GetPlayerGlobaStats(pid)
 
 	data := struct {
 		// palayer global stats
