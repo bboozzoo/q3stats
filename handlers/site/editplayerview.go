@@ -101,7 +101,7 @@ func (s *Site) editSubmitPlayerViewHandler(w http.ResponseWriter, req *http.Requ
 
 	err := s.p.UpdatePlayerAliases(pid, aliases)
 	if err != nil {
-		panic(errors.Wrap(err, "error creating player"))
+		panic(errors.Wrap(err, "error updating player"))
 	}
 
 	// redirect to player view
