@@ -29,11 +29,14 @@ import (
 )
 
 type PlayerGlobalStats struct {
-	Kills    uint
-	Deaths   uint
-	Suicides uint
-	Matches  uint
-	Wins     uint
+	Kills         uint
+	Deaths        uint
+	Suicides      uint
+	Matches       uint
+	KillsPerMatch float32
+	// frags per life
+	Efficiency float32
+	Wins       uint
 	// global weapon stats
 	Weapons []WeaponStat
 	// global item stats
@@ -77,5 +80,12 @@ func GetPlayerGlobaStats(store store.DB, player uint) *PlayerGlobalStats {
 	pgs.Kills, pgs.Deaths, pgs.Suicides = getPlayerKillDeathSuicide(db,
 		player)
 	pgs.Matches = getPlayerMatches(db, player)
+	if pgs.Matches != 0 {
+		pgs.KillsPerMatch = float32(pgs.Kills) / float32(pgs.Matches)
+	}
+
+	if (pgs.Deaths + pgs.Suicides) != 0 {
+		pgs.Efficiency = float32(pgs.Kills) / float32(pgs.Deaths+pgs.Suicides)
+	}
 	return &pgs
 }
