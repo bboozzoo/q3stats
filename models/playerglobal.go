@@ -73,6 +73,42 @@ func getPlayerMatches(db *gorm.DB, player uint) uint {
 	return result.Matches
 }
 
+func getPlayerWeapons(db *gorm.DB, player uint) []WeaponStat {
+
+	// have some initial capacity
+	ws := make([]WeaponStat, 0, 10)
+
+	rows, err := db.Table("weapon_stats").
+		Select("type, sum(weapon_stats.shots) as shots, sum(weapon_stats.hits) as hits, sum(weapon_stats.kills) as kills").
+		Joins("join player_match_stats on weapon_stats.player_match_stat_id = player_match_stats.id").
+		Joins("join aliases on player_match_stats.alias_id = aliases.id").
+		Where("aliases.player_id = ?", player).
+		Group("weapon_stats.type").
+		Rows()
+
+	if err != nil {
+		log.Printf("query failed: %s", err)
+		return ws
+	}
+
+	for rows.Next() {
+		var t string
+		var k, s, h uint
+		if err := rows.Scan(&t, &s, &h, &k); err != nil {
+			log.Printf("failed to scan row: %s", err)
+		}
+		log.Printf("stats: %s %v %v %v", t, s, h, k)
+		ws = append(ws, WeaponStat{
+			Shots: s,
+			Kills: k,
+			Hits:  h,
+			Type:  t,
+		})
+	}
+
+	return ws
+}
+
 func GetPlayerGlobaStats(store store.DB, player uint) *PlayerGlobalStats {
 	db := store.Conn()
 
@@ -80,6 +116,7 @@ func GetPlayerGlobaStats(store store.DB, player uint) *PlayerGlobalStats {
 	pgs.Kills, pgs.Deaths, pgs.Suicides = getPlayerKillDeathSuicide(db,
 		player)
 	pgs.Matches = getPlayerMatches(db, player)
+	pgs.Weapons = getPlayerWeapons(db, player)
 	if pgs.Matches != 0 {
 		pgs.KillsPerMatch = float32(pgs.Kills) / float32(pgs.Matches)
 	}

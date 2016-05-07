@@ -132,13 +132,13 @@ func TestGetPlayerGlobalStats(t *testing.T) {
 	for _, w := range pgs.Weapons {
 		switch w.Type {
 		case RocketLauncher:
-			assert.Equal(t, 110, w.Shots)
-			assert.Equal(t, 15, w.Hits)
+			assert.Equal(t, uint(110), w.Shots)
+			assert.Equal(t, uint(15), w.Hits)
 		case GrenadeLauncher:
-			assert.Equal(t, 25, w.Shots)
+			assert.Equal(t, uint(25), w.Shots)
 		case Shotgun:
-			assert.Equal(t, 10, w.Shots)
-			assert.Equal(t, 5, w.Hits)
+			assert.Equal(t, uint(10), w.Shots)
+			assert.Equal(t, uint(5), w.Hits)
 		default:
 			assert.Fail(t, "unexpected weapon type: %s", w.Type)
 		}
