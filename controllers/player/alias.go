@@ -24,6 +24,7 @@ package player
 
 import (
 	"github.com/bboozzoo/q3stats/models"
+	"github.com/pkg/errors"
 )
 
 func (p *PlayerController) ListUnclaimedAliases() []models.Alias {
@@ -37,5 +38,5 @@ func (p *PlayerController) ListPlayerAliases(player uint) []models.Alias {
 // update aliases so that the player owns only the aliases passed as
 // `aliases` parameter
 func (p *PlayerController) UpdatePlayerAliases(player uint, alises []string) error {
-	return nil
+	return errors.New("not implemented")
 }
