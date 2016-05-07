@@ -26,6 +26,7 @@ import (
 	"github.com/bboozzoo/q3stats/store"
 	"github.com/jinzhu/gorm"
 	"log"
+	"time"
 )
 
 type PlayerGlobalStats struct {
@@ -92,8 +93,8 @@ func getPlayerWeapons(db *gorm.DB, player uint) []WeaponStat {
 	}
 
 	for rows.Next() {
-		var t string
-		var k, s, h uint
+		var t string     // type
+		var k, s, h uint // kills, shots, hits
 		if err := rows.Scan(&t, &s, &h, &k); err != nil {
 			log.Printf("failed to scan row: %s", err)
 		}
@@ -109,6 +110,43 @@ func getPlayerWeapons(db *gorm.DB, player uint) []WeaponStat {
 	return ws
 }
 
+func getPlayerItems(db *gorm.DB, player uint) []ItemStat {
+
+	// have some initial capacity
+	is := make([]ItemStat, 0, 10)
+
+	rows, err := db.Table("item_stats").
+		Select("type, sum(item_stats.pickups) as pickups, sum(item_stats.time) as time").
+		Joins("join player_match_stats on item_stats.player_match_stat_id = player_match_stats.id").
+		Joins("join aliases on player_match_stats.alias_id = aliases.id").
+		Where("aliases.player_id = ?", player).
+		Group("item_stats.type").
+		Rows()
+
+	if err != nil {
+		log.Printf("query failed: %s", err)
+		return is
+	}
+
+	for rows.Next() {
+		var t string // type
+		var p uint   // pickups
+		var d uint64 // duration
+		if err := rows.Scan(&t, &p, &d); err != nil {
+			log.Printf("failed to scan row: %s", err)
+		}
+		dur := time.Duration(d)
+		log.Printf("stats: %s %v %v", t, p, dur)
+		is = append(is, ItemStat{
+			Pickups: p,
+			Time:    dur,
+			Type:    t,
+		})
+	}
+
+	return is
+}
+
 func GetPlayerGlobaStats(store store.DB, player uint) *PlayerGlobalStats {
 	db := store.Conn()
 
@@ -117,6 +155,7 @@ func GetPlayerGlobaStats(store store.DB, player uint) *PlayerGlobalStats {
 		player)
 	pgs.Matches = getPlayerMatches(db, player)
 	pgs.Weapons = getPlayerWeapons(db, player)
+	pgs.Items = getPlayerItems(db, player)
 	if pgs.Matches != 0 {
 		pgs.KillsPerMatch = float32(pgs.Kills) / float32(pgs.Matches)
 	}

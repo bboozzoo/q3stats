@@ -148,13 +148,13 @@ func TestGetPlayerGlobalStats(t *testing.T) {
 	for _, i := range pgs.Items {
 		switch i.Type {
 		case MegaHealth:
-			assert.Equal(t, 12, i.Pickups)
+			assert.Equal(t, uint(12), i.Pickups)
 		case RedArmor:
-			assert.Equal(t, 5, i.Pickups)
+			assert.Equal(t, uint(5), i.Pickups)
 		case GreenArmor:
-			assert.Equal(t, 3, i.Pickups)
+			assert.Equal(t, uint(3), i.Pickups)
 		case QuadDamage:
-			assert.Equal(t, 5+1, i.Pickups)
+			assert.Equal(t, uint(5+1), i.Pickups)
 			assert.Equal(t, time.Duration(30+5)*time.Second,
 				i.Time)
 		}
