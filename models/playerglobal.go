@@ -22,6 +22,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package models
 
+import (
+	"github.com/bboozzoo/q3stats/store"
+	"github.com/jinzhu/gorm"
+	"log"
+)
+
 type PlayerGlobalStats struct {
 	Kills    uint
 	Deaths   uint
@@ -32,4 +38,30 @@ type PlayerGlobalStats struct {
 	Weapons []WeaponStat
 	// global item stats
 	Items []ItemStat
+}
+
+func getPlayerKillDeathSuicide(db *gorm.DB, player uint) (uint, uint, uint) {
+	var result = struct {
+		Kills    uint
+		Deaths   uint
+		Suicides uint
+	}{}
+	db.Model(&PlayerMatchStat{}).
+		Select("sum(kills) as kills, sum(deaths) as deaths, sum(suicides)as suicides").
+		Joins("join aliases on player_match_stats.alias_id = aliases.id").
+		Where("aliases.player_id = ?", player).
+		Scan(&result)
+	log.Printf("stats: %+v", result)
+
+	return result.Kills, result.Deaths, result.Suicides
+}
+
+func GetPlayerGlobaStats(store store.DB, player uint) *PlayerGlobalStats {
+	db := store.Conn()
+
+	pgs := PlayerGlobalStats{}
+	pgs.Kills, pgs.Deaths, pgs.Suicides = getPlayerKillDeathSuicide(db,
+		player)
+
+	return &pgs
 }
