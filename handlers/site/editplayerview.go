@@ -54,7 +54,6 @@ func (s *Site) commonEditPlayerViewHandler(w http.ResponseWriter, req *http.Requ
 
 	// first aliases owned by current player
 	for _, a := range s.p.ListPlayerAliases(pid) {
-		log.Printf("owned: %s", a.Alias)
 		data.Aliases = append(data.Aliases, editViewAlias{
 			a,
 			true,
@@ -62,7 +61,6 @@ func (s *Site) commonEditPlayerViewHandler(w http.ResponseWriter, req *http.Requ
 	}
 	// then list unclaimed aliases
 	for _, a := range s.p.ListUnclaimedAliases() {
-		log.Printf("unowned: %s", a.Alias)
 		data.Aliases = append(data.Aliases, editViewAlias{
 			a,
 			false,
