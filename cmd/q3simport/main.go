@@ -30,7 +30,10 @@ import (
 )
 
 func doImport(c *cli.Context) {
-	log.Printf("import")
+	if c.Args().Present() == false {
+		cli.ShowAppHelp(c)
+		os.Exit(1)
+	}
 
 	srcfile := c.Args().First()
 	mh, err := runImport(srcfile, c.String("host"))
@@ -43,34 +46,19 @@ func doImport(c *cli.Context) {
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "q3stats"
+	app.Usage = "Q3 Match Statistics import tool"
+	app.Version = "0.0.1"
+	app.ArgsUsage = "<match-file>"
 	app.HideHelp = true
-	app.HideVersion = true
-	cli.VersionFlag = cli.BoolFlag{
-		Name:  "version, v",
-		Usage: "print version information",
-	}
-	app.Commands = []cli.Command{
-		{
-			Name:   "import",
-			Usage:  "import match logs",
-			Action: doImport,
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "host, t",
-					Usage: "Daemon host address",
-					Value: "localhost:9090",
-				},
-			},
-		},
-		{
-			Name:  "help",
-			Usage: "show command help",
-			Action: func(c *cli.Context) {
-				cli.ShowCommandHelp(c, c.Args().First())
-			},
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "host, t",
+			Usage: "Q3 Stats server host:port address",
+			Value: "localhost:9090",
 		},
 	}
+	app.Action = doImport
+	app.Commands = []cli.Command{}
 
 	app.Run(os.Args)
 }
