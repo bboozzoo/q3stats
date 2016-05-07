@@ -56,12 +56,26 @@ func getPlayerKillDeathSuicide(db *gorm.DB, player uint) (uint, uint, uint) {
 	return result.Kills, result.Deaths, result.Suicides
 }
 
+func getPlayerMatches(db *gorm.DB, player uint) uint {
+	var result = struct {
+		Matches uint
+	}{}
+	db.Model(&PlayerMatchStat{}).
+		Select("count(distinct player_match_stats.match_id) as matches").
+		Joins("join aliases on player_match_stats.alias_id = aliases.id").
+		Where("aliases.player_id = ?", player).
+		Scan(&result)
+	log.Printf("stats: %+v", result)
+
+	return result.Matches
+}
+
 func GetPlayerGlobaStats(store store.DB, player uint) *PlayerGlobalStats {
 	db := store.Conn()
 
 	pgs := PlayerGlobalStats{}
 	pgs.Kills, pgs.Deaths, pgs.Suicides = getPlayerKillDeathSuicide(db,
 		player)
-
+	pgs.Matches = getPlayerMatches(db, player)
 	return &pgs
 }
