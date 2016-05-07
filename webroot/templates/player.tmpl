@@ -34,6 +34,7 @@
         <div class="col-md-1">{{printf "%.02f" .Efficiency}}</div>
     </div>
 </div>
+{{end}}
 
 <div class="container col-md-4">
     <h4>Personal Stats</h4>
@@ -41,9 +42,8 @@
 </div>
 {{end}}
 
-{{end}}
-
 {{define "playerstats"}}
+<h4>Weapons</h4>
 <table class="table">
     <thead>
         <tr>
@@ -54,6 +54,72 @@
         </tr>
     </thead>
     <tbody>
+        {{with .Weapons}}
+        {{template "weapon" .G}}
+        {{template "weapon" .MG}}
+        {{template "weapon" .SG}}
+        {{template "weapon" .PG}}
+        {{template "weapon" .GL}}
+        {{template "weapon" .RL}}
+        {{template "weapon" .LG}}
+        {{template "weapon" .RG}}
+        {{end}}
+    </tbody>
+</table>
+
+<h4>Items</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Pickups</th>
+            <th>Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{with .Items}}
+        {{template "item" .GA}}
+        {{template "item" .YA}}
+        {{template "item" .RA}}
+        {{template "item" .MH}}
+        {{template "item" .Quad}}
+        {{template "item" .BattleSuit}}
+        {{end}}
     </tbody>
 </table>
 {{end}}
+
+{{define "weapon"}}
+<tr>
+    <td>{{.Type}}</td>
+
+    {{if .Shots}}
+    <td>{{.Shots}}</td>
+    {{else}}
+    <td>-</td>
+    {{end}}
+
+    <td>{{.Kills}}</td>
+    
+    {{if .Shots}}
+    <td>{{.Accuracy}}%</td>
+    {{else}}
+    <td>-</td>
+    {{end}}
+</tr>
+{{end}}
+
+{{define "item"}}
+<tr>
+    <td>{{.Type}}</td>
+    <td>{{.Pickups}}</td>
+    
+    {{if .Time}}
+    <td>{{.DurationDesc}}</td>
+    {{else}}
+    <td>-</td>
+    {{end}}
+    
+</tr>
+{{end}}
+

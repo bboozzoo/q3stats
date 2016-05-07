@@ -47,9 +47,19 @@ func (s *Site) playerViewHandler(w http.ResponseWriter, req *http.Request) {
 		// palayer global stats
 		PlayerGlobalStats *models.PlayerGlobalStats
 		Name              string
+		Weapons           map[string]models.WeaponStat
+		Items             map[string]models.ItemStat
 	}{
 		pgs,
 		pl.Name,
+		make(map[string]models.WeaponStat),
+		make(map[string]models.ItemStat),
+	}
+	for _, w := range pgs.Weapons {
+		data.Weapons[w.Type] = w
+	}
+	for _, i := range pgs.Items {
+		data.Items[i.Type] = i
 	}
 
 	s.loadRenderOrError(w, data, "player.tmpl", "base.tmpl")
