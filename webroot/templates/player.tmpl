@@ -1,0 +1,133 @@
+{{define "content"}}
+<div class="container">
+    <h3>{{.Name}}</h3>
+    <a href="{{.PlayerEditURL}}">Update aliases</a>
+    {{with .PlayerGlobalStats}}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-1">Matches:</div>
+            <div class="col-md-1">{{.Matches}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-1">Kills:</div>
+            <div class="col-md-1">{{.Kills}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-1">Deaths:</div>
+            <div class="col-md-1">{{.Deaths}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-1">Suicides:</div>
+            <div class="col-md-1">{{.Suicides}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-1">Kills/match:</div>
+            <div class="col-md-1">{{printf "%.02f" .KillsPerMatch}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-1">Efficiency:</div>
+            <div class="col-md-1">{{printf "%.02f" .Efficiency}}</div>
+        </div>
+    </div>
+</div>
+{{end}}
+
+<div class="container col-md-4">
+    <h4>Personal Stats</h4>
+    {{template "playerstats" .}}
+</div>
+{{end}}
+
+{{define "playerstats"}}
+<h4>Weapons</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Weapon</th>
+            <th>Shots</th>
+            <th>Kills</th>
+            <th>Accuracy</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{with .Weapons}}
+        {{template "weapon" .G}}
+        {{template "weapon" .MG}}
+        {{template "weapon" .SG}}
+        {{template "weapon" .PG}}
+        {{template "weapon" .GL}}
+        {{template "weapon" .RL}}
+        {{template "weapon" .LG}}
+        {{template "weapon" .RG}}
+        {{end}}
+    </tbody>
+</table>
+
+<h4>Items</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Pickups</th>
+            <th>Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{with .Items}}
+        {{template "item" .GA}}
+        {{template "item" .YA}}
+        {{template "item" .RA}}
+        {{template "item" .MH}}
+        {{template "item" .Quad}}
+        {{template "item" .BattleSuit}}
+        {{template "item" .Regen}}
+        {{template "item" .Haste}}
+        {{end}}
+    </tbody>
+</table>
+{{end}}
+
+{{define "weapon"}}
+{{if .}}
+<tr>
+    <td>{{.Desc.Name}}</td>
+
+    {{if .Shots}}
+    <td>{{.Shots}}</td>
+    {{else}}
+    <td>-</td>
+    {{end}}
+
+    <td>{{.Kills}}</td>
+    
+    {{if .Shots}}
+    <td>{{.Accuracy}}%</td>
+    {{else}}
+    <td>-</td>
+    {{end}}
+</tr>
+{{end}}
+{{end}}
+
+{{define "item"}}
+{{if .}}
+<tr>
+    <td>{{.Desc.Name}}</td>
+    <td>{{.Pickups}}</td>
+    
+    {{if .Time}}
+    <td>{{.DurationDesc}}</td>
+    {{else}}
+    <td>-</td>
+    {{end}}
+    
+</tr>
+{{end}}
+{{end}}
+

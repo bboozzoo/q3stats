@@ -1,0 +1,31 @@
+{{define "content"}}
+<div class="container">
+    {{if .Error}}
+    <div class="alert alert-danger alert-dismissable" role="alert">
+        {{.Error}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+    {{end}}
+    <h3>Edit player data</h3>
+
+    <div class="col-md-4">
+        <form method="POST">
+            <div class="form-group">
+                <label>Update claimed aliases:</label>
+                {{range .Aliases}}
+                {{template "checkbox-alias" .}}
+                {{end}}
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+{{end}}
+
+{{define "checkbox-alias"}}
+<div class="checkbox">
+    <label>
+        <input name="aliases" type="checkbox" value="{{.Alias.Alias}}" {{if .Selected}}checked{{end}}>{{.Alias.Alias}}
+    </label>
+</div>
+{{end}}
