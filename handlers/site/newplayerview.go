@@ -40,7 +40,9 @@ func (s *Site) commonNewPlayerViewHandler(w http.ResponseWriter, req *http.Reque
 	}
 
 	data.Aliases = s.p.ListUnclaimedAliases()
-	s.loadRenderOrError(w, data, "newplayer.tmpl", "base.tmpl")
+
+	p := s.NewPage(catPlayers, data)
+	s.loadRenderOrError(w, p, "newplayer.tmpl", "base.tmpl")
 }
 
 func (s *Site) newPlayerViewHandler(w http.ResponseWriter, req *http.Request) {
