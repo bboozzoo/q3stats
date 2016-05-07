@@ -62,11 +62,13 @@ func (s *Site) playerViewHandler(w http.ResponseWriter, req *http.Request) {
 		Name              string
 		Weapons           map[string]playerViewWeapon
 		Items             map[string]playerViewItem
+		PlayerEditURL     string
 	}{
 		pgs,
 		pl.Name,
 		make(map[string]playerViewWeapon),
 		make(map[string]playerViewItem),
+		s.playerEditURL(pid),
 	}
 	for _, w := range pgs.Weapons {
 		data.Weapons[w.Type] = playerViewWeapon{
