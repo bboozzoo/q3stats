@@ -36,6 +36,12 @@ command will upload the match statistics to the server. If server is
 running on another host/port, the address can be passed by adding `-t
 <host>:<port>` in command line.
 
+Example:
+
+```
+./q3simport matchdata/stats/2016/02/29/14_18_42.xml
+```
+
 The import tool is intentionally built as a separate program (and
 lives under `cmd/q3simport` in the source tree). The for that is the
 tool has very little (no) dependencies outside of Go's stdlib,
