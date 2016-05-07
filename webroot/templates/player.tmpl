@@ -1,16 +1,27 @@
 {{define "content"}}
 <h3>{{.Name}}</h3>
 
+{{with .PlayerGlobalStats}}
 <div class="container">
     <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-1">Matches:</div>
-        <div class="col-md-1">TBD</div>
+        <div class="col-md-1">{{.Matches}}</div>
     </div>
     <div class="row">
         <div class="col-md-1"></div>
-        <div class="col-md-1">Duration</div>
-        <div class="col-md-1">TBD</div>
+        <div class="col-md-1">Kills:</div>
+        <div class="col-md-1">{{.Kills}}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-1">Deaths:</div>
+        <div class="col-md-1">{{.Deaths}}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-1">Suicides:</div>
+        <div class="col-md-1">{{.Suicides}}</div>
     </div>
 </div>
 
@@ -18,6 +29,7 @@
     <h4>Personal Stats</h4>
     {{template "playerstats" .}}
 </div>
+{{end}}
 
 {{end}}
 
