@@ -28,12 +28,6 @@ import (
 	"net/http"
 )
 
-// wrapper for player data with URL to player's profile
-type homeViewPlayerData struct {
-	models.Player
-	URL string
-}
-
 func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 	log.Printf("site / handler")
 
@@ -44,27 +38,16 @@ func (s *Site) siteHomeHandler(w http.ResponseWriter, req *http.Request) {
 		Limit:    10,
 	})
 
-	players := s.p.ListPlayers()
-
 	data := struct {
 		RecentMatches []matchesViewMatchData
 		Global        models.GlobalStats
-		Players       []homeViewPlayerData
 	}{
 		make([]matchesViewMatchData, len(matches)),
 		models.GlobalStats{},
-		make([]homeViewPlayerData, len(players)),
 	}
 	for i, m := range matches {
 		data.RecentMatches[i] = matchesViewMatchData{
 			m,
-		}
-	}
-
-	for i, p := range players {
-		data.Players[i] = homeViewPlayerData{
-			p,
-			s.playerViewURL(p.ID),
 		}
 	}
 

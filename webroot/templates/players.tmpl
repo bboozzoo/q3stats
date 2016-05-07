@@ -1,0 +1,9 @@
+{{define "content"}}
+<div class="container">
+    <h3>Players</h3>
+    {{range .Players}}
+    <a href="{{.URL}}">{{.Name}}</a>
+    {{end}}
+    <a class="btn btn-default" role="button" href="players/new">Add</a>
+</div>
+{{end}}

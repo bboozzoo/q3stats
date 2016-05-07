@@ -34,13 +34,6 @@
 
 </div>
 <div class="container">
-    <h3>Players</h3>
-    {{range .Players}}
-    <a href="{{.URL}}">{{.Name}}</a>
-    {{end}}
-    <a class="btn btn-default" role="button" href="players/new">Add</a>
-</div>
-<div class="container">
     <h3>Recent matches</h3><a href="matches">See All</a>
     {{template "matchlist" .RecentMatches}}
 </div>

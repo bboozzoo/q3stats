@@ -23,59 +23,36 @@
 package site
 
 import (
-// "github.com/gorilla/mux"
+	"github.com/bboozzoo/q3stats/models"
+	"log"
+	"net/http"
 )
 
-type ActiveMap map[string]bool
-type UrlsMap map[string]string
-
-type Page struct {
-	// active page
-	Active ActiveMap
-	// main urls
-	Urls UrlsMap
-
-	ContentData interface{}
+// wrapper for player data with URL to player's profile
+type playersViewPlayerData struct {
+	models.Player
+	URL string
 }
 
-const (
-	catHome    = "Home"
-	catPlayers = "Players"
-	catMatches = "Matches"
-)
+func (s *Site) playersViewHandler(w http.ResponseWriter, req *http.Request) {
+	log.Printf("site / handler")
 
-var (
-	categories = []string{
-		catHome,
-		catPlayers,
-		catMatches,
-	}
-)
+	players := s.p.ListPlayers()
 
-func (s *Site) NewPage(category string, content interface{}) Page {
-	p := Page{
-		Active: make(ActiveMap),
-		Urls:   make(UrlsMap),
+	data := struct {
+		Players []playersViewPlayerData
+	}{
+		make([]playersViewPlayerData, len(players)),
 	}
 
-	for _, c := range categories {
-		if category == c {
-			p.Active[c] = true
-		} else {
-			p.Active[c] = false
+	for i, p := range players {
+		data.Players[i] = playersViewPlayerData{
+			p,
+			s.playerViewURL(p.ID),
 		}
 	}
 
-	p.Urls[catHome] = s.getSimpleURL("home")
-	p.Urls[catPlayers] = s.getSimpleURL("players")
-	p.Urls[catMatches] = s.getSimpleURL("matches")
-
-	p.ContentData = content
-
-	return p
-}
-
-func (s *Site) getSimpleURL(name string) string {
-	u, _ := s.r.Get(name).URL()
-	return u.String()
+	p := s.NewPage(catPlayers, data)
+	s.loadRenderOrError(w, p,
+		"players.tmpl", "base.tmpl")
 }
