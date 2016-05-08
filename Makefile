@@ -1,3 +1,4 @@
+GB ?= gb
 GO ?= go
 UPX ?= upx
 PACK ?= 0
@@ -13,22 +14,22 @@ DEPS = \
 	github.com/stretchr/testify/assert
 
 
-all: q3stats q3simport
+all: bin/q3stats bin/q3simport
 
-q3stats:
-	$(GO) build -v
+bin/q3stats: $(shell find src/q3stats -name '*.go')
+	$(GB) build q3stats
 
-packed: q3stats.upx q3simport.upx
+packed: bin/q3stats.upx bin/q3simport.upx
 
 %.upx: %
 	$(UPX) $^ -o $@
 
-q3simport:
-	$(GO) build -v ./cmd/q3simport
+bin/q3simport: $(shell find src/cmd/q3simport -name '*.go')
+	$(GB) build cmd/q3simport
 
 clean:
-	$(GO) clean
-	rm -f *.upx q3simport q3stats
+	rm -rf bin
+	rm -f *.upx
 
 get-deps:
 	for d in $(DEPS); do \
@@ -38,5 +39,4 @@ get-deps:
 test:
 	$(GO) test -v ./...
 
-.PHONY: clean q3stats q3simport \
-	all packed get-deps test
+.PHONY: clean all packed get-deps test
