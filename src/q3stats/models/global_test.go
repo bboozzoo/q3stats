@@ -23,8 +23,8 @@
 package models
 
 import (
-	"github.com/bboozzoo/q3stats/models/test"
 	"github.com/stretchr/testify/assert"
+	"q3stats/models/test"
 	"testing"
 )
 

@@ -24,9 +24,9 @@ package match
 
 import (
 	"fmt"
-	"github.com/bboozzoo/q3stats/loader"
-	"github.com/bboozzoo/q3stats/models"
-	"github.com/bboozzoo/q3stats/store"
+	"q3stats/loader"
+	"q3stats/models"
+	"q3stats/store"
 	"github.com/pkg/errors"
 	"log"
 )

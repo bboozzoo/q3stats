@@ -23,7 +23,7 @@
 package player
 
 import (
-	"github.com/bboozzoo/q3stats/store"
+	"q3stats/store"
 )
 
 type PlayerController struct {

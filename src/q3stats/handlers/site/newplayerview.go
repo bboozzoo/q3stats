@@ -24,7 +24,7 @@ package site
 
 import (
 	"fmt"
-	"github.com/bboozzoo/q3stats/models"
+	"q3stats/models"
 	"github.com/pkg/errors"
 	"log"
 	"net/http"

@@ -24,18 +24,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/bboozzoo/q3stats/controllers"
-	"github.com/bboozzoo/q3stats/controllers/match"
-	"github.com/bboozzoo/q3stats/controllers/player"
-	"github.com/bboozzoo/q3stats/handlers"
-	"github.com/bboozzoo/q3stats/handlers/api"
-	"github.com/bboozzoo/q3stats/handlers/site"
 	ghandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
 	"path"
+	"q3stats/controllers"
+	"q3stats/controllers/match"
+	"q3stats/controllers/player"
+	"q3stats/handlers"
+	"q3stats/handlers/api"
+	"q3stats/handlers/site"
 )
 
 const (

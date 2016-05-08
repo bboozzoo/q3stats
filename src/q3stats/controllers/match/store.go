@@ -23,8 +23,8 @@
 package match
 
 import (
-	"github.com/bboozzoo/q3stats/loader"
-	"github.com/bboozzoo/q3stats/models"
+	"q3stats/loader"
+	"q3stats/models"
 	"github.com/pkg/errors"
 	"log"
 	"time"

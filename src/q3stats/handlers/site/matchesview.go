@@ -23,7 +23,7 @@
 package site
 
 import (
-	"github.com/bboozzoo/q3stats/models"
+	"q3stats/models"
 	"log"
 	"net/http"
 )

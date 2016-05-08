@@ -23,7 +23,7 @@
 package test
 
 import (
-	"github.com/bboozzoo/q3stats/store"
+	"q3stats/store"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/pkg/errors"

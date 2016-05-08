@@ -25,7 +25,7 @@ package loader
 import (
 	"bytes"
 	"encoding/xml"
-	"github.com/bboozzoo/q3stats/util"
+	"q3stats/util"
 	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"

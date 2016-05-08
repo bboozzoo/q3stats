@@ -23,7 +23,7 @@
 package api
 
 import (
-	"github.com/bboozzoo/q3stats/controllers/match"
+	"q3stats/controllers/match"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"

@@ -23,8 +23,8 @@
 package models
 
 import (
-	"github.com/bboozzoo/q3stats/store"
 	"github.com/jinzhu/gorm"
+	"q3stats/store"
 	"time"
 )
 

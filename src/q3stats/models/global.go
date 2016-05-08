@@ -23,9 +23,9 @@
 package models
 
 import (
-	"github.com/bboozzoo/q3stats/store"
 	"github.com/jinzhu/gorm"
 	"log"
+	"q3stats/store"
 )
 
 type GlobalStats struct {

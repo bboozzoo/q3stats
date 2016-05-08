@@ -23,7 +23,7 @@
 package player
 
 import (
-	"github.com/bboozzoo/q3stats/models"
+	"q3stats/models"
 	"github.com/pkg/errors"
 )
 

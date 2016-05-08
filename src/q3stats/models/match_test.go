@@ -23,7 +23,7 @@
 package models
 
 import (
-	"github.com/bboozzoo/q3stats/models/test"
+	"q3stats/models/test"
 	"testing"
 	"time"
 )

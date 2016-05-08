@@ -23,8 +23,8 @@
 package controllers
 
 import (
-	"github.com/bboozzoo/q3stats/controllers/match"
-	"github.com/bboozzoo/q3stats/controllers/player"
+	"q3stats/controllers/match"
+	"q3stats/controllers/player"
 )
 
 type Controllers struct {

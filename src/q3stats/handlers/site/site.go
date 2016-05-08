@@ -23,9 +23,9 @@
 package site
 
 import (
-	"github.com/bboozzoo/q3stats/controllers"
-	"github.com/bboozzoo/q3stats/controllers/match"
-	"github.com/bboozzoo/q3stats/controllers/player"
+	"q3stats/controllers"
+	"q3stats/controllers/match"
+	"q3stats/controllers/player"
 	"github.com/gorilla/mux"
 	"path"
 )

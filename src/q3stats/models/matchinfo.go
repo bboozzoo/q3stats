@@ -23,7 +23,7 @@
 package models
 
 import (
-	"github.com/bboozzoo/q3stats/store"
+	"q3stats/store"
 	"log"
 )
 
