@@ -1,0 +1,118 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/codegangsta/cli",
+			"repository": "https://github.com/codegangsta/cli",
+			"revision": "d3a4d5467b9d41ee3b466a3d6684cdc36482e471",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/davecgh/go-spew/spew",
+			"repository": "https://github.com/davecgh/go-spew",
+			"revision": "5215b55f46b2b919f50a1df0eaa5886afe4e3b3d",
+			"branch": "master",
+			"path": "/spew"
+		},
+		{
+			"importpath": "github.com/denisenkom/go-mssqldb",
+			"repository": "https://github.com/denisenkom/go-mssqldb",
+			"revision": "8d4984e8baccbf5bfadd7f7e366fd61b7ccac38b",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/go-sql-driver/mysql",
+			"repository": "https://github.com/go-sql-driver/mysql",
+			"revision": "7ebe0a500653eeb1859664bed5e48dec1e164e73",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/gorilla/context",
+			"repository": "https://github.com/gorilla/context",
+			"revision": "a8d44e7d8e4d532b6a27a02dd82abb31cc1b01bd",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/gorilla/handlers",
+			"repository": "https://github.com/gorilla/handlers",
+			"revision": "66e6c6f01d8da976ee113437745ca029c2b585a6",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/gorilla/mux",
+			"repository": "https://github.com/gorilla/mux",
+			"revision": "9c19ed558d5df4da88e2ade9c8940d742aef0e7e",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/jinzhu/gorm",
+			"repository": "https://github.com/jinzhu/gorm",
+			"revision": "bf413d67d3a25d4eeddb28541283fa6434d1cdb5",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/jinzhu/gorm/dialects/sqlite",
+			"repository": "https://github.com/jinzhu/gorm",
+			"revision": "bf413d67d3a25d4eeddb28541283fa6434d1cdb5",
+			"branch": "master",
+			"path": "/dialects/sqlite"
+		},
+		{
+			"importpath": "github.com/jinzhu/inflection",
+			"repository": "https://github.com/jinzhu/inflection",
+			"revision": "3272df6c21d04180007eb3349844c89a3856bc25",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/lib/pq",
+			"repository": "https://github.com/lib/pq",
+			"revision": "dd3290b2f71a8b30bee8e4e75a337a825263d26f",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mattn/go-sqlite3",
+			"repository": "https://github.com/mattn/go-sqlite3",
+			"revision": "7204887cf3a42df1cfaa5505dc3a3427f6dded8b",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/pkg/errors",
+			"repository": "https://github.com/pkg/errors",
+			"revision": "0d62637d0446292fceb852ab68e3ce6e07bddc00",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/pmezard/go-difflib/difflib",
+			"repository": "https://github.com/pmezard/go-difflib",
+			"revision": "792786c7400a136282c1664665ae0a8db921c6c2",
+			"branch": "master",
+			"path": "/difflib"
+		},
+		{
+			"importpath": "github.com/stretchr/testify/assert",
+			"repository": "https://github.com/stretchr/testify",
+			"revision": "6cb3b85ef5a0efef77caef88363ec4d4b5c0976d",
+			"branch": "master",
+			"path": "/assert"
+		},
+		{
+			"importpath": "golang.org/x/crypto/md4",
+			"repository": "https://go.googlesource.com/crypto",
+			"revision": "47ff8dfbc528fea3003fc0ce2d88ffbbfbc46a43",
+			"branch": "master",
+			"path": "/md4"
+		},
+		{
+			"importpath": "gopkg.in/gcfg.v1",
+			"repository": "https://gopkg.in/gcfg.v1",
+			"revision": "083575c3955c85df16fe9590cceab64d03f5eb6e",
+			"branch": "v1"
+		},
+		{
+			"importpath": "gopkg.in/yaml.v2",
+			"repository": "https://gopkg.in/yaml.v2",
+			"revision": "a83829b6f1293c91addabc89d0571c246397bbf4",
+			"branch": "v2"
+		}
+	]
+}
