@@ -8,7 +8,9 @@ DEPS = \
 	github.com/gorilla/handlers \
 	github.com/jinzhu/gorm \
 	github.com/jinzhu/gorm/dialects/sqlite \
-	gopkg.in/gcfg.v1
+	gopkg.in/gcfg.v1 \
+	github.com/pkg/errors \
+	github.com/stretchr/testify/assert
 
 
 all: q3stats q3simport
