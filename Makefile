@@ -33,4 +33,8 @@ get-deps:
 		$(GO) get $$d; \
 	done
 
-.PHONY: clean q3stats q3simport all packed get-deps
+test:
+	$(GO) test -v ./...
+
+.PHONY: clean q3stats q3simport \
+	all packed get-deps test
