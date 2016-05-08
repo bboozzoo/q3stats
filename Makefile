@@ -2,6 +2,15 @@ GO ?= go
 UPX ?= upx
 PACK ?= 0
 
+DEPS = \
+	github.com/codegangsta/cli \
+	github.com/gorilla/mux \
+	github.com/gorilla/handlers \
+	github.com/jinzhu/gorm \
+	github.com/jinzhu/gorm/dialects/sqlite \
+	gopkg.in/gcfg.v1
+
+
 all: q3stats q3simport
 
 q3stats:
@@ -19,4 +28,9 @@ clean:
 	$(GO) clean
 	rm -f *.upx q3simport q3stats
 
-.PHONY: clean q3stats q3simport all packed
+get-deps:
+	for d in $(DEPS); do \
+		$(GO) get $$d; \
+	done
+
+.PHONY: clean q3stats q3simport all packed get-deps
