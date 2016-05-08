@@ -4,14 +4,7 @@ UPX ?= upx
 PACK ?= 0
 
 DEPS = \
-	github.com/codegangsta/cli \
-	github.com/gorilla/mux \
-	github.com/gorilla/handlers \
-	github.com/jinzhu/gorm \
-	github.com/jinzhu/gorm/dialects/sqlite \
-	gopkg.in/gcfg.v1 \
-	github.com/pkg/errors \
-	github.com/stretchr/testify/assert
+	go get github.com/constabulary/gb/...
 
 
 all: bin/q3stats bin/q3simport
