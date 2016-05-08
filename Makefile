@@ -3,10 +3,6 @@ GO ?= go
 UPX ?= upx
 PACK ?= 0
 
-DEPS = \
-	go get github.com/constabulary/gb/...
-
-
 all: bin/q3stats bin/q3simport
 
 bin/q3stats: $(shell find src/q3stats -name '*.go')
@@ -25,9 +21,8 @@ clean:
 	rm -f *.upx
 
 get-deps:
-	for d in $(DEPS); do \
-		$(GO) get $$d; \
-	done
+	go get github.com/constabulary/gb/...
+	$(GB) vendor restore
 
 test:
 	$(GO) test -v ./...
