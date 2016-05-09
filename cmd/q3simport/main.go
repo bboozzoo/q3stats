@@ -25,11 +25,10 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
-	"log"
 	"os"
 )
 
-func doImport(c *cli.Context) {
+func doImport(c *cli.Context) error {
 	if c.Args().Present() == false {
 		cli.ShowAppHelp(c)
 		os.Exit(1)
@@ -38,10 +37,12 @@ func doImport(c *cli.Context) {
 	srcfile := c.Args().First()
 	mh, err := runImport(srcfile, c.String("host"))
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	fmt.Println(mh)
+
+	return nil
 }
 
 func main() {
