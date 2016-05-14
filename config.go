@@ -29,9 +29,6 @@ import (
 )
 
 type Config struct {
-
-	// path to webroot
-	Webroot string
 	// listen port
 	Port int
 	// path to DB
