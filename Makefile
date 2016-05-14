@@ -14,15 +14,20 @@ DEPS = \
 	github.com/stretchr/testify/assert \
 	github.com/mjibson/esc
 
+TOPDIR = $(shell pwd)
 
 all: q3stats q3simport
 
-q3stats: assets/assets.go
+q3stats: assets/static/assets.go assets/templates/assets.go
 	$(GO) build -v
 
-assets/assets.go:
-	cd webroot && \
-		$(ESC) -pkg assets -o ../$@ .
+assets/static/assets.go:
+	cd webroot/static && \
+		$(ESC) -pkg static -o $(TOPDIR)/$@ .
+
+assets/templates/assets.go:
+	cd webroot/templates && \
+		$(ESC) -pkg templates -o $(TOPDIR)/$@ .
 
 packed: q3stats.upx q3simport.upx
 
