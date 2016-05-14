@@ -36,7 +36,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path"
 )
 
 const (
@@ -69,10 +68,6 @@ func setupHandlers(handlers []handlerRouting) {
 	r.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		http.Redirect(w, req, uriSite, http.StatusFound)
 	})
-
-	// static files
-	staticroot := path.Join(C.Webroot, "static")
-	log.Printf("serving static files from %s", staticroot)
 
 	filehandler := http.FileServer(astatic.FS(false))
 	r.PathPrefix(uriStatic).
