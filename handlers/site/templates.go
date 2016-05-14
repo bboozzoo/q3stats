@@ -24,9 +24,9 @@ package site
 
 import (
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"path"
 )
 
 func (s *Site) loadRenderOrError(w http.ResponseWriter, data interface{},
@@ -43,19 +43,25 @@ func (s *Site) loadRenderOrError(w http.ResponseWriter, data interface{},
 }
 
 func (s *Site) loadTemplates(names ...string) *template.Template {
-	paths := make([]string, 0, len(names))
+	t := template.New("site")
 	for _, n := range names {
-		tpath := path.Join(s.tdir, n)
-		paths = append(paths, tpath)
+		//
+		f, err := s.fs.Open("/" + n)
+		if err != nil {
+			log.Printf("failed to load template file %s: %s",
+				n, err)
+			return nil
+		}
+
+		tdata, _ := ioutil.ReadAll(f)
+		f.Close()
+		_, err = t.Parse(string(tdata))
+		if err != nil {
+			log.Printf("failed to parse template from file %s: %s",
+				n, err)
+		}
 	}
 
-	log.Printf("loading templates: %s", paths)
-
-	t, err := template.ParseFiles(paths...)
-	if err != nil {
-		log.Printf("failed to parse templates: %s", err)
-		return nil
-	}
 	return t
 }
 

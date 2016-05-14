@@ -27,21 +27,23 @@ import (
 	"github.com/bboozzoo/q3stats/controllers/match"
 	"github.com/bboozzoo/q3stats/controllers/player"
 	"github.com/gorilla/mux"
-	"path"
+	"net/http"
 )
 
 type Site struct {
-	m    *match.MatchController
-	p    *player.PlayerController
-	tdir string
-	r    *mux.Router
+	m  *match.MatchController
+	p  *player.PlayerController
+	fs http.FileSystem
+	r  *mux.Router
 }
 
-func NewSite(c controllers.Controllers, webroot string) *Site {
+// create new site handler, `fs` is a FS wrapper with template files
+// located at the root (/)
+func NewSite(c controllers.Controllers, fs http.FileSystem) *Site {
 	return &Site{
-		m:    c.M,
-		p:    c.P,
-		tdir: path.Join(webroot, "templates"),
+		m:  c.M,
+		p:  c.P,
+		fs: fs,
 	}
 }
 
