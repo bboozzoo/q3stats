@@ -25,6 +25,7 @@ package main
 import (
 	"fmt"
 	astatic "github.com/bboozzoo/q3stats/assets/static"
+	atemplates "github.com/bboozzoo/q3stats/assets/templates"
 	"github.com/bboozzoo/q3stats/controllers"
 	"github.com/bboozzoo/q3stats/controllers/match"
 	"github.com/bboozzoo/q3stats/controllers/player"
@@ -93,7 +94,7 @@ func daemonMain() error {
 		matchctrl,
 		userctrl,
 	}
-	site := site.NewSite(ctrls, C.Webroot)
+	site := site.NewSite(ctrls, atemplates.FS(false))
 
 	hrouting := []handlerRouting{
 		{uriApi, api},
