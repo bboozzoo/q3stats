@@ -21,11 +21,11 @@ all: q3stats q3simport
 q3stats: assets/static/assets.go assets/templates/assets.go
 	$(GO) build -v
 
-assets/static/assets.go:
+assets/static/assets.go: $(shell find webroot/static)
 	cd webroot/static && \
 		$(ESC) -pkg static -o $(TOPDIR)/$@ .
 
-assets/templates/assets.go:
+assets/templates/assets.go: $(shell find webroot/templates)
 	cd webroot/templates && \
 		$(ESC) -pkg templates -o $(TOPDIR)/$@ .
 
