@@ -1,4 +1,5 @@
 GO ?= go
+ESC ?= esc
 UPX ?= upx
 PACK ?= 0
 
@@ -10,13 +11,18 @@ DEPS = \
 	github.com/jinzhu/gorm/dialects/sqlite \
 	gopkg.in/gcfg.v1 \
 	github.com/pkg/errors \
-	github.com/stretchr/testify/assert
+	github.com/stretchr/testify/assert \
+	github.com/mjibson/esc
 
 
 all: q3stats q3simport
 
-q3stats:
+q3stats: assets/assets.go
 	$(GO) build -v
+
+assets/assets.go:
+	cd webroot && \
+		$(ESC) -pkg assets -o ../$@ .
 
 packed: q3stats.upx q3simport.upx
 
