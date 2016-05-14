@@ -24,6 +24,7 @@ package main
 
 import (
 	"fmt"
+	astatic "github.com/bboozzoo/q3stats/assets/static"
 	"github.com/bboozzoo/q3stats/controllers"
 	"github.com/bboozzoo/q3stats/controllers/match"
 	"github.com/bboozzoo/q3stats/controllers/player"
@@ -73,7 +74,7 @@ func setupHandlers(handlers []handlerRouting) {
 	staticroot := path.Join(C.Webroot, "static")
 	log.Printf("serving static files from %s", staticroot)
 
-	filehandler := http.FileServer(http.Dir(staticroot))
+	filehandler := http.FileServer(astatic.FS(false))
 	r.PathPrefix(uriStatic).
 		Handler(http.StripPrefix(uriStatic, filehandler))
 
