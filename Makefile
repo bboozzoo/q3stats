@@ -16,10 +16,17 @@ DEPS = \
 
 TOPDIR = $(shell pwd)
 
+GIT_VERSION = $(shell git describe --always --tags --dirty)
+BUILD_DATE = $(shell date +%Y-%m-%d\ %H:%M)
+VERSION = $(GIT_VERSION) $(BUILD_DATE)
+
+LDFLAGS = -ldflags \
+	"-X 'github.com/bboozzoo/q3stats/version.versionInfo=$(VERSION)'"
+
 all: q3stats q3simport
 
 q3stats: assets/static/assets.go assets/templates/assets.go
-	$(GO) build -v
+	$(GO) build $(LDFLAGS) -v
 
 assets/static/assets.go: $(shell find webroot/static)
 	cd webroot/static && \
@@ -35,7 +42,7 @@ packed: q3stats.upx q3simport.upx
 	$(UPX) $^ -o $@
 
 q3simport:
-	$(GO) build -v ./cmd/q3simport
+	$(GO) build $(LDFLAGS) -v ./cmd/q3simport
 
 clean:
 	$(GO) clean
