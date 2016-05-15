@@ -23,7 +23,6 @@
 package main
 
 import (
-	"fmt"
 	astatic "github.com/bboozzoo/q3stats/assets/static"
 	atemplates "github.com/bboozzoo/q3stats/assets/templates"
 	"github.com/bboozzoo/q3stats/controllers"
@@ -34,27 +33,32 @@ import (
 	"github.com/bboozzoo/q3stats/handlers/site"
 	ghandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
 	"log"
 	"net/http"
 	"os"
 )
 
 const (
-	defaultListenPort = 9090
-
 	uriApi    = "/api"
 	uriStatic = "/static/"
 	uriSite   = "/site/"
-)
 
-var (
-	defaultListenAddr = fmt.Sprintf("localhost:%d",
-		defaultListenPort)
+	// default listen address
+	defaultListenAddr = ":9090"
 )
 
 type handlerRouting struct {
 	prefix  string
 	handler handlers.Handler
+}
+
+// wrapper for daemon configuration
+type DaemonConfig struct {
+	// path to database file
+	DbPath string
+	// listen address
+	ListenAddr string
 }
 
 func setupHandlers(handlers []handlerRouting) {
@@ -80,9 +84,9 @@ func setupHandlers(handlers []handlerRouting) {
 	http.Handle("/", lr)
 }
 
-func daemonMain() error {
+func daemonMain(c *DaemonConfig) error {
 	db := NewDB()
-	if err := db.Open(); err != nil {
+	if err := db.Open(c.DbPath); err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
@@ -102,11 +106,19 @@ func daemonMain() error {
 	}
 	setupHandlers(hrouting)
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", C.Port), nil)
+	return http.ListenAndServe(c.ListenAddr, nil)
 }
 
-func runDaemon() error {
-	log.Printf("listen port: %d", C.Port)
+func runDaemon(c DaemonConfig) error {
 
-	return daemonMain()
+	if c.DbPath == "" {
+		return errors.New("DB path not provided")
+	}
+
+	if c.ListenAddr == "" {
+		log.Printf("using default listen address: %s",
+			defaultListenAddr)
+		c.ListenAddr = defaultListenAddr
+	}
+	return daemonMain(&c)
 }
