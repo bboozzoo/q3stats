@@ -23,6 +23,7 @@
 package main
 
 import (
+	"github.com/bboozzoo/q3stats/version"
 	"github.com/codegangsta/cli"
 	"log"
 	"os"
@@ -40,7 +41,7 @@ func doDaemon(c *cli.Context) {
 func main() {
 	app := cli.NewApp()
 	app.Usage = "Q3 Match Statistics"
-	app.Version = "0.0.1"
+	app.Version = version.GetVersion()
 	app.HideHelp = true
 	app.Flags = []cli.Flag{
 		cli.StringFlag{

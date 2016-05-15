@@ -24,6 +24,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/bboozzoo/q3stats/version"
 	"github.com/codegangsta/cli"
 	"os"
 )
@@ -48,7 +49,7 @@ func doImport(c *cli.Context) error {
 func main() {
 	app := cli.NewApp()
 	app.Usage = "Q3 Match Statistics import tool"
-	app.Version = "0.0.1"
+	app.Version = version.GetVersion()
 	app.ArgsUsage = "<match-file>"
 	app.HideHelp = true
 	app.Flags = []cli.Flag{
