@@ -30,10 +30,11 @@ import (
 
 func doDaemon(c *cli.Context) {
 	log.Printf("starting daemon")
-	if err := LoadConfig(c.GlobalString("config")); err != nil {
-		log.Fatal(err)
-	}
-	log.Fatal(runDaemon())
+
+	log.Fatal(runDaemon(DaemonConfig{
+		DbPath:     c.String("db"),
+		ListenAddr: c.String("listen"),
+	}))
 }
 
 func main() {
@@ -43,24 +44,18 @@ func main() {
 	app.HideHelp = true
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "config, c",
-			Usage: "Path to configuration file",
+			Name:  "db, f",
+			Usage: "Path to database file",
+			Value: defaultDbPath,
+		},
+		cli.StringFlag{
+			Name:  "listen, l",
+			Usage: "Address to listen on",
+			Value: defaultListenAddr,
 		},
 	}
-	app.Commands = []cli.Command{
-		{
-			Name:   "daemon",
-			Usage:  "Run in daemon mode",
-			Action: doDaemon,
-		},
-		{
-			Name:  "help",
-			Usage: "Show command help",
-			Action: func(c *cli.Context) {
-				cli.ShowCommandHelp(c, c.Args().First())
-			},
-		},
-	}
+	app.Commands = []cli.Command{}
+	app.Action = doDaemon
 
 	app.Run(os.Args)
 }
