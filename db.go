@@ -28,12 +28,10 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/pkg/errors"
 	"log"
-	"os"
-	"path"
 )
 
 const (
-	defaultDbName = "q3stat.db"
+	defaultDbPath = "q3stat.db"
 )
 
 type DB struct {
@@ -44,16 +42,10 @@ func NewDB() *DB {
 	return &DB{}
 }
 
-func (d *DB) Open() error {
-	p := C.Dbpath
-	fi, _ := os.Stat(p)
-	if fi.IsDir() == true {
-		p = path.Join(p, defaultDbName)
-	}
+func (d *DB) Open(dbpath string) error {
+	log.Printf("opening DB file: %s", dbpath)
 
-	log.Printf("opening DB file: %s", p)
-
-	db, err := gorm.Open("sqlite3", p)
+	db, err := gorm.Open("sqlite3", dbpath)
 	if err != nil {
 		return errors.Wrap(err, "failed to open DB")
 	}
