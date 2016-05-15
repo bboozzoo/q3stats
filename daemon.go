@@ -106,6 +106,7 @@ func daemonMain(c *DaemonConfig) error {
 	}
 	setupHandlers(hrouting)
 
+	log.Printf("listening on %s", c.ListenAddr)
 	return http.ListenAndServe(c.ListenAddr, nil)
 }
 
