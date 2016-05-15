@@ -11,12 +11,13 @@ go get github.com/bboozzoo/q3stats
 Unfortunately the code will not be built during `go get` as the
 default build process is limited.
 
-Fetch all dependencies by running `make get-deps`. This will fecth all
-of the dependencies as well as tools used during the build (`esc`).
+Fetch all dependencies and required tools (`esc`) by running `make
+get-deps`. Make sure that your `GOPATH` is set properly before running
+the command.
 
-Build with `make`. This will build both the server executable and
-helper tools. The main `q3stats` binary is self contained, all static
-data is embedded directly into the binary itself.
+The main server binary and helper tools are built by running
+`make`. The server binary (`q3stats`) is self contained, all static
+data is embedded directly into the binary itself during the built.
 
 You can also run `make packed` to pack the binaries with UPX (make
 sure that `upx` is available).
